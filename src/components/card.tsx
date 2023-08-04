@@ -59,7 +59,8 @@ function Card({ text, description, tags, owner } : cardType ) {
         <div
             id={id}
             draggable            
-            className="rounded bg-indigo-900 hover:bg-indigo-400 hover:cursor-grab p-5 mb-2 w-full"
+            className="rounded bg-indigo-900 hover:bg-indigo-400 hover:cursor-pointer p-5 mb-2 w-full"
+            onClick={()=>openMyDialog()}
         >
             {/*  */}
             <div className="text-gray-300 text-xl font-semibold">
@@ -67,7 +68,7 @@ function Card({ text, description, tags, owner } : cardType ) {
             </div>  
             
             {/* Modal */}
-            <button className="select-none btn text-white hover:bg-purple-800 animate-pulse" onClick={()=>openMyDialog()}>Open Card</button>
+            {/* <button className="select-none btn text-white hover:bg-purple-800 animate-pulse" >Open Card</button> */}
             <dialog id={modalId} className="modal w-1/2 h-3/4 p-5 bg-zinc-800">                
                 <form method="dialog" className="modal-box rounded text-white p-2 ">
                     <div className="modal-action flex w-full mb-1 mt-1 ">                    

@@ -1,123 +1,66 @@
 import React, { useState } from 'react';
-import CardArea from './components/cardArea';
+import expandIcon from './assets/expand-icon.png'
 import NavBar from './components/navbar';
-import editIcon from './assets/edit-icon.png';
+import BoardArea from './components/boardArea';
 
 function App() {
-  const [appData, setAppData] = useState({
-    mainTitle : {
-      title : 'Test Board',
-      edit : false,
-      save : () => {
-        let txt = document.getElementById("cardTitle")! as HTMLInputElement
-        let mainTitle = {title: txt.value, edit : false, save: appData.mainTitle.save}
-        setAppData({mainTitle}) 
-      }
-    },
-  })
+  const [showSideNav, setShowSideNav] = useState(false)  
 
-  let data  = {
-    cardData: {
-      text : "Testingggg",
-      description: "%%%%%%%%%%%%%%%%%%%",
-      tags: ['VueJS', 'SQL', 'Javascript'],
-      owner : "Aaron"
-    },
-    cardData2: {
-      text : "Other Teste 2",
-      description: "&&&&&&&&&&&&&&&&&&&&&&",
-      tags: ['Important', 'Team', 'Paycheck'],
-      owner : "Aaron"
-    },
-    cardData3: {
-      text : "Run it",
-      description: "@@@@@@@@@@@@@@@@@",
-      tags: ['USA', 'BR', 'CHINA'],
-      owner : "Aaron"
-    },
+  function changeBoardAreaOpacity(){    
+    let div = document.getElementById('externalBoardArea')! as HTMLElement
+    let icon = document.getElementById('expandIcon')! as HTMLElement
+    showSideNav ? div.style.opacity = '100%' : div.style.opacity = '25%'
+    showSideNav ? div.style.pointerEvents = '' : div.style.pointerEvents = 'none'    
+    setShowSideNav(!showSideNav)
   }
-  let initialObject = {
-    configureObject : {
-      name : "Planing",    
-      tasks : [data.cardData, data.cardData2]
-    },
-    configureObject2 : {
-      name : "To Do", 
-      tasks : [data.cardData3]
-    },
-    configureObject3 : {
-      name : "Done",    
-      tasks : []
-    },
-    configureObject4 : {
-      name : "Pending",
-      tasks : []
-    }
-  }
-  let arr : Array<typeof initialObject.configureObject>
-  = [initialObject.configureObject, initialObject.configureObject2, initialObject.configureObject3, initialObject.configureObject4] 
-  
-  return (
-    <div className="App">    
-      <NavBar/>
-      <div id="body" className='bg-red-900 w-screen'>        
-        <div className='p-7 text-white font-bold w-full bg-zinc-700'>                         
+
+  function sideNav () {
+    let ml10 = 'flex ml-44', ml0 = 'flex ml-0',
+    transitionListDiv = 'text-2xl select-none hover:cursor-pointer p-5 rounded transition ease-in-out delay-150 bg-zinc-600 hover:-translate-y-1 hover:scale-110 hover:bg-orange-400 duration-300'
+
+    return(
+      <div 
+          className='nav space-y-8 w-auto h-screen bg-zinc-600 text-white text-lg font-bold'
+        >            
+        <div className={showSideNav ? ml10 : ml0}>          
+          <img 
+            id="expandIcon"
+            alt='Expand' 
+            src={expandIcon}
+            className='rounded-full w-12 h-12 ml-5 mt-6 invert z-10 hover:cursor-pointer hover:bg-zinc-500 transition ease-in-out delay-150 bg-blue-500 hover:-translate-y-1 hover:scale-110 hover:bg-indigo-500 duration-300'
+            onClick={changeBoardAreaOpacity}
+          />
+        </div>      
         {
-          appData.mainTitle.edit ?
-          (                                        
+          showSideNav ? 
+          (
             <div>
-                <input 
-                  title="cardTitle" 
-                  id="cardTitle" 
-                  type="text" 
-                  defaultValue={appData.mainTitle.title}
-                  className="rounded p-1"
-                />
-                <div className="flex w-32">
-                    <div 
-                      className="btn select-none w-1/2 text-xl p-2 rounded bg-sky-500 hover:bg-sky-400" 
-                      onClick={appData.mainTitle.save}
-                    >
-                      Save
-                    </div>
-                    <div 
-                      className="btn select-none w-1/2 text-xl p-2 rounded bg-zinc-500 hover:bg-zinc-400" 
-                      onClick={()=>{
-                        let mainTitle = {title: appData.mainTitle.title, edit : false, save: appData.mainTitle.save}
-                        setAppData({mainTitle})
-                      }}
-                    >
-                      Close
-                    </div>
-                </div>
-            </div>                                    
+              <p className='underline select-none text-xl font-bold ml-5 mb-10 text-orange-400'>Board Models</p>
+              <ul className='space-y-8 p-5'>
+                <li className={transitionListDiv}>Project Managment</li>
+                <li className={transitionListDiv}>Habit Control</li>
+                <li className={transitionListDiv}>Editorial Calendar</li>
+                <li className={transitionListDiv}>Integration of New Employees</li>
+              </ul>
+            </div>
           )
           :
           (
-            <div className='flex'>
-              <div className='btn w-10 rounded hover:bg-gray-400' onClick={()=>{
-                let mainTitle = {title: appData.mainTitle.title, edit : true, save: appData.mainTitle.save}
-                setAppData({mainTitle})
-              }}>
-                <img alt='edit' src={editIcon} className='w-10 h-10 p-1 invert justify-right'/>
-              </div>
-              <div className='select-none text-4xl ml-3'>{appData.mainTitle.title}</div>
-            </div>
+            <div className='w-8'></div>
           )
-        }
-        </div>
-        <div className='flex w-full h-screen bg-gray-800 p-3'>          
-          {
-            arr.map((config)=>{
-              return (
-                <CardArea
-                  key={config.name}          
-                  configObject={config}
-                />                  
-              )
-            })
-          }
-        </div>
+        }          
+      </div>   
+    )
+  }
+
+  return (
+    <div className="App">    
+      <NavBar/>
+      <div className='flex bg-zinc-800'>      
+        {sideNav()}
+        <div id="externalBoardArea">
+          <BoardArea/>
+        </div>   
       </div>
     </div>
   );
