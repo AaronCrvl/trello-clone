@@ -1,12 +1,12 @@
-import React, { useState, useEffect } from "react";
+import React from "react";
 import { cardType } from "../types/cardType";
 import editIcon from '../assets/edit-icon.png'
 
 function Card({ text, description, tags, owner } : cardType ) {  
     const id : string = 'dragContent' + Math.random()
     const modalId : string = 'myModal' + Math.random()
-    const [dragItem, setDragItem] = useState<HTMLElement>()    
-    const [cardData, setCardData] = useState({
+    const [dragConfig, setDragConfig] = React.useState<HTMLElement>()          
+    const [card, setCard] = React.useState({
         data: {
             // default
             text: text, 
@@ -14,7 +14,7 @@ function Card({ text, description, tags, owner } : cardType ) {
             tags : tags, 
             owner : owner,
             
-            //configs
+            // configs
             cardTitleConfig : {            
                 edit : false,
                 save : ()=>{
@@ -26,49 +26,53 @@ function Card({ text, description, tags, owner } : cardType ) {
                         owner: owner, 
                         cardTitleConfig : {
                             edit: false,
-                            save: cardData.data.cardTitleConfig.save
+                            save: card.data.cardTitleConfig.save
                         }
                     }
-                    setCardData({data})
+                    setCard({data})
                 }
             }
         }
     })
+    let date = new Date()
         
-    useEffect(() => {        
-        setDragItem(document.getElementById(id)!)        
-        if(dragItem !== undefined)
+    // drag settings
+    React.useEffect(() => {        
+        setDragConfig(document.getElementById(id)!)        
+        if(dragConfig !== undefined)
         {               
-            dragItem.ondragstart = function (e) {                                  
-                e.dataTransfer!.setData("foo", (e.target as Element).id);                                            
+            dragConfig.ondragstart = function (e) {    
+                if((e.target as Element).id === id) {                                              
+                    e.dataTransfer!.setData("card", (e.target as Element).id);                                            
+                }
             }
             
-            dragItem.ondrag = function(e) {
-                console.log("The text is being dragged.")
+            dragConfig.ondrag = function(e) {
+                if((e.target as Element).id === id) {   
+                    console.log(`Card ${id} is beeing dragged.`)
+                }
             }        
         }
     })
 
-    function openMyDialog() {
+    function openCardModal() {
         let myDialog : any = document.getElementById(modalId)
         myDialog.showModal()
-    }
-        
-    let date = new Date()
+    }        
+    
     return (
         <div
             id={id}
             draggable            
             className="rounded bg-indigo-900 hover:bg-indigo-400 hover:cursor-pointer p-5 mb-2 w-full"
-            onClick={()=>openMyDialog()}
+            onClick={()=>openCardModal()}
         >
-            {/*  */}
-            <div className="text-gray-300 text-xl font-semibold">
+            {/* Card Title */}
+            <div className="select-none text-gray-300 text-xl font-semibold">
                 {text}
             </div>  
             
-            {/* Modal */}
-            {/* <button className="select-none btn text-white hover:bg-purple-800 animate-pulse" >Open Card</button> */}
+            {/* Modal */}            
             <dialog id={modalId} className="modal w-1/2 h-3/4 p-5 bg-zinc-800">                
                 <form method="dialog" className="modal-box rounded text-white p-2 ">
                     <div className="modal-action flex w-full mb-1 mt-1 ">                    
@@ -95,7 +99,9 @@ function Card({ text, description, tags, owner } : cardType ) {
                                 {
                                     tags.map((tag)=>{
                                         return (
-                                            <li>{tag}</li>
+                                            <li
+                                                key={Math.random()}
+                                            >{tag}</li>
                                         )
                                     })
                                 }
@@ -108,4 +114,4 @@ function Card({ text, description, tags, owner } : cardType ) {
     );
 }
 
-export default Card;
+export default Card; // !_
