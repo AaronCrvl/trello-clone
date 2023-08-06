@@ -89,9 +89,9 @@ function CardArea({ configObject } : configObjectType) {
     return (
         <div           
             id={areaId}
-            className="ml-2 w-1/4 rounded w-fit h-fit p-12 mt-2 bg-indigo-900 mr-5 hover:bg-indigo-700"            
+            className="rounded w-fit h-fit p-12 bg-sky-900 hover:bg-sky-700"            
         >               
-            <div className="bg-indigo-800 p-5">                
+            <div className="bg-sky-800 p-3">                
                 {/* Title */}
                 <div className="w-full p-3 mb-3">                                
                     {
@@ -127,15 +127,19 @@ function CardArea({ configObject } : configObjectType) {
                             // Title div
                             <div className="flex">                                
                                 <div 
-                                    className=' btn w-10 rounded hover:bg-gray-400 hover:cursor-pointer' 
+                                    className='btn w-1/2 h-10 rounded hover:cursor-pointer transition ease-in-out delay-150 hover:-translate-y-1 hover:scale-110 hover:bg-red-500 duration-300' 
                                     onClick={()=>{
                                         let titleTextEdit : typeof cardArea.titleTextEdit = {name: cardArea.titleTextEdit.name, edit: true, new: false, save : cardArea.titleTextEdit.save}
                                         setCardArea({titleTextEdit})
                                     }}
                                 >
-                                    <img alt='edit' src={editIcon} className='select-none w-10 h-10 p-1 invert justify-right'/>                                     
+                                    <img 
+                                        alt='edit' 
+                                        src={editIcon} 
+                                        className='select-none w-10 h-10 p-1 justify-right invert'
+                                    />                                     
                                 </div>                                                                                                              
-                                <h1 className="select-none text-2xl text-white font-semibold">{cardArea.titleTextEdit.name}</h1>                                                                                                                               
+                                <h1 className="w-2/3 select-none ml-3 text-xl text-white font-bold">{cardArea.titleTextEdit.name}</h1>                                                                                                                               
                             </div>
                         )
                     }                
@@ -143,7 +147,7 @@ function CardArea({ configObject } : configObjectType) {
                 {/* Cards */}
                 <div
                     id={cardsDivId} 
-                    className="rounded bg-zinc-800 p-5 h-auto w-full mb-3"
+                    className="rounded bg-zinc-800 p-3 h-auto w-full"
                 >
                     {
                         configObject.tasks === undefined ?

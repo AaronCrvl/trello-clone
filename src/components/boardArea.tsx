@@ -174,8 +174,8 @@ function BoardArea({ configObj } : initialDataType) {
                     </div> 
                 </div>
                 {/* Cards Area */}
-                <div className='flex w-full h-screen bg-red-800'>          
-                    <div id={cardAreaId} className='w-full p-5 flex bg-gray-800 h-full overflow-x-auto'>
+                <div className='flex w-full h-screen bg-gray-800'>          
+                    <div id={cardAreaId} className='inline-grid gap-4 grid-cols-6 p-2 bg-gray-800'>
                         {
                             arr.map((config : configObjectType) => {
                                 return (                           

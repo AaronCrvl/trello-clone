@@ -6,12 +6,12 @@ import DataGeneratorControl from "./dataGeneratorControl";
 
 function EditAreaControl () {        
     const dataControl = new DataGeneratorControl()
-    const [showSideNav, setShowSideNav] = React.useState(false)              
+    const [showSideNav, setShowSideNav] = React.useState(false)      
 
-    // Component dynamic data    
+    // Component data    
     let [data, setData] = React.useState<initialDataType>({
         configObj: {
-            configs:
+            configs: 
                 [
                     {
                         configObject: {
@@ -41,51 +41,35 @@ function EditAreaControl () {
         switch(boardModelId) {
             case 1:                 
                 dataControl.getProjectManagementData()                                          
-                .then((data) => {                    
-                    setData({
-                        configObj: {
-                            configs: data
-                        }
-                    })                                        
-                })                                
+                .then((data) => { setData({ configObj: { configs: data } }) })                                
             break; 
             
             case 2:                 
                 dataControl.getHabitControlData()                            
-                .then((data) => {                    
-                    setData({
-                        configObj: {
-                            configs: data
-                        }
-                    })                                        
-                })                
+                .then((data) => { setData({ configObj: { configs: data } }) })                                            
             break; 
 
             case 3:                 
                 dataControl.getEditorialCalendarData()                           
-                .then((data) => {                    
-                    setData({
-                        configObj: {
-                            configs: data
-                        }
-                    })                                        
-                })             
+                .then((data) => { setData({ configObj: { configs: data } }) })                                             
             break; 
 
             case 4:                 
                 dataControl.getIntegrationNewEmployees()                            
-                .then((data) => {                    
-                    setData({
-                        configObj: {
-                            configs: data
-                        }
-                    })                                        
-                })              
+                .then((data) => { setData({ configObj: { configs: data } }) })                                              
             break; 
         }   
         
         changeBoardAreaOpacity()
     }  
+
+    // Load Initial Board View
+    React.useEffect(()=> {
+        if(data.configObj.configs[0].configObject.name === 'Area Name') {
+            clearData()
+            dataControl.getHabitControlData().then((data) => { setData({ configObj: { configs: data } }) })                                
+        }
+    })
 
     // Side Nav
     function sideNav () {

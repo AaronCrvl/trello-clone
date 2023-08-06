@@ -2,7 +2,7 @@ import React from "react";
 import { cardType } from "../types/cardType";
 import editIcon from '../assets/edit-icon.png'
 
-function Card({ text, description, tags, owner } : cardType ) {  
+function    Card({ text, description, tags, owner } : cardType ) {  
     const id : string = 'dragContent' + Math.random()
     const modalId : string = 'myModal' + Math.random()
     const [dragConfig, setDragConfig] = React.useState<HTMLElement>()          
@@ -62,7 +62,7 @@ function Card({ text, description, tags, owner } : cardType ) {
         <div
             id={id}
             draggable            
-            className="rounded bg-indigo-900 hover:bg-indigo-400 hover:cursor-pointer p-5 mb-2 w-full"
+            className="rounded p-5 mb-2 w-full bg-sky-900 hover:bg-sky-600 hover:cursor-pointer"
             onClick={openCardModal}
         >
             {/* Title */}
@@ -77,7 +77,7 @@ function Card({ text, description, tags, owner } : cardType ) {
                     <div className="modal-action flex w-full mb-1 mt-1 ">                    
                         <h3 className=" rounded font-semibold text-left text-4xl bg-blue-900 w-full p-2 mb-2">{text}</h3>
                         <button 
-                            className="btn p-4 w-fit h-fit text-white text-right font-bold rounded bg-indigo-600 hover:bg-indigo-400 p-1"
+                            className="btn p-4 w-fit h-fit text-white text-right font-bold rounded bg-sky-600 hover:bg-sky-400 p-1"
                         >
                             X
                         </button>
