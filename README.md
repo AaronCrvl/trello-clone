@@ -7,7 +7,7 @@ Trello clone made with typescript and React JS.
 - Edit card
 - Move cards between boards
 - Create new board based on avaliable templates
-- Remove custom card areas
+- Remove card areas
 
 ## In Progress
 - Create new custom board

@@ -6,8 +6,7 @@ class DataGeneratorControl {
     getProjectManagementData () : Promise<configObjectType[]> {        
         return new Promise((resolve, reject) => {
             try {
-                let boardData = new BoardDataControl().getProjectManagementBoardData()                 
-                resolve(boardData)
+                new BoardDataControl().getProjectManagementBoardData().then(resolve)                                                              
             }   
             catch(e){
                 reject(e)
@@ -18,8 +17,7 @@ class DataGeneratorControl {
     getHabitControlData () : Promise<configObjectType[]> {
         return new Promise((resolve, reject) => {
             try {
-                let boardData = new BoardDataControl().getHabitControlData()                 
-                resolve(boardData)
+                new BoardDataControl().getHabitControlData().then(resolve)                                              
             }   
             catch(e){
                 reject(e)
@@ -30,8 +28,7 @@ class DataGeneratorControl {
     getEditorialCalendarData () : Promise<configObjectType[]> {
         return new Promise((resolve, reject) => {
             try {
-                let boardData = new BoardDataControl().getProjectManagementBoardData()                 
-                resolve(boardData)
+                new BoardDataControl().getProjectManagementBoardData().then(resolve)                              
             }   
             catch(e){
                 reject(e)
@@ -42,8 +39,7 @@ class DataGeneratorControl {
     getIntegrationNewEmployees () : Promise<configObjectType[]> {
         return new Promise((resolve, reject) => {
             try {
-                let boardData = new BoardDataControl().getProjectManagementBoardData()                 
-                resolve(boardData)
+                new BoardDataControl().getProjectManagementBoardData().then(resolve)                                              
             }   
             catch(e){
                 reject(e)
@@ -54,4 +50,4 @@ class DataGeneratorControl {
     constructor () {}
 }
 
-export default DataGeneratorControl; //!_
+export default DataGeneratorControl; // !_☄

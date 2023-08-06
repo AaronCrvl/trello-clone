@@ -6,10 +6,13 @@ import { configObjectType } from '../types/configObjectType';
 
 function BoardArea({ configObj } : initialDataType) {    
     const id = 'BoardAreaItem' + Math.random()    
-    const excludeAreaId : string = 'excludeArea' + Math.random()       
+    const excludeAreaId : string = 'ExcludeArea' + Math.random()       
+    const cardAreaId : string = 'CardAreaOnBoad' + Math.random()       
 
     const [arr, setArr] = React.useState<Array<configObjectType>>(configObj.configs)
-    const [dropConfig, setDropConfig] = React.useState<HTMLElement>()              
+    const [dropConfig, setDropConfig] = React.useState<HTMLElement>()       
+    
+    // Component dynamic data
     const [board, setBoard] = React.useState({
         mainTitle : {
           title : 'New 📋'  ,
@@ -26,7 +29,7 @@ function BoardArea({ configObj } : initialDataType) {
         if(configObj.configs.length < 8) {
             let newArea : configObjectType = {
                 configObject: {
-                    name : 'New Area',
+                    name : '',
                     ready : false, 
                     tasks : []
                 }
@@ -36,12 +39,15 @@ function BoardArea({ configObj } : initialDataType) {
 
             let mainTitle :typeof  board.mainTitle = {title: board.mainTitle.title, edit: false, save: board.mainTitle.save}
             setBoard({mainTitle})
+
+            console.log('Afte! add: ' + configObj.configs)            
         }
-        else {
-            alert('You can create a max of 8 boards!')
+        else {            
+            alert('You can create a max of 8 card areas!')
         }
     }    
 
+    // !_🖥 
     // this fix the configObject useState problem.
     // when a template is selected the board area don't change automatically 
     // because of the asynchronous hook call
@@ -49,6 +55,7 @@ function BoardArea({ configObj } : initialDataType) {
         addNewCardArea()
     }, [configObj])
 
+    // Exclude area drop config
     React.useEffect(() : any => {
         setDropConfig(document.getElementById(excludeAreaId)!)
         if(dropConfig !== undefined)
@@ -63,14 +70,37 @@ function BoardArea({ configObj } : initialDataType) {
                 dropConfig.style.border = ""
             }
 
-            dropConfig.ondrop = function (e) {        
-                let _id = e.dataTransfer!.getData("cardArea");
-                if((e.target as Element).id === _id) {                                                                  
-                    var element = document.getElementById(_id)!                
-                    let div = (document.getElementById('cardBoardArea') as HTMLElement)
+            dropConfig.ondrop = function (e) : void {                                        
+                let name = e.dataTransfer!.getData("cardAreaName")
+                if(name !== undefined) {                                                                                                                                                             
+                    configObj.configs.forEach((config : configObjectType) : void => {                        
+                        if ( 
+                            config !== undefined 
+                            && config.configObject !== undefined 
+                            && config.configObject.name === name ) 
+                        {                            
+                            let index : number = configObj.configs.findIndex((x) => { 
+                                return (x !== undefined && x.configObject != undefined) ? x.configObject.name === name : 0                                
+                            })
 
-                    div.contains(element) === true ? div.removeChild(element) : dropConfig.style.border = ""
-                    dropConfig.style.border = ""                
+                            if(index > 0) {                        
+                                // use this instead of delete, because "delete arr[index]" set arr[index] to undefined
+                                // using "delete" create future problems for card manipulation on Card Area     
+                                configObj.configs.splice(index, 1) 
+                                setArr(configObj.configs)                                   
+                            }
+                            else {                         
+                                console.log('configObj not found')                                                                                    
+                                return 
+                            }                        
+
+                            dropConfig.style.border = ""                                                          
+                            return      
+                        }                        
+                    })
+        
+                    let mainTitle : typeof board.mainTitle = {title: board.mainTitle.title, edit: false, save: board.mainTitle.save}
+                    setBoard({mainTitle})
                 }
             }            
         }
@@ -103,7 +133,7 @@ function BoardArea({ configObj } : initialDataType) {
                                 <div className="flex mt-1">
                                     <div className="btn p-1 select-none rounded bg-sky-500 text-white text-lg mr-1" onClick={board.mainTitle.save}>Save</div>
                                     <div className="btn p-1 select-none rounded bg-zinc-500 text-white text-lg" onClick={()=>{                                    
-                                        let mainTitle :typeof  board.mainTitle = {title: board.mainTitle.title, edit: false, save: board.mainTitle.save}
+                                        let mainTitle : typeof board.mainTitle = {title: board.mainTitle.title, edit: false, save: board.mainTitle.save}
                                         setBoard({mainTitle})
                                     }}>Close</div>
                                 </div>
@@ -113,22 +143,31 @@ function BoardArea({ configObj } : initialDataType) {
                         (
                             // Title
                             <div className='flex w-fit'>
-                                <div className='btn w-10 rounded hover:bg-gray-400' onClick={()=>{
+                                <div className='btn w-10 h-12 rounded' onClick={()=>{
                                         let mainTitle = {title: board.mainTitle.title, edit : true, save: board.mainTitle.save}
                                         setBoard({mainTitle})
                                     }}>
-                                    <img alt='edit' src={editIcon} className='w-10 h-10 p-1 invert justify-right'/>
+                                    <img 
+                                        alt='edit' 
+                                        src={editIcon} 
+                                        className='w-10 h-10 p-1 justify-right transition ease-in-out delay-350 bg-zinc-600 hover:-translate-y-1 hover:scale-110 hover:bg-blue-400 duration-100'
+                                    />
                                 </div>
                                 <div className='select-none text-4xl ml-3'>{board.mainTitle.title}</div>
-                                <div className="select-none text-md ml-12 h-full ml-2 hover:bg-zinc-600 p-3 opacity-75 hover:cursor-pointer" onClick={()=>addNewCardArea()}>Add Area</div>                                                                                    
+                                <div 
+                                    className="select-none text-md ml-16 h-12 ml-2 hover:bg-zinc-600 p-3 opacity-75 hover:cursor-pointer transition ease-in-out delay-350 bg-zinc-600 hover:-translate-y-1 hover:scale-110 hover:bg-blue-600 duration-100'" 
+                                    onClick={()=>addNewCardArea()}
+                                >
+                                    Add Area
+                                </div>                                                                                    
                             </div>
                         )
                     }
                     <div 
                         id={excludeAreaId}
-                        className="float select-none text-center h-24 w-24 bg-red-500 opacity-75 rounded text-white font-semibold ml-auto p-0 hover:cursor-pointer hover:bg-red-900"                                
+                        className="float select-none text-center h-24 w-24 bg-red-500 opacity-75 rounded text-white font-semibold ml-auto p-0 hover:cursor-pointer hover:bg-red-700"                                
                     >
-                        <p className='p-3 text-sm animate-bounce'>
+                        <p className='p-3 text-sm font-bold'>
                             Drag Here to 
                             Exclude Area
                         </p>
@@ -136,17 +175,17 @@ function BoardArea({ configObj } : initialDataType) {
                 </div>
                 {/* Cards Area */}
                 <div className='flex w-full h-screen bg-red-800'>          
-                    <div id='cardBoardArea' className='w-full p-5 flex bg-gray-800 h-full overflow-x-scroll'>
-                    {
-                        arr.map((config : configObjectType) => {
-                            return (                           
-                                <CardArea                                    
-                                    key={'cardArea' + Math.random()}          
-                                    configObject={config.configObject}
-                                />                                              
-                            )
-                        })
-                    }
+                    <div id={cardAreaId} className='w-full p-5 flex bg-gray-800 h-full overflow-x-auto'>
+                        {
+                            arr.map((config : configObjectType) => {
+                                return (                           
+                                    <CardArea                                    
+                                        key={'cArea' + Math.random()}          
+                                        configObject={config.configObject}
+                                    />                                              
+                                )
+                            })
+                        }
                     </div>
                 </div>
             </div>
@@ -154,4 +193,4 @@ function BoardArea({ configObj } : initialDataType) {
     );
 }
 
-export default BoardArea; // !_
+export default BoardArea; // !_☄

@@ -1,8 +1,8 @@
+import reportWebVitals from "./reportWebVitals";
 function Server(){
     const app =  require("express")
-    // const cors = require("cors")
-    
-    app.listen(3000, ()=> console.log("Started!"))    
+    app.listen(3000, ()=> console.log("☄🖥"))    
+    reportWebVitals(console.log)
 }
 
-export default Server;
+export default Server; // !_☄

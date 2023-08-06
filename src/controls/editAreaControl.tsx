@@ -7,6 +7,8 @@ import DataGeneratorControl from "./dataGeneratorControl";
 function EditAreaControl () {        
     const dataControl = new DataGeneratorControl()
     const [showSideNav, setShowSideNav] = React.useState(false)              
+
+    // Component dynamic data    
     let [data, setData] = React.useState<initialDataType>({
         configObj: {
             configs:
@@ -30,25 +32,16 @@ function EditAreaControl () {
     }
 
     function clearData() {
-        setData({
-            configObj: {
-                configs: [{
-                    configObject : {
-                        name : '',
-                        ready : false,
-                        tasks: []
-                    }
-                }]
-            }
-        })
+        setData({ configObj: { configs: [{ configObject : { name : '', ready : false, tasks: [] } }] } })
     }
 
+    // Board Template Select
     function chooseBoardModel(boardModelId : Number) {                
         clearData()
         switch(boardModelId) {
             case 1:                 
-                let projectManagementTemplate = dataControl.getProjectManagementData()                                          
-                projectManagementTemplate.then((data) => {                    
+                dataControl.getProjectManagementData()                                          
+                .then((data) => {                    
                     setData({
                         configObj: {
                             configs: data
@@ -58,8 +51,8 @@ function EditAreaControl () {
             break; 
             
             case 2:                 
-                let habitControlTemplate = dataControl.getHabitControlData()                            
-                habitControlTemplate.then((data) => {                    
+                dataControl.getHabitControlData()                            
+                .then((data) => {                    
                     setData({
                         configObj: {
                             configs: data
@@ -69,8 +62,8 @@ function EditAreaControl () {
             break; 
 
             case 3:                 
-                let editorialCalendarTemplate = dataControl.getEditorialCalendarData()                           
-                editorialCalendarTemplate.then((data) => {                    
+                dataControl.getEditorialCalendarData()                           
+                .then((data) => {                    
                     setData({
                         configObj: {
                             configs: data
@@ -80,8 +73,8 @@ function EditAreaControl () {
             break; 
 
             case 4:                 
-                let newEmpolyeesTemplate = dataControl.getIntegrationNewEmployees()                            
-                newEmpolyeesTemplate.then((data) => {                    
+                dataControl.getIntegrationNewEmployees()                            
+                .then((data) => {                    
                     setData({
                         configObj: {
                             configs: data
@@ -104,7 +97,8 @@ function EditAreaControl () {
             <div 
                 className='select-none space-y-8 text-white text-lg font-bold p-2'
             >            
-                <div className={showSideNav ? ml10 : ml0}>          
+                {/* Expand Icon */}
+                <div className={showSideNav ? ml10 : ml0}>                              
                     <img 
                         id="expandIcon"
                         alt='Expand' 
@@ -113,12 +107,14 @@ function EditAreaControl () {
                         onClick={changeBoardAreaOpacity}
                     />
                 </div>      
+                {/* Side nav control */}
                 <div>
-                    {                    
+                    {                             
                         showSideNav ? 
                         (
+                            // Expanded side nav
                             <div className="z-10 ">
-                                <p className='underline select-none text-xl font-bold ml-5 mb-10 text-orange-400'>Board Models</p>
+                                <p className='underline select-none text-xl font-bold ml-5 mb-10 text-orange-400'>Board Templates</p>
                                 <ul className='space-y-8 p-5'>
                                     <li className={transitionListDiv} onClick={()=>chooseBoardModel(1)}>Project Managment</li>
                                     <li className={transitionListDiv} onClick={()=>chooseBoardModel(2)}>Habit Control</li>
@@ -129,6 +125,7 @@ function EditAreaControl () {
                         )
                         :
                         (
+                            // Closed side nav
                             <div className='w-0'></div>
                         )
                     }  
@@ -142,6 +139,7 @@ function EditAreaControl () {
             <div className="h-auto bg-zinc-600">
                 {sideNav()}
             </div>
+            {/* Boards, Card Area, Cards */}
             <div id="externalBoardArea" className="h-full w-full">                               
                 <BoardArea
                     configObj={data.configObj}
@@ -151,4 +149,4 @@ function EditAreaControl () {
     )
 }
 
-export default EditAreaControl; //!_
+export default EditAreaControl; // !_☄
