@@ -3,15 +3,16 @@ Trello clone made with typescript and React JS.
 
 ## Running Features
 - Create card
-- Edit board (title)
+- Create new custom board
+- Edit board -title and card area quantity-
 - Edit card
 - Move cards between boards
-- Create new board based on avaliable templates
+- Create new board based on available  templates
 - Remove card areas
 
 ## In Progress
-- Create new custom board
-- Add all type of input type in card structure
+- Add all types of input in card structure
+- Make card and background color customizable
 
 ## Execution
 
