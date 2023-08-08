@@ -1,0 +1,47 @@
+[
+  [
+    [
+      { "text": "Set tags on your cards", "description": "", "tags": [ "Tag1", "Tag2", "Tag3" ], "owner": "" },
+      { "text": "Launch Timeline", "description": "", "tags": [ "Dev", "Launch", "Project" ], "owner": "" },
+      { "text": "Weekly Updates", "description": "Team and project news.", "tags": [], "owner": "" }
+    ],
+    [
+      { "text": "HTML Problem", "description": "", "tags": [ "HTML 5", "CSS", "Javascript" ], "owner": "" },
+      { "text": "Unity Tests", "description": "", "tags": [ "Important", "Team" ], "owner": "" }
+    ],
+    [
+      { "text": "Implement Site Banner", "description": "", "tags": [ "HTML 5", "CSS", "Javascript" ], "owner": "" },
+      { "text": "React Course", "description": "", "tags": [ "Important", "Team" ], "owner": "" }
+    ],
+    [
+      { "text": "Legal Process", "description": "", "tags": [ "People Relation" ], "owner": "" }
+    ],
+    [
+      { "text": "Unfinished Tasks", "description": "", "tags": [ "Tag1", "Tag2", "Tag3" ], "owner": "" },
+      { "text": "Timeline", "description": "", "tags": [ "Launch", "Project" ], "owner": "" },
+      { "text": "Finished", "description": "Just include tasks that was finished", "tags": [], "owner": "" }
+    ]
+  ],
+
+  [
+    { "text": "Set tags on your cards", "description": "", "tags": [ "Tag1", "Tag2", "Tag3" ], "owner": "" },
+    { "text": "Launch Timeline", "description": "", "tags": [ "Dev", "Launch", "Project" ], "owner": "" },
+    { "text": "Weekly Updates", "description": "Team and project news.", "tags": [], "owner": "" }
+  ],
+  [
+    { "text": "HTML Problem", "description": "", "tags": [ "HTML 5", "CSS", "Javascript" ], "owner": "" },
+    { "text": "Unity Tests", "description": "", "tags": [ "Important", "Team" ], "owner": "" }
+  ],
+  [
+    { "text": "Implement Site Banner", "description": "", "tags": [ "HTML 5", "CSS", "Javascript" ], "owner": "" },
+    { "text": "React Course", "description": "", "tags": [ "Important", "Team" ], "owner": "" }
+  ],
+  [
+    { "text": "Legal Process", "description": "", "tags": [ "People Relation" ], "owner": "" }
+  ],
+  [
+    { "text": "Unfinished Tasks", "description": "", "tags": [ "Tag1", "Tag2", "Tag3" ], "owner": "" },
+    { "text": "Timeline", "description": "", "tags": [ "Launch", "Project" ], "owner": "" },
+    { "text": "Finished", "description": "Just include tasks that was finished", "tags": [], "owner": "" }
+  ]
+]
