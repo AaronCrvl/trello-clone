@@ -1,8 +1,10 @@
 import React from 'react';
 import CardArea from './cardArea';
 import editIcon from '../assets/edit-icon.png'
+import trashCanIcon from '../assets/trashcan-icon.png'
 import { initialDataType } from '../types/initialDataType';
 import { configObjectType } from '../types/configObjectType';
+import { config } from 'process';
 
 function BoardArea({ configObj } : initialDataType) {    
     const id = 'BoardAreaItem' + Math.random()    
@@ -15,7 +17,7 @@ function BoardArea({ configObj } : initialDataType) {
     // Component dynamic data
     const [board, setBoard] = React.useState({
         mainTitle : {
-          title : 'New 📋'  ,
+          title : '',
           edit : false,
           save : () => {
             let txt = document.getElementById("cardTitle")! as HTMLInputElement
@@ -26,7 +28,8 @@ function BoardArea({ configObj } : initialDataType) {
     })         
 
     function addNewCardArea () {   
-        if(configObj.configs.length < 8) {
+        // ..... fix this
+        if(configObj.configs.length < 15) {
             let newArea : configObjectType = {
                 configObject: {
                     name : '',
@@ -38,12 +41,10 @@ function BoardArea({ configObj } : initialDataType) {
             setArr(configObj.configs)        
 
             let mainTitle :typeof  board.mainTitle = {title: board.mainTitle.title, edit: false, save: board.mainTitle.save}
-            setBoard({mainTitle})
-
-            console.log('Afte! add: ' + configObj.configs)            
+            setBoard({mainTitle})            
         }
         else {            
-            alert('You can create a max of 8 card areas!')
+            alert(`I bet you dont need more than ${configObj.configs.length} boards!`)
         }
     }    
 
@@ -51,8 +52,12 @@ function BoardArea({ configObj } : initialDataType) {
     // this fix the configObject useState problem.
     // when a template is selected the board area don't change automatically 
     // because of the asynchronous hook call
-    React.useEffect(()=> {            
+    React.useEffect(()=> {                 
         addNewCardArea()
+        if(board.mainTitle.title === '' || board.mainTitle.title === 'New 📋') {            
+            let mainTitle :typeof  board.mainTitle = {title: configObj.boardName, edit: false, save: board.mainTitle.save}
+            setBoard({mainTitle})
+        }
     }, [configObj])
 
     // Exclude area drop config
@@ -108,7 +113,7 @@ function BoardArea({ configObj } : initialDataType) {
 
     return (
         <div id={id}>                
-            <div className='w-full'>        
+            <div className=''>        
                 {/* Board Title */}
                 <div className='flex w-full p-7 text-white font-bold bg-zinc-700'>                 
                     {
@@ -135,47 +140,47 @@ function BoardArea({ configObj } : initialDataType) {
                                     <div className="btn p-1 select-none rounded bg-zinc-500 text-white text-lg" onClick={()=>{                                    
                                         let mainTitle : typeof board.mainTitle = {title: board.mainTitle.title, edit: false, save: board.mainTitle.save}
                                         setBoard({mainTitle})
-                                    }}>Close</div>
+                                    }}>
+                                        Close
+                                    </div>
                                 </div>
                             </div>                                         
                         )
                         :
                         (
                             // Title
-                            <div className='flex w-fit'>
-                                <div className='btn w-10 h-12 rounded' onClick={()=>{
+                            <div className='flex w-fit mt-7'>
+                                <div className='btn w-10 h-12 rounded ml-10' onClick={()=>{
                                         let mainTitle = {title: board.mainTitle.title, edit : true, save: board.mainTitle.save}
                                         setBoard({mainTitle})
                                     }}>
                                     <img 
                                         alt='edit' 
                                         src={editIcon} 
-                                        className='w-10 h-10 p-1 justify-right transition ease-in-out delay-350 bg-zinc-600 hover:-translate-y-1 hover:scale-110 hover:bg-blue-400 duration-100'
+                                        className='z-10 w-10 h-10 p-1 justify-right transition ease-in-out delay-350 bg-zinc-600 hover:-translate-y-1 hover:scale-110 hover:bg-cyan-700 duration-100'
                                     />
                                 </div>
                                 <div className='select-none text-4xl ml-3'>{board.mainTitle.title}</div>
                                 <div 
-                                    className="select-none text-md ml-16 h-12 ml-2 hover:bg-zinc-600 p-3 opacity-75 hover:cursor-pointer transition ease-in-out delay-350 bg-zinc-600 hover:-translate-y-1 hover:scale-110 hover:bg-blue-600 duration-100'" 
+                                    className="select-none text-md ml-16 h-12 ml-2 p-3 hover:cursor-pointer transition ease-in-out delay-350 bg-zinc-600 hover:-translate-y-1 hover:scale-110 hover:bg-cyan-700 duration-100" 
                                     onClick={()=>addNewCardArea()}
                                 >
                                     Add Area
                                 </div>                                                                                    
                             </div>
                         )
-                    }
+                    }                                        
                     <div 
                         id={excludeAreaId}
-                        className="float select-none text-center h-24 w-24 bg-red-500 opacity-75 rounded text-white font-semibold ml-auto p-0 hover:cursor-pointer hover:bg-red-700"                                
-                    >
-                        <p className='p-3 text-sm font-bold'>
-                            Drag Here to 
-                            Exclude Area
-                        </p>
+                        className="float text-sm select-none text-center h-24 w-24 bg-red-500 opacity-75 rounded text-white items-center justify-center font-semibold ml-auto p-0 hover:cursor-pointer hover:bg-red-700"                                
+                    >                                                                    
+                        <img title='trashCan' className='invert p-1 mt-2 ml-7 w-10 h-10 justify-center items-center' src={trashCanIcon}/>                        
+                        Drag area to exclude
                     </div> 
                 </div>
                 {/* Cards Area */}
-                <div className='flex w-full h-screen bg-gray-800'>          
-                    <div id={cardAreaId} className='inline-grid gap-4 grid-cols-6 p-2 bg-gray-800'>
+                <div className='flex w-auto h-screen bg-zinc-700'>          
+                    <div id={cardAreaId} className='inline-flex flex-nowrap p-2 Flipped bg-zinc-700 overflow-x-auto'>
                         {
                             arr.map((config : configObjectType) => {
                                 return (                           

@@ -1,6 +1,6 @@
 export type cardType = {    
     text : string,
-    description : string,
+    description : Array<string>,
     tags : Array<string>,
     owner : string   
 }

@@ -28,7 +28,7 @@ class DataGeneratorControl {
     getEditorialCalendarData () : Promise<configObjectType[]> {
         return new Promise((resolve, reject) => {
             try {
-                new BoardDataControl().getProjectManagementBoardData().then(resolve)                              
+                new BoardDataControl().getEditorialCalendarData().then(resolve)                              
             }   
             catch(e){
                 reject(e)
@@ -39,7 +39,7 @@ class DataGeneratorControl {
     getIntegrationNewEmployees () : Promise<configObjectType[]> {
         return new Promise((resolve, reject) => {
             try {
-                new BoardDataControl().getProjectManagementBoardData().then(resolve)                                              
+                new BoardDataControl().getIntegrationOfNewEmployeesData().then(resolve)                                              
             }   
             catch(e){
                 reject(e)

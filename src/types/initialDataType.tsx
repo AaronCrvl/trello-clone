@@ -1,7 +1,8 @@
 import { configObjectType } from "./configObjectType"
 
-export type initialDataType = {
+export type initialDataType = {    
     configObj : {
+        boardName: string,
         configs : configObjectType[]
     }
 }
