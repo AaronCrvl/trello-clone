@@ -22,6 +22,6 @@
   },
   "include": [
     "src"
-, "gulp", "gulpfile.ts"  ]
+, "gulp", "gulp/gulpfile.ts"  ]
 }
 // !_☄
