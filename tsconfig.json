@@ -21,6 +21,7 @@
     "jsx": "react-jsx"
   },
   "include": [
-    "src" ]
+    "src"
+, "gulp", "gulpfile.ts"  ]
 }
 // !_☄
