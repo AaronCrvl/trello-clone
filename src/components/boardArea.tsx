@@ -1,17 +1,19 @@
 import React from 'react';
 import CardArea from './cardArea';
 import editIcon from '../assets/edit-icon.png'
-import trashCanIcon from '../assets/trashcan-icon.png'
 import { initialDataType } from '../types/initialDataType';
 import { configObjectType } from '../types/configObjectType';
+import { config } from 'process';
 
 function BoardArea({ configObj } : initialDataType) {    
     const id = 'BoardAreaItem' + Math.random()    
     const excludeAreaId : string = 'ExcludeArea' + Math.random()       
+    const excludeCardId : string = 'ExcludeCard' + Math.random()       
     const cardAreaId : string = 'CardAreaOnBoad' + Math.random()       
 
     const [arr, setArr] = React.useState<Array<configObjectType>>(configObj.configs)
     const [dropConfig, setDropConfig] = React.useState<HTMLElement>()       
+    const [cardDropConfig, setCardDropConfig] = React.useState<HTMLElement>()  
     
     // Component dynamic data
     const [board, setBoard] = React.useState({
@@ -90,7 +92,7 @@ function BoardArea({ configObj } : initialDataType) {
         {
             dropConfig.ondragover = function (e) {                
                 e.preventDefault()
-                dropConfig.style.border = "4px solid white"        
+                dropConfig.style.border = "2px solid white"        
             }
 
             dropConfig.ondragleave = function (e) {                
@@ -99,8 +101,8 @@ function BoardArea({ configObj } : initialDataType) {
             }
 
             dropConfig.ondrop = function (e) : void {                                        
-                let name = e.dataTransfer!.getData("cardAreaName")
-                if(name !== undefined) {                                                                                                                                                             
+                let name = e.dataTransfer!.getData("cardAreaName")                          
+                if(name !== undefined && !name.includes('Card')) {                                                                                                                                                             
                     configObj.configs.forEach((config : configObjectType) : void => {                        
                         if ( 
                             config !== undefined 
@@ -132,7 +134,56 @@ function BoardArea({ configObj } : initialDataType) {
                 }
             }            
         }
-    })   
+    })  
+    
+     // Exclude card drop config
+     React.useEffect(() : any => {
+        setCardDropConfig(document.getElementById(excludeCardId)!)
+        if(cardDropConfig !== undefined)
+        {
+            cardDropConfig.ondragover = function (e) {                
+                e.preventDefault()
+                cardDropConfig.style.border = "2px solid white"        
+            }
+
+            cardDropConfig.ondragleave = function (e) {                
+                e.preventDefault()
+                cardDropConfig.style.border = ""
+            }
+
+            cardDropConfig.ondrop = function (e) : void {                                                        
+                let key : string = e.dataTransfer!.getData("key")                
+                if(key !== undefined && key.includes('Card')) {                                                                                                                                                             
+                    configObj.configs.forEach((config : configObjectType) : void => {                        
+                        if (config.configObject === undefined) 
+                        {                                                                             
+                            cardDropConfig.style.border = ""                                                          
+                            return      
+                        }                        
+                    })
+                                               
+                    let boardIndex : number = -1, cardIndex : number = -1                     
+                    configObj.configs.forEach(board => {
+                        board.configObject.tasks.forEach(cardInBoard => {
+                            if(cardInBoard.uniqueKey == key) {
+                                boardIndex = configObj.configs.indexOf(board)                                
+                                cardIndex = configObj.configs[configObj.configs.indexOf(board)].configObject.tasks.indexOf(cardInBoard)
+                            }
+                        })
+                    })
+                                                                
+                    if(boardIndex > -1 && cardIndex > -1)
+                    {                        
+                        configObj.configs[boardIndex].configObject.tasks.splice(cardIndex, 1)
+                        setArr(configObj.configs)       
+
+                        let mainTitle : typeof board.mainTitle = {title: board.mainTitle.title, edit: false, save: board.mainTitle.save}
+                        setBoard({mainTitle})
+                    }                                        
+                }
+            }            
+        }
+    })  
 
     return (
         <div id={id}>                
@@ -192,18 +243,35 @@ function BoardArea({ configObj } : initialDataType) {
                                 </div>                                                                                    
                             </div>
                         )
-                    }                                        
-                    <div 
-                        id={excludeAreaId}
-                        className="float text-sm select-none text-center h-24 w-24 bg-red-500 opacity-75 rounded text-white items-center justify-center font-semibold ml-auto p-0 hover:cursor-pointer hover:bg-red-700"                                
-                    >                                                                    
-                        <img title='trashCan' className='invert p-1 mt-2 ml-7 w-10 h-10 justify-center items-center' src={trashCanIcon}/>                        
-                        Drag area to exclude
-                    </div> 
+                    }   
+                    <div className='flex gap-20 ml-auto'>
+                        <div
+                            id={excludeAreaId}  
+                            className=''
+                        >
+                            <p className='text-blue-300'>Drop Areas</p>
+                            <div                                
+                                className='text-4xl rounded bg-blue-500 p-2 hover:bg-red-500'
+                            >
+                                🚮
+                            </div> 
+                        </div>
+                        <div
+                            id={excludeCardId}  
+                            className=''
+                        >
+                            <p className='text-amber-300'>Drop Cards</p>
+                            <div                                
+                                className='text-4xl invert rounded bg-blue-500 p-2 hover:bg-red-500'
+                            >
+                                🚮
+                            </div> 
+                        </div>
+                    </div>                                     
                 </div>
                 {/* Cards Area */}
                 <div className='flex w-auto h-screen bg-zinc-700'>          
-                    <div id={cardAreaId} className='inline-flex flex-nowrap p-2 Flipped bg-zinc-700 overflow-x-auto'>
+                    <div id={cardAreaId} className='inline-flex flex-nowrap p-2 Flipped bg-zinc-700 mt-10 overflow-x-auto'>
                         {
                             arr.map((config : configObjectType) => {
                                 return (                                                           

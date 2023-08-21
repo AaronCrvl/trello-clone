@@ -7,8 +7,12 @@ import { configObjectType } from "../types/configObjectType";
 
 function EditAreaControl () {        
     const modalId : string = 'myModal' + Math.random()
+    const boardModalId : string = 'myBoardModal' + Math.random()
     const dataControl = new DataGeneratorControl()
+    // Side Nav
     const [showSideNav, setShowSideNav] = React.useState(false)      
+    // Top Options
+    const [showTopOptions, setShowTopOptions] = React.useState(false) 
     // Board Color    
     const [showBoardColors, setShowBoardColors] = React.useState<Boolean>(false)
 
@@ -31,7 +35,7 @@ function EditAreaControl () {
 
     function validaNewBoardData(name:string, count:string) : Boolean {
         let res = false
-        if(name === undefined || count === undefined){
+        if(name === undefined || count === undefined) {
             return res
         }
         else {
@@ -42,7 +46,6 @@ function EditAreaControl () {
             catch(e) {
                 alert("Fill all data to create a new board!")
             }
-
             return res
         }        
     }
@@ -89,8 +92,9 @@ function EditAreaControl () {
         setShowSideNav(!showSideNav)
     }
 
-    function clearData() {
+    function clearData() {        
         setData({ configObj: { boardName: '', configs: [{ configObject : { name : '', boardColor : '', ready : false, tasks: [] } }] } })                
+        closeCleanBoardModal()
     }
 
     function openBoardModal() {
@@ -100,6 +104,16 @@ function EditAreaControl () {
 
     function closeBoarModal() {
         let myDialog : any = document.getElementById(modalId)
+        myDialog.close()
+    }
+
+    function openCleanBoardModal() {
+        let myDialog : any = document.getElementById(boardModalId)
+        myDialog.showModal()
+    } 
+
+    function closeCleanBoardModal() {
+        let myDialog : any = document.getElementById(boardModalId)
         myDialog.close()
     }
 
@@ -134,7 +148,7 @@ function EditAreaControl () {
             break;
 
             case 'Transparent':
-                data.configObj.configs.forEach(config => config.configObject.boardColor = "bg-transparent border-2 border-zinc-200")
+                data.configObj.configs.forEach(config => config.configObject.boardColor = "bg-transparent")
                 setData({ configObj: { boardName: '', configs: data.configObj.configs } })
             break;
 
@@ -232,46 +246,64 @@ function EditAreaControl () {
                     {sideNav()}
                 </div>
                 {/* Boards, Card Area, Cards */}
-                <div id="externalBoardArea" className="h-full w-full overflow-x-hidden">                               
-                    <div className="flex w-full bg-zinc-800 p-5 text-gray-300 font-bold">
-                        <div 
-                            className="rounded text-yellow-200 ml-10 p-1 select-none hover:cursor-pointer transition ease-in-out delay-350 hover:-translate-y-1 hover:scale-110 hover:bg-yellow-600 hover:text-white duration-100"
-                            onClick={openBoardModal}
-                        >
-                            New Board
-                        </div>
-                        <div 
-                            className="rounded text-blue-200 ml-10 p-1 select-none hover:cursor-pointer transition ease-in-out delay-350 hover:-translate-y-1 hover:scale-110 hover:bg-blue-600 hover:text-white duration-100"
-                            onClick={clearData}
-                        >
-                            Clear Board
-                        </div>
-                        <div 
-                            className= { !showBoardColors ? 
-                                            "rounded text-teal-200 ml-10 p-1 select-none hover:cursor-pointer transition ease-in-out delay-350 hover:-translate-y-1 hover:scale-110 hover:bg-teal-600 hover:text-white duration-100"
-                                        :
-                                            "rounded text-teal-200 ml-10 p-1 select-none hover:cursor-pointer"                                        
-                                    }                            
-                            onClick={viewBoardColors}
-                        >
-                            Set Boards Color
-                            {
-                                !showBoardColors ? 
-                                (<div></div>)
-                                :
-                                (
-                                    <ul className='mt-5 p-1 z-20 opacity-75'>
-                                        <li className='hover:bg-red-700 p-1 rounded text-white' onClick={()=> setColor('Red')}>Red</li>
-                                        <li className='hover:bg-sky-700 p-1 rounded text-white' onClick={()=> setColor('Blue')}>Blue</li>
-                                        <li className='hover:bg-emerald-700 p-1 rounded text-white' onClick={()=> setColor('Teal')}>Green</li>                                
-                                        <li className='hover:bg-amber-700 p-1 rounded text-white' onClick={()=> setColor('Amber')}>Amber</li>                                
-                                        <li className='hover:bg-cyan-700 p-1 rounded text-white' onClick={()=> setColor('Cyan')}>Cyan</li>                                
-                                        <li className='hover:bg-transparent p-1 rounded text-white' onClick={()=> setColor('Transparent')}>Transparent</li>                                
-                                    </ul>
-                                )
-                            }
-                        </div>
-                    </div>
+                <div id="externalBoardArea" className="h-full w-full overflow-x-hidden">     
+                    <div 
+                        className="transition-colors delay-1000 duration-1000"
+                        onMouseEnter={()=>setShowTopOptions(true)}
+                        onMouseLeave={()=>setShowTopOptions(false)}
+                    >
+                        {
+                            showTopOptions ?
+                            (
+                                <div className="flex text-center items-center justify-center w-full bg-zinc-800 p-5 text-gray-300 font-bold">
+                                    <div 
+                                        className="rounded text-center text-yellow-200 ml-10 p-1 select-none hover:cursor-pointer transition ease-in-out delay-350 hover:-translate-y-1 hover:scale-110 hover:bg-yellow-600 hover:text-white duration-100"
+                                        onClick={openBoardModal}
+                                    >
+                                        New Board
+                                    </div>
+                                    <div 
+                                        className="rounded text-center text-blue-200 ml-10 p-1 select-none hover:cursor-pointer transition ease-in-out delay-350 hover:-translate-y-1 hover:scale-110 hover:bg-blue-600 hover:text-white duration-100"
+                                        onClick={openCleanBoardModal}
+                                    >
+                                        Clear Board
+                                    </div>
+                                    <div 
+                                        className = { 
+                                            showBoardColors ? 
+                                                "rounded text-center text-teal-200 ml-10 p-1 select-none hover:cursor-pointer"                                        
+                                            :
+                                                "rounded text-center text-teal-200 ml-10 p-1 select-none hover:cursor-pointer transition ease-in-out delay-350 hover:-translate-y-1 hover:scale-110 hover:bg-teal-600 hover:text-white duration-100"                                                                                            
+                                        }                            
+                                        onClick={viewBoardColors}
+                                    >
+                                        Set Boards Color
+                                        {
+                                            showBoardColors ? 
+                                            (
+                                                <ul className='mt-5 p-1 z-20 opacity-75'>
+                                                    <li className='hover:bg-red-700 p-1 rounded text-white' onClick={()=> setColor('Red')}>Red</li>
+                                                    <li className='hover:bg-sky-700 p-1 rounded text-white' onClick={()=> setColor('Blue')}>Blue</li>
+                                                    <li className='hover:bg-emerald-700 p-1 rounded text-white' onClick={()=> setColor('Teal')}>Green</li>                                
+                                                    <li className='hover:bg-amber-700 p-1 rounded text-white' onClick={()=> setColor('Amber')}>Amber</li>                                
+                                                    <li className='hover:bg-cyan-700 p-1 rounded text-white' onClick={()=> setColor('Cyan')}>Cyan</li>                                
+                                                    <li className='hover:bg-transparent p-1 rounded text-white' onClick={()=> setColor('Transparent')}>Transparent</li>                                
+                                                </ul>
+                                            )                                            
+                                            :
+                                            (<div></div>)                                            
+                                        }
+                                    </div>
+                                </div>
+                            )
+                            :
+                            (
+                                <div className="flex w-full bg-zinc-800 text-center p-2 text-gray-300 font-bold">
+                                    <p className="w-full opacity-50 text-center text-sm">Expand Options</p>                                    
+                                </div>
+                            )
+                        }   
+                    </div>                                           
                     <div className="w-full">
                         <BoardArea
                             configObj={data.configObj}
@@ -322,6 +354,37 @@ function EditAreaControl () {
                                     Create Board
                                 </button>                          
                             </div>
+                        </form>
+                        <p className="text-center text-gray-500 text-xs">
+                            Trello Clone by Aaron Carvalho
+                        </p>
+                    </div>
+                </form>
+            </dialog>  
+
+            {/* Clear Boards Modal */}
+            <dialog id={boardModalId} className="modal p-5 bg-zinc-800">                
+                <form method="dialog" className="modal-box rounded text-white p-2 ">                 
+                    {/* Modal Body */}
+                    <div className="w-full max-w-xs">
+                        <form className="bg-zinc-700 text-white shadow-md rounded px-8 pt-6 pb-8 mb-4">
+                            <div className="mb-4">
+                                <label className="block p-2 text-white text-lg font-semibold mb-2 text-red-500" htmlFor="username">
+                                    Are you sure you want to clear all data?
+                                </label>
+                                <div className="flex gap-10">
+                                    <div 
+                                        onClick={clearData}
+                                        className="btn font-bold select-none rounded p-2 bg-sky-500 hover:bg-sky-600 hover:cursor-pointer">
+                                            Continue                                        
+                                    </div>
+                                    <div 
+                                        onClick={closeCleanBoardModal}
+                                        className="btn font-bold select-none rounded p-2 bg-red-500 hover:bg-red-600 hover:cursor-pointer">
+                                            Cancel
+                                    </div>
+                                </div>
+                            </div>                       
                         </form>
                         <p className="text-center text-gray-500 text-xs">
                             Trello Clone by Aaron Carvalho

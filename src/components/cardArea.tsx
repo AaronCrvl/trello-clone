@@ -46,14 +46,15 @@ function CardArea({ configObject } : configObjectType) {
     function removeCardFromList(key : string) : void
     {        
         let index : number = configObject.tasks.findIndex((x) => { 
-            return x.uniqueKey === key
+            return x.uniqueKey === key ? x.uniqueKey : 0
         })
         
+        console.log('Index: ' + index)
         if(index >= 0)
         {                        
-            configObject.tasks.splice(index, 1)
+            configObject.tasks.splice(index, 1)            
             let titleTextEdit : typeof cardArea.titleTextEdit = {name: cardArea.titleTextEdit.name, edit: false, new: false, save : cardArea.titleTextEdit.save}
-            setCardArea({titleTextEdit})
+            setCardArea({titleTextEdit})            
         }
     }
 
@@ -68,8 +69,7 @@ function CardArea({ configObject } : configObjectType) {
             }
 
             dropConfig.ondragleave = function (e) {                
-                e.preventDefault()
-                dropConfig.style.border = ""
+                e.preventDefault()                
             }
 
             dropConfig.ondrop = function (e) {                        
@@ -80,7 +80,8 @@ function CardArea({ configObject } : configObjectType) {
                 let element = document.getElementById(key)!                
                 dropConfig.appendChild(element)      
 
-                // get card data and edit array      
+                // get card data and edit array                
+                dropConfig.style.border = ""
             }            
         }
     })
@@ -178,30 +179,14 @@ function CardArea({ configObject } : configObjectType) {
                         (
                             configObject.tasks.map((card : cardType) => {                         
                                 {/* Card */}                       
-                                return (                                                                                             
-                                    <div
-                                        id={card.uniqueKey}    
-                                        className="flex h-full w-full hover:cursor-grab"
-                                    >                                                                                
-                                        <Card             
-                                            uniqueKey={card.uniqueKey}                                                                                  
-                                            text={card.text}
-                                            description={card.description}
-                                            tags={card.tags}
-                                            owner={card.owner}
-                                        />                                           
-                                        {/* Exclude card */}
-                                        <div 
-                                            className="bg-transparent text-center ml-auto"
-                                            onClick={()=>removeCardFromList(card.uniqueKey)}
-                                        >
-                                            <div 
-                                                className="p-3 ml-2 opacity-50 btn rounded-50 border-2 border-white mt-5 select-none text-white hover:bg-red-800 hover:text-bold hover:opacity-100 hover:cursor-pointer"
-                                            >
-                                                X
-                                            </div>
-                                        </div> 
-                                    </div>                                                                            
+                                return (                                                                                                                                                                                                                 
+                                    <Card             
+                                        uniqueKey={card.uniqueKey}                                                                                  
+                                        text={card.text}
+                                        description={card.description}
+                                        tags={card.tags}
+                                        owner={card.owner}
+                                    />                                                                                                                                                         
                                 )
                             })           
                         )

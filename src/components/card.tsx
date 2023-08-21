@@ -54,7 +54,7 @@ function Card({ uniqueKey, text, description, tags, owner } : cardType ) {
             dragConfig.ondragstart = function (e) {    
                 if((e.target as Element).id === id) {                                              
                     e.dataTransfer!.setData("card", (e.target as Element).id);                                            
-                    e.dataTransfer!.setData("key", uniqueKey);                                            
+                    e.dataTransfer!.setData("key", uniqueKey);                                                                  
                 }
             }
             
