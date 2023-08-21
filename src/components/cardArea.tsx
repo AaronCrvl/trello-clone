@@ -23,9 +23,42 @@ function CardArea({ configObject } : configObjectType) {
             }
         }
     })
-    
+        
+    // card functions
+    function addNewCard() : void {
+        if(cardArea.titleTextEdit.new)
+        {
+            let txt = document.getElementById("newCardInput")! as HTMLInputElement            
+            let newCard : cardType = {
+                uniqueKey : 'Card' + Math.random(),
+                text :  txt.value,
+                description : [],
+                tags : [],
+                owner: '' 
+            }             
+
+            configObject.tasks.push(newCard)                      
+            let titleTextEdit : typeof cardArea.titleTextEdit = {name: cardArea.titleTextEdit.name, edit: false, new: false, save : cardArea.titleTextEdit.save}
+            setCardArea({titleTextEdit})
+        }
+    }
+
+    function removeCardFromList(key : string) : void
+    {        
+        let index : number = configObject.tasks.findIndex((x) => { 
+            return x.uniqueKey === key
+        })
+        
+        if(index >= 0)
+        {                        
+            configObject.tasks.splice(index, 1)
+            let titleTextEdit : typeof cardArea.titleTextEdit = {name: cardArea.titleTextEdit.name, edit: false, new: false, save : cardArea.titleTextEdit.save}
+            setCardArea({titleTextEdit})
+        }
+    }
+
     // Card drop on this component
-    React.useEffect(() : any => {
+    React.useEffect(() : void => {
         setDropConfig(document.getElementById(cardsDivId)!)
         if(dropConfig !== undefined)
         {
@@ -39,17 +72,21 @@ function CardArea({ configObject } : configObjectType) {
                 dropConfig.style.border = ""
             }
 
-            dropConfig.ondrop = function (e) {                                                        
-                let _id = e.dataTransfer!.getData("card");
-                let element = document.getElementById(_id)!
-                dropConfig.appendChild(element)
-                dropConfig.style.border = ""
+            dropConfig.ondrop = function (e) {                        
+                let _id = e.dataTransfer!.getData("card") // card id
+                let key = e.dataTransfer!.getData("key"); // card key
+                
+                // get card with exclude button div
+                let element = document.getElementById(key)!                
+                dropConfig.appendChild(element)      
+
+                // get card data and edit array      
             }            
         }
     })
 
     // Card area drag
-    React.useEffect(() => {        
+    React.useEffect(() : void => {        
         setDragConfig(document.getElementById(areaId)!)        
         if(dragConfig !== undefined)
         {               
@@ -67,34 +104,16 @@ function CardArea({ configObject } : configObjectType) {
             }        
         }
     })
-
-    // card functions
-    function addNewCard() {
-        if(cardArea.titleTextEdit.new)
-        {
-            let txt = document.getElementById("newCardInput")! as HTMLInputElement            
-            let newCard : cardType = {
-                text :  txt.value,
-                description : [''],
-                tags : [],
-                owner: '' 
-            }             
-
-            configObject.tasks.push(newCard)                      
-            let titleTextEdit : typeof cardArea.titleTextEdit = {name: cardArea.titleTextEdit.name, edit: false, new: false, save : cardArea.titleTextEdit.save}
-            setCardArea({titleTextEdit})
-        }
-    }
  
     return (
         <div           
             id={areaId}
             draggable
-            className="rounded Content h-auto p-3 w-96 hover:bg-zinc-800"            
+            className="rounded Content h-auto p-3 w-96 "            
         >               
-            <div className="bg-slate-700 border-2 border-zinc-500 p-10">                
+            <div className={'border-2 border-zinc-100 p-10 hover:cursor-grab ' + configObject.boardColor}>                
                 {/* Title */}
-                <div className="w-full p-3 mb-3">                                
+                <div className="w-full p-1 mb-3">                                
                     {
                         cardArea.titleTextEdit.edit ? 
                         (
@@ -128,7 +147,7 @@ function CardArea({ configObject } : configObjectType) {
                             // Title div
                             <div className="flex">                                
                                 <div 
-                                    className='btn w-1/2 h-10 rounded hover:cursor-pointer transition ease-in-out delay-150 hover:-translate-y-1 hover:scale-110 duration-300' 
+                                    className='btn h-10 rounded hover:cursor-pointer transition ease-in-out delay-150 hover:-translate-y-1 hover:scale-110 duration-300' 
                                     onClick={()=>{
                                         let titleTextEdit : typeof cardArea.titleTextEdit = {name: cardArea.titleTextEdit.name, edit: true, new: false, save : cardArea.titleTextEdit.save}
                                         setCardArea({titleTextEdit})
@@ -140,10 +159,10 @@ function CardArea({ configObject } : configObjectType) {
                                         className='select-none w-10 h-10 p-1 justify-right invert hover:bg-red-500'
                                     />                                     
                                 </div>                                                                                                              
-                                <h1 className="w-2/3 select-none ml-3 text-xl text-white font-bold">{cardArea.titleTextEdit.name}</h1>                                                                                                                               
+                                <h1 className="select-none ml-2 text-2xl text-white">{cardArea.titleTextEdit.name}</h1>                                                                                                                               
                             </div>
                         )
-                    }                
+                    }                                   
                 </div>
                 {/* Cards */}
                 <div
@@ -157,22 +176,39 @@ function CardArea({ configObject } : configObjectType) {
                         )
                         :
                         (
-                            configObject.tasks.map((card : cardType)=> {
-                                return (
-                                    <Card             
-                                        key={Math.random()}                                                                                  
-                                        text={card.text}
-                                        description={card.description}
-                                        tags={card.tags}
-                                        owner={card.owner}
-                                    />                                                            
+                            configObject.tasks.map((card : cardType) => {                         
+                                {/* Card */}                       
+                                return (                                                                                             
+                                    <div
+                                        id={card.uniqueKey}    
+                                        className="flex h-full w-full hover:cursor-grab"
+                                    >                                                                                
+                                        <Card             
+                                            uniqueKey={card.uniqueKey}                                                                                  
+                                            text={card.text}
+                                            description={card.description}
+                                            tags={card.tags}
+                                            owner={card.owner}
+                                        />                                           
+                                        {/* Exclude card */}
+                                        <div 
+                                            className="bg-transparent text-center ml-auto"
+                                            onClick={()=>removeCardFromList(card.uniqueKey)}
+                                        >
+                                            <div 
+                                                className="p-3 ml-2 opacity-50 btn rounded-50 border-2 border-white mt-5 select-none text-white hover:bg-red-800 hover:text-bold hover:opacity-100 hover:cursor-pointer"
+                                            >
+                                                X
+                                            </div>
+                                        </div> 
+                                    </div>                                                                            
                                 )
                             })           
                         )
                     }          
                 </div>    
                 {/* Add new Card */}
-                <div className="flex p-5">
+                <div className="flex text-center mt-5">
                     {
                         cardArea.titleTextEdit.new ?
                         (
@@ -201,7 +237,7 @@ function CardArea({ configObject } : configObjectType) {
                         :
                         (
                             <div 
-                                className="btn p-2 select-none rounded text-white w-full text-left hover:bg-zinc-600 hover:cursor-pointer"
+                                className="btn select-none rounded text-white w-full text-left hover:bg-zinc-600 hover:cursor-pointer"
                                 onClick={()=>{
                                         let titleTextEdit : typeof cardArea.titleTextEdit = {name : cardArea.titleTextEdit.name, edit : false, new : true, save : cardArea.titleTextEdit.save}
                                         setCardArea({titleTextEdit})

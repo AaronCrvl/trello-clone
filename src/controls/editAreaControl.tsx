@@ -1,30 +1,31 @@
-import React, { useState } from "react";
+import React from "react";
 import BoardArea from "../components/boardArea";
 import expandIcon from '../assets/expand-icon.png'
 import { initialDataType } from "../types/initialDataType";
 import DataGeneratorControl from "./dataGeneratorControl";
 import { configObjectType } from "../types/configObjectType";
-import { cardType } from "../types/cardType";
 
 function EditAreaControl () {        
     const modalId : string = 'myModal' + Math.random()
     const dataControl = new DataGeneratorControl()
     const [showSideNav, setShowSideNav] = React.useState(false)      
+    // Board Color    
+    const [showBoardColors, setShowBoardColors] = React.useState<Boolean>(false)
 
     // Component data    
     let [data, setData] = React.useState<initialDataType>({
         configObj: {
             boardName: '',
             configs: 
-                [
-                    {
-                        configObject: {
-                            name: 'Area Name',
-                            ready: false,
-                            tasks : []
-                        }                 
-                    },
-                ]
+            [{
+                configObject: 
+                {
+                    name: 'Area Name',
+                    boardColor : ' bg-transparent border-2 border-zinc-200',
+                    ready: false,
+                    tasks : []
+                }                 
+            }]
         }
     })
 
@@ -46,27 +47,29 @@ function EditAreaControl () {
         }        
     }
 
-    function createNewBoard() {
+    const createNewBoard = () => {
         let newBoardName = (document.getElementById('boardName') as HTMLInputElement).value
         let newBoardAreaNumber = (document.getElementById('boardNumber') as HTMLInputElement).value  
         if(validaNewBoardData(newBoardName, newBoardAreaNumber) === true)  {
             clearData()
             let boardCount : number = parseInt(newBoardAreaNumber)
-            let data : configObjectType = {
+            let config : configObjectType = {
                 configObject: {
                     name: '',
+                    boardColor : data.configObj.configs[0].configObject.boardColor,
                     ready: false,
                     tasks: []
                 }
             }
 
             let arr : configObjectType[] = []                
-            arr = [data]            
+            arr = [config]            
 
             for(let i=1; i < (boardCount-1); ++i) {
                 let r : configObjectType = {
                     configObject: {
                         name: '',
+                        boardColor : data.configObj.configs[0].configObject.boardColor,
                         ready: false,
                         tasks: []
                     }
@@ -87,7 +90,7 @@ function EditAreaControl () {
     }
 
     function clearData() {
-        setData({ configObj: { boardName: '', configs: [{ configObject : { name : '', ready : false, tasks: [] } }] } })
+        setData({ configObj: { boardName: '', configs: [{ configObject : { name : '', boardColor : '', ready : false, tasks: [] } }] } })                
     }
 
     function openBoardModal() {
@@ -98,6 +101,46 @@ function EditAreaControl () {
     function closeBoarModal() {
         let myDialog : any = document.getElementById(modalId)
         myDialog.close()
+    }
+
+    function viewBoardColors () { setShowBoardColors(!showBoardColors) }
+
+    function setColor (color : String) {
+        switch(color)
+        {
+            case 'Red':
+                data.configObj.configs.forEach(config => config.configObject.boardColor = "bg-red-700")
+                setData({ configObj: { boardName: '', configs: data.configObj.configs } })
+                break;
+
+            case 'Blue':
+                data.configObj.configs.forEach(config => config.configObject.boardColor = "bg-blue-700")
+                setData({ configObj: { boardName: '', configs: data.configObj.configs } })
+            break;
+
+            case 'Teal':
+                data.configObj.configs.forEach(config => config.configObject.boardColor = "bg-emerald-700")
+                setData({ configObj: { boardName: '', configs: data.configObj.configs } })
+            break;
+
+            case 'Amber':
+                data.configObj.configs.forEach(config => config.configObject.boardColor = "bg-amber-700")
+                setData({ configObj: { boardName: '', configs: data.configObj.configs } })
+            break;
+
+            case 'Cyan':
+                data.configObj.configs.forEach(config => config.configObject.boardColor = "bg-cyan-700")
+                setData({ configObj: { boardName: '', configs: data.configObj.configs } })
+            break;
+
+            case 'Transparent':
+                data.configObj.configs.forEach(config => config.configObject.boardColor = "bg-transparent border-2 border-zinc-200")
+                setData({ configObj: { boardName: '', configs: data.configObj.configs } })
+            break;
+
+            default:
+                break;
+        }
     }
 
     // Board Template Select
@@ -192,16 +235,41 @@ function EditAreaControl () {
                 <div id="externalBoardArea" className="h-full w-full overflow-x-hidden">                               
                     <div className="flex w-full bg-zinc-800 p-5 text-gray-300 font-bold">
                         <div 
-                            className="ml-10 p-1 select-none hover:cursor-pointer transition ease-in-out delay-350 hover:-translate-y-1 hover:scale-110 hover:bg-sky-600 hover:text-white duration-100"
+                            className="rounded text-yellow-200 ml-10 p-1 select-none hover:cursor-pointer transition ease-in-out delay-350 hover:-translate-y-1 hover:scale-110 hover:bg-yellow-600 hover:text-white duration-100"
                             onClick={openBoardModal}
                         >
-                            📋 New Board
+                            New Board
                         </div>
                         <div 
-                            className="ml-10 p-1 select-none hover:cursor-pointer transition ease-in-out delay-350 hover:-translate-y-1 hover:scale-110 hover:bg-sky-600 hover:text-white duration-100"
+                            className="rounded text-blue-200 ml-10 p-1 select-none hover:cursor-pointer transition ease-in-out delay-350 hover:-translate-y-1 hover:scale-110 hover:bg-blue-600 hover:text-white duration-100"
                             onClick={clearData}
                         >
-                            🚮 Clear Board
+                            Clear Board
+                        </div>
+                        <div 
+                            className= { !showBoardColors ? 
+                                            "rounded text-teal-200 ml-10 p-1 select-none hover:cursor-pointer transition ease-in-out delay-350 hover:-translate-y-1 hover:scale-110 hover:bg-teal-600 hover:text-white duration-100"
+                                        :
+                                            "rounded text-teal-200 ml-10 p-1 select-none hover:cursor-pointer"                                        
+                                    }                            
+                            onClick={viewBoardColors}
+                        >
+                            Set Boards Color
+                            {
+                                !showBoardColors ? 
+                                (<div></div>)
+                                :
+                                (
+                                    <ul className='mt-5 p-1 z-20 opacity-75'>
+                                        <li className='hover:bg-red-700 p-1 rounded text-white' onClick={()=> setColor('Red')}>Red</li>
+                                        <li className='hover:bg-sky-700 p-1 rounded text-white' onClick={()=> setColor('Blue')}>Blue</li>
+                                        <li className='hover:bg-emerald-700 p-1 rounded text-white' onClick={()=> setColor('Teal')}>Green</li>                                
+                                        <li className='hover:bg-amber-700 p-1 rounded text-white' onClick={()=> setColor('Amber')}>Amber</li>                                
+                                        <li className='hover:bg-cyan-700 p-1 rounded text-white' onClick={()=> setColor('Cyan')}>Cyan</li>                                
+                                        <li className='hover:bg-transparent p-1 rounded text-white' onClick={()=> setColor('Transparent')}>Transparent</li>                                
+                                    </ul>
+                                )
+                            }
                         </div>
                     </div>
                     <div className="w-full">

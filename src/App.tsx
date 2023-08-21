@@ -5,7 +5,7 @@ function App() {
 
   return (
     <div className="App">    
-      <div className='w-auto h-auto'>
+      <div className='w-auto h-auto font-poppins'>
         <NavBar/>
         <div>      
           <EditAreaControls/>

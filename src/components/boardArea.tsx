@@ -4,7 +4,6 @@ import editIcon from '../assets/edit-icon.png'
 import trashCanIcon from '../assets/trashcan-icon.png'
 import { initialDataType } from '../types/initialDataType';
 import { configObjectType } from '../types/configObjectType';
-import { config } from 'process';
 
 function BoardArea({ configObj } : initialDataType) {    
     const id = 'BoardAreaItem' + Math.random()    
@@ -28,11 +27,12 @@ function BoardArea({ configObj } : initialDataType) {
     })         
 
     function addNewCardArea () {   
-        // ..... fix this
+        // ..... define dynamic length size
         if(configObj.configs.length < 15) {
             let newArea : configObjectType = {
                 configObject: {
                     name : '',
+                    boardColor: configObj.configs[0].configObject.boardColor,
                     ready : false, 
                     tasks : []
                 }
@@ -46,14 +46,37 @@ function BoardArea({ configObj } : initialDataType) {
         else {            
             alert(`I bet you dont need more than ${configObj.configs.length} boards!`)
         }
-    }    
+    } 
+    
+    function fakeInsertUpdate () {   
+        // ..... define dynamic length size
+        if(configObj.configs.length < 15) {
+            let newArea : configObjectType = {
+                configObject: {
+                    name : '',
+                    boardColor: configObj.configs[0].configObject.boardColor,
+                    ready : false, 
+                    tasks : []
+                }
+            }      
+            configObj.configs.push(newArea)                 
+            setArr(configObj.configs)   
+            // pop to prevent new card area to be created     
+            arr.pop()
+            let mainTitle :typeof  board.mainTitle = {title: board.mainTitle.title, edit: false, save: board.mainTitle.save}
+            setBoard({mainTitle})            
+        }
+        else {            
+            alert(`I bet you dont need more than ${configObj.configs.length} boards!`)
+        }
+    } 
 
     // !_🖥 
     // this fix the configObject useState problem.
     // when a template is selected the board area don't change automatically 
     // because of the asynchronous hook call
     React.useEffect(()=> {                 
-        addNewCardArea()
+        fakeInsertUpdate()
         if(board.mainTitle.title === '' || board.mainTitle.title === 'New 📋') {            
             let mainTitle :typeof  board.mainTitle = {title: configObj.boardName, edit: false, save: board.mainTitle.save}
             setBoard({mainTitle})
@@ -157,7 +180,7 @@ function BoardArea({ configObj } : initialDataType) {
                                     <img 
                                         alt='edit' 
                                         src={editIcon} 
-                                        className='z-10 w-10 h-10 p-1 justify-right transition ease-in-out delay-350 bg-zinc-600 hover:-translate-y-1 hover:scale-110 hover:bg-cyan-700 duration-100'
+                                        className='hover:cursor-pointer z-10 w-10 h-10 p-1 justify-right transition ease-in-out delay-350 bg-zinc-600 hover:-translate-y-1 hover:scale-110 hover:bg-cyan-700 duration-100'
                                     />
                                 </div>
                                 <div className='select-none text-4xl ml-3'>{board.mainTitle.title}</div>
@@ -183,11 +206,11 @@ function BoardArea({ configObj } : initialDataType) {
                     <div id={cardAreaId} className='inline-flex flex-nowrap p-2 Flipped bg-zinc-700 overflow-x-auto'>
                         {
                             arr.map((config : configObjectType) => {
-                                return (                           
+                                return (                                                           
                                     <CardArea                                    
                                         key={'cArea' + Math.random()}          
                                         configObject={config.configObject}
-                                    />                                              
+                                    />                                                                                  
                                 )
                             })
                         }

@@ -8,11 +8,12 @@ Trello clone made with typescript and React JS.
 - Edit card
 - Move cards between boards
 - Create new board based on available  templates
-- Remove card areas
+- Remove card area
+- Remove individual card from area
+- Choose boards background color
 
 - *In Progress:*
-   - Add all types of input in card structure
-   - Make card and background color customizable
+   - Add all types of input in card structure   
 
 ## Gif
 ![ezgif com-video-to-gif](https://github.com/AaronCrvl/trello-clone/assets/72924198/3bb768cb-8650-4ae1-a0e3-ec61e5cfc84d)
