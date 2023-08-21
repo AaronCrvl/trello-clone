@@ -73,11 +73,10 @@ function CardArea({ configObject } : configObjectType) {
             }
 
             dropConfig.ondrop = function (e) {                        
-                let _id = e.dataTransfer!.getData("card") // card id
-                let key = e.dataTransfer!.getData("key"); // card key
+                let _id = e.dataTransfer!.getData("card") // card id                
                 
                 // get card with exclude button div
-                let element = document.getElementById(key)!                
+                let element = document.getElementById(_id)!                
                 dropConfig.appendChild(element)      
 
                 // get card data and edit array                
