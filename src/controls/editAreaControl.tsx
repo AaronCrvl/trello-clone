@@ -4,11 +4,16 @@ import expandIcon from '../assets/expand-icon.png'
 import { initialDataType } from "../types/initialDataType";
 import DataGeneratorControl from "./dataGeneratorControl";
 import { configObjectType } from "../types/configObjectType";
+import SystemColors from "../types/enums/systemColors";
+import SystemBoardTemplates from "../types/enums/SystemBoardTemplates";
 
-function EditAreaControl () {        
-    const modalId : string = 'myModal' + Math.random()
+function EditAreaControl () {       
+    const newBoadModalId : string = 'myModal' + Math.random()
     const boardModalId : string = 'myBoardModal' + Math.random()
     const dataControl = new DataGeneratorControl()
+    // enums
+    const appColors = new SystemColors()
+    const appBoardTemplates = new SystemBoardTemplates()
     // Side Nav
     const [showSideNav, setShowSideNav] = React.useState(false)      
     // Top Options
@@ -25,7 +30,7 @@ function EditAreaControl () {
                 configObject: 
                 {
                     name: 'Area Name',
-                    boardColor : ' bg-transparent border-2 border-zinc-200',
+                    boardColor : ' bg-transparent',
                     ready: false,
                     tasks : []
                 }                 
@@ -81,7 +86,7 @@ function EditAreaControl () {
             }
           
             setData({ configObj: { boardName: newBoardName, configs: arr } })
-            closeBoarModal()
+            handleModalClose(boardModalId)
         }        
     }
 
@@ -94,101 +99,64 @@ function EditAreaControl () {
 
     function clearData() {        
         setData({ configObj: { boardName: '', configs: [{ configObject : { name : '', boardColor : '', ready : false, tasks: [] } }] } })                
-        closeCleanBoardModal()
+        handleModalClose(boardModalId)
     }
 
-    function openBoardModal() {
-        let myDialog : any = document.getElementById(modalId)
-        myDialog.showModal()
+    function handleModalOpen(selectedModalId : string) {
+        if(selectedModalId == newBoadModalId) {
+            let myDialog : any = document.getElementById(newBoadModalId)
+            myDialog.showModal()
+        }
+        if(selectedModalId == boardModalId) {
+            let myDialog : any = document.getElementById(boardModalId)
+            myDialog.showModal()
+        }
     } 
 
-    function closeBoarModal() {
-        let myDialog : any = document.getElementById(modalId)
-        myDialog.close()
-    }
-
-    function openCleanBoardModal() {
-        let myDialog : any = document.getElementById(boardModalId)
-        myDialog.showModal()
-    } 
-
-    function closeCleanBoardModal() {
-        let myDialog : any = document.getElementById(boardModalId)
-        myDialog.close()
-    }
+    function handleModalClose(selectedModalId : string) {
+        if(selectedModalId == newBoadModalId) {
+            let myDialog : any = document.getElementById(newBoadModalId)
+            myDialog.close()
+        }
+        if(selectedModalId == boardModalId) {
+            let myDialog : any = document.getElementById(boardModalId)
+            myDialog.close()
+        }
+    }  
 
     function viewBoardColors () { setShowBoardColors(!showBoardColors) }
 
-    function setColor (color : String) {
-        switch(color)
-        {
-            case 'Red':
-                data.configObj.configs.forEach(config => config.configObject.boardColor = "bg-red-700")
-                setData({ configObj: { boardName: '', configs: data.configObj.configs } })
-                break;
-
-            case 'Blue':
-                data.configObj.configs.forEach(config => config.configObject.boardColor = "bg-blue-700")
-                setData({ configObj: { boardName: '', configs: data.configObj.configs } })
-            break;
-
-            case 'Teal':
-                data.configObj.configs.forEach(config => config.configObject.boardColor = "bg-emerald-700")
-                setData({ configObj: { boardName: '', configs: data.configObj.configs } })
-            break;
-
-            case 'Amber':
-                data.configObj.configs.forEach(config => config.configObject.boardColor = "bg-amber-700")
-                setData({ configObj: { boardName: '', configs: data.configObj.configs } })
-            break;
-
-            case 'Cyan':
-                data.configObj.configs.forEach(config => config.configObject.boardColor = "bg-cyan-700")
-                setData({ configObj: { boardName: '', configs: data.configObj.configs } })
-            break;
-
-            case 'Transparent':
-                data.configObj.configs.forEach(config => config.configObject.boardColor = "bg-transparent")
-                setData({ configObj: { boardName: '', configs: data.configObj.configs } })
-            break;
-
-            default:
-                break;
-        }
+    function setColor (color : any) {        
+        if (appColors.eColors.hasOwnProperty(color)) {                        
+            data.configObj.configs.forEach(config => config.configObject.boardColor = appColors.getSystemColors(color).toString())
+            setData({ configObj: { boardName: '', configs: data.configObj.configs } })                
+        } 
+        else {
+            console.log("Something went wrong setting the colors.");
+        }        
     }
 
     // Board Template Select
-    function chooseBoardModel(boardModelId : Number) {                
+    function chooseBoardModel(boardModelId : any) {                
         clearData()
-        switch(boardModelId) {
-            case 1:                 
-                dataControl.getProjectManagementData()                                          
-                .then((data) => { setData({ configObj: { boardName: '', configs: data } }) })                                
-            break; 
-            
-            case 2:                 
-                dataControl.getHabitControlData()                            
-                .then((data) => { setData({ configObj: { boardName: '', configs: data } }) })                                            
-            break; 
-
-            case 3:                 
-                dataControl.getEditorialCalendarData()                           
-                .then((data) => { setData({ configObj: { boardName: '', configs: data } }) })                                             
-            break; 
-
-            case 4:                 
-                dataControl.getIntegrationNewEmployees()                            
-                .then((data) => { setData({ configObj: { boardName: '', configs: data } }) })                                              
-            break; 
-        }   
-        
         changeBoardAreaOpacity()
+
+        if (appBoardTemplates.eBoardsTemplates.hasOwnProperty(boardModelId)) {
+            appBoardTemplates.getBoardTemplate(boardModelId).then(resConfig => {
+                setData({ configObj: { boardName: '', configs: resConfig}})
+            })
+        }
+        else {
+            console.log("Something went wrong setting the colors.");
+        }                        
     }  
 
     // Load Initial Board View
     React.useEffect(()=> {
-        if(data.configObj.configs[0].configObject.name === 'Area Name') {            
-            dataControl.getHabitControlData().then((data) => { setData({ configObj: { boardName: 'New 📋', configs: data } }) })                                
+        if(data.configObj.configs[0].configObject.name === 'Area Name') {      
+            appBoardTemplates.getBoardTemplate(-1).then(resConfigs => {
+                setData({ configObj: { boardName: 'New 📋', configs: resConfigs } })
+            })      
         }
     })
 
@@ -213,7 +181,7 @@ function EditAreaControl () {
                     />
                 </div>      
                 {/* Side nav control */}
-                <div>
+                <React.Fragment>
                     {                             
                         showSideNav ? 
                         (
@@ -221,10 +189,10 @@ function EditAreaControl () {
                             <div className="z-10 ">
                                 <p className='underline select-none text-xl font-bold ml-5 mb-10 text-orange-400'>Board Templates</p>
                                 <ul className='space-y-8 p-5'>
-                                    <li className={transitionListDiv} onClick={()=>chooseBoardModel(1)}>Project Managment</li>
-                                    <li className={transitionListDiv} onClick={()=>chooseBoardModel(2)}>Habit Control</li>
-                                    <li className={transitionListDiv} onClick={()=>chooseBoardModel(3)}>Editorial Calendar</li>
-                                    <li className={transitionListDiv} onClick={()=>chooseBoardModel(4)}>Integration of New Employees</li>
+                                    <li className={transitionListDiv} onClick={()=>chooseBoardModel(0)}>Project Managment</li>
+                                    <li className={transitionListDiv} onClick={()=>chooseBoardModel(1)}>Habit Control</li>
+                                    <li className={transitionListDiv} onClick={()=>chooseBoardModel(2)}>Editorial Calendar</li>
+                                    <li className={transitionListDiv} onClick={()=>chooseBoardModel(3)}>Integration of New Employees</li>
                                 </ul>
                             </div>
                         )
@@ -234,7 +202,7 @@ function EditAreaControl () {
                             <div className='w-0'></div>
                         )
                     }  
-                </div>        
+                </React.Fragment>        
             </div>   
         )
     }
@@ -258,13 +226,13 @@ function EditAreaControl () {
                                 <div className="flex text-center items-center justify-center w-full bg-zinc-800 p-5 text-gray-300 font-bold">
                                     <div 
                                         className="rounded text-center text-yellow-200 ml-10 p-1 select-none hover:cursor-pointer transition ease-in-out delay-350 hover:-translate-y-1 hover:scale-110 hover:bg-yellow-600 hover:text-white duration-100"
-                                        onClick={openBoardModal}
+                                        onClick={()=> handleModalOpen(newBoadModalId)}
                                     >
                                         New Board
                                     </div>
                                     <div 
                                         className="rounded text-center text-blue-200 ml-10 p-1 select-none hover:cursor-pointer transition ease-in-out delay-350 hover:-translate-y-1 hover:scale-110 hover:bg-blue-600 hover:text-white duration-100"
-                                        onClick={openCleanBoardModal}
+                                        onClick={()=> handleModalOpen(boardModalId)}
                                     >
                                         Clear Board
                                     </div>
@@ -282,12 +250,12 @@ function EditAreaControl () {
                                             showBoardColors ? 
                                             (
                                                 <ul className='mt-5 p-1 z-20 opacity-75'>
-                                                    <li className='hover:bg-red-700 p-1 rounded text-white' onClick={()=> setColor('Red')}>Red</li>
-                                                    <li className='hover:bg-sky-700 p-1 rounded text-white' onClick={()=> setColor('Blue')}>Blue</li>
-                                                    <li className='hover:bg-emerald-700 p-1 rounded text-white' onClick={()=> setColor('Teal')}>Green</li>                                
-                                                    <li className='hover:bg-amber-700 p-1 rounded text-white' onClick={()=> setColor('Amber')}>Amber</li>                                
-                                                    <li className='hover:bg-cyan-700 p-1 rounded text-white' onClick={()=> setColor('Cyan')}>Cyan</li>                                
-                                                    <li className='hover:bg-transparent p-1 rounded text-white' onClick={()=> setColor('Transparent')}>Transparent</li>                                
+                                                    <li className='hover:bg-red-700 p-1 rounded text-white' onClick={()=> setColor(0)}>Red</li>
+                                                    <li className='hover:bg-sky-700 p-1 rounded text-white' onClick={()=> setColor(1)}>Blue</li>
+                                                    <li className='hover:bg-emerald-700 p-1 rounded text-white' onClick={()=> setColor(2)}>Green</li>                                
+                                                    <li className='hover:bg-amber-700 p-1 rounded text-white' onClick={()=> setColor(3)}>Amber</li>                                
+                                                    <li className='hover:bg-cyan-700 p-1 rounded text-white' onClick={()=> setColor(4)}>Cyan</li>                                
+                                                    <li className='hover:bg-transparent p-1 rounded text-white' onClick={()=> setColor(5)}>Transparent</li>                                
                                                 </ul>
                                             )                                            
                                             :
@@ -312,7 +280,7 @@ function EditAreaControl () {
                 </div>
             </div>          
             {/* New Board Modal */}
-            <dialog id={modalId} className="modal p-5 bg-zinc-800">                
+            <dialog id={newBoadModalId} className="modal p-5 bg-zinc-800">                
                 <form method="dialog" className="modal-box rounded text-white p-2 ">
                     {/* Modal Title  */}
                     <div className="modal-action text-right p-2">                                            
@@ -344,7 +312,7 @@ function EditAreaControl () {
                                     id="boardNumber"
                                     placeholder="Example label" 
                                 />                             
-                                </div>
+                            </div>
                             <div className="flex items-center justify-between">
                                 <button 
                                     className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline" 
@@ -379,7 +347,7 @@ function EditAreaControl () {
                                             Continue                                        
                                     </div>
                                     <div 
-                                        onClick={closeCleanBoardModal}
+                                        onClick={()=> handleModalClose(boardModalId)}
                                         className="btn font-bold select-none rounded p-2 bg-red-500 hover:bg-red-600 hover:cursor-pointer">
                                             Cancel
                                     </div>

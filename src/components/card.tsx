@@ -74,7 +74,7 @@ function Card({ uniqueKey, text, description, tags, owner } : cardType ) {
         <div
             id={id}
             draggable            
-            className="rounded-75 p-5 mb-2 w-full border-2 border-zinc-500 hover:bg-zinc-600"
+            className="rounded-lg p-5 mb-2 w-full border-2 border-zinc-500 hover:bg-zinc-600"
             onClick={openCardModal}
         >
             {/* Title */}

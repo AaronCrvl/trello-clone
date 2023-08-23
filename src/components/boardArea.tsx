@@ -1,9 +1,9 @@
 import React from 'react';
 import CardArea from './cardArea';
 import editIcon from '../assets/edit-icon.png'
+import trashIcon from '../assets/trashcan-icon.png';
 import { initialDataType } from '../types/initialDataType';
 import { configObjectType } from '../types/configObjectType';
-import { config } from 'process';
 
 function BoardArea({ configObj } : initialDataType) {    
     const id = 'BoardAreaItem' + Math.random()    
@@ -11,6 +11,7 @@ function BoardArea({ configObj } : initialDataType) {
     const excludeCardId : string = 'ExcludeCard' + Math.random()       
     const cardAreaId : string = 'CardAreaOnBoad' + Math.random()       
 
+    const [showExclusionArea, setShowExclusionArea] = React.useState<Boolean>(false)
     const [arr, setArr] = React.useState<Array<configObjectType>>(configObj.configs)
     const [dropConfig, setDropConfig] = React.useState<HTMLElement>()       
     const [cardDropConfig, setCardDropConfig] = React.useState<HTMLElement>()  
@@ -92,11 +93,13 @@ function BoardArea({ configObj } : initialDataType) {
         {
             dropConfig.ondragover = function (e) {                
                 e.preventDefault()
+                setShowExclusionArea(true)
                 dropConfig.style.border = "2px solid white"        
             }
 
             dropConfig.ondragleave = function (e) {                
                 e.preventDefault()
+                setShowExclusionArea(false)
                 dropConfig.style.border = ""
             }
 
@@ -136,8 +139,8 @@ function BoardArea({ configObj } : initialDataType) {
         }
     })  
     
-     // Exclude card drop config
-     React.useEffect(() : any => {
+    // Exclude card drop config
+    React.useEffect(() : any => {
         setCardDropConfig(document.getElementById(excludeCardId)!)
         if(cardDropConfig !== undefined)
         {
@@ -187,14 +190,15 @@ function BoardArea({ configObj } : initialDataType) {
 
     return (
         <div id={id}>                
-            <div className=''>        
+            <React.Fragment>        
                 {/* Board Title */}
-                <div className='flex w-full p-7 text-white font-bold bg-zinc-700'>                 
+                <div className='flex w-full p-7 text-white font-bold bg-zinc-700'>   
+                    <React.Fragment>
                     {
                         // Edit title
                         board.mainTitle.edit ?
                         (           
-                            <div className="">                            
+                            <React.Fragment>                            
                                 <div className="relative mb-3" data-te-input-wrapper-init>
                                     <input                                    
                                         className="peer block min-h-[auto] w-full rounded border-0 bg-transparent px-3 py-[0.32rem] leading-[1.6] outline-none transition-all duration-200 ease-linear focus:placeholder:opacity-100 peer-focus:text-primary data-[te-input-state-active]:placeholder:opacity-100 motion-reduce:transition-none dark:text-neutral-200 dark:placeholder:text-neutral-200 dark:peer-focus:text-primary [&:not([data-te-input-placeholder-active])]:placeholder:opacity-0"                                    
@@ -218,12 +222,12 @@ function BoardArea({ configObj } : initialDataType) {
                                         Close
                                     </div>
                                 </div>
-                            </div>                                         
+                            </React.Fragment>                                         
                         )
                         :
                         (
                             // Title
-                            <div className='flex w-fit mt-7'>
+                            <div className='flex w-full mt-7'>
                                 <div className='btn w-10 h-12 rounded ml-10' onClick={()=>{
                                         let mainTitle = {title: board.mainTitle.title, edit : true, save: board.mainTitle.save}
                                         setBoard({mainTitle})
@@ -236,7 +240,7 @@ function BoardArea({ configObj } : initialDataType) {
                                 </div>
                                 <div className='select-none text-4xl ml-3'>{board.mainTitle.title}</div>
                                 <div 
-                                    className="select-none text-md ml-16 h-12 ml-2 p-3 hover:cursor-pointer transition ease-in-out delay-350 bg-zinc-600 hover:-translate-y-1 hover:scale-110 hover:bg-cyan-700 duration-100" 
+                                    className="select-none w-24 text-md ml-16 h-12 ml-2 p-3 hover:cursor-pointer transition ease-in-out delay-350 bg-zinc-600 hover:-translate-y-1 hover:scale-110 hover:bg-cyan-700 duration-100" 
                                     onClick={()=>addNewCardArea()}
                                 >
                                     Add Area
@@ -244,30 +248,54 @@ function BoardArea({ configObj } : initialDataType) {
                             </div>
                         )
                     }   
-                    <div className='flex gap-20 ml-auto'>
-                        <div
-                            id={excludeAreaId}  
-                            className=''
-                        >
-                            <p className='text-blue-300'>Drop Areas</p>
-                            <div                                
-                                className='text-4xl rounded bg-blue-500 p-2 hover:bg-red-500'
-                            >
-                                🚮
-                            </div> 
-                        </div>
-                        <div
-                            id={excludeCardId}  
-                            className=''
-                        >
-                            <p className='text-amber-300'>Drop Cards</p>
-                            <div                                
-                                className='text-4xl invert rounded bg-blue-500 p-2 hover:bg-red-500'
-                            >
-                                🚮
-                            </div> 
-                        </div>
-                    </div>                                     
+                    </React.Fragment>    
+
+                    {/* Exclusion Area */}
+                    <div
+                        className='flex w-full'                                                                        
+                        onMouseLeave={()=> setShowExclusionArea(false)} 
+                    > 
+                        {
+                            showExclusionArea ? 
+                            (
+                                <div                                    
+                                    className='flex bg-zinc-900 rounded p-10 gap-20 ml-auto'>
+                                    <div
+                                        id={excludeAreaId}  
+                                        className='select-none w-1/2 h-1/2'
+                                    >
+                                        <p className='text-blue-300'>Drop Areas</p>
+                                        <div                                
+                                            className='text-4xl rounded bg-blue-500 p-2 hover:bg-red-500'
+                                        >
+                                            🚮
+                                        </div> 
+                                    </div>
+                                    <div
+                                        id={excludeCardId}  
+                                        className='select-none w-1/2 h-1/2'
+                                    >
+                                        <p className='text-amber-300'>Drop Cards</p>
+                                        <div                                
+                                            className='text-4xl rounded bg-blue-500 p-2 hover:bg-red-500'
+                                        >
+                                            🚮
+                                        </div> 
+                                    </div>
+                                </div>      
+                            )
+                            :
+                            (                                
+                                <div className='ml-auto'>
+                                    <div id={excludeAreaId} className='rounded ml-auto bg-zinc-900 w-16 h-16 p-2'>                                                                            
+                                        <img className='invert w-12 h-12 ml-auto' alt='' src={trashIcon}/>                                    
+                                        <div id={excludeCardId} />
+                                    </div>
+                                    <p className='select-none ml-auto bg-transparent text-sm p-5 opacity-25 animate-pulse'>Drag here to delete</p>
+                                </div>                                                                                                     
+                            )
+                        }                                                                    
+                    </div>              
                 </div>
                 {/* Cards Area */}
                 <div className='flex w-auto h-screen bg-zinc-700'>          
@@ -284,7 +312,7 @@ function BoardArea({ configObj } : initialDataType) {
                         }
                     </div>
                 </div>
-            </div>
+            </React.Fragment>
         </div>
     );
 }

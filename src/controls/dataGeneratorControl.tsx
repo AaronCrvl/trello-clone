@@ -1,4 +1,4 @@
-import BoardDataControl from "./boardDataControl";
+import BoardDataControl from '../controls/boardDataControl'
 import { configObjectType } from "../types/configObjectType";
 
 class DataGeneratorControl {    
