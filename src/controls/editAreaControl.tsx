@@ -7,7 +7,7 @@ import { configObjectType } from "../types/configObjectType";
 import SystemColors from "../types/enums/systemColors";
 import SystemBoardTemplates from "../types/enums/SystemBoardTemplates";
 
-function EditAreaControl () {       
+function EditAreaControl ( templateId : Number ) {           
     const newBoadModalId : string = 'myModal' + Math.random()
     const boardModalId : string = 'myBoardModal' + Math.random()
     const dataControl = new DataGeneratorControl()
@@ -153,10 +153,16 @@ function EditAreaControl () {
 
     // Load Initial Board View
     React.useEffect(()=> {
-        if(data.configObj.configs[0].configObject.name === 'Area Name') {      
+        if(data.configObj.configs[0].configObject.name === 'Area Name' && templateId === -1) {      
             appBoardTemplates.getBoardTemplate(-1).then(resConfigs => {
                 setData({ configObj: { boardName: 'New 📋', configs: resConfigs } })
             })      
+        }
+        if(templateId != -1)
+        {
+            appBoardTemplates.getBoardTemplate(templateId).then(resConfigs => {
+                setData({ configObj: { boardName: 'New 📋', configs: resConfigs } })
+            })   
         }
     })
 

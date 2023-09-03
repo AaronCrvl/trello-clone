@@ -2,6 +2,7 @@ import { createBrowserRouter } from "react-router-dom";
 import NavBar from '../components/navbar';
 import StartPage from '../pages/startPage';
 import EditBoard from '../pages/editBoard';
+import MyBoards from "../pages/myBoards";
 
 class AppRouter {
     mapRoutes () : any {
@@ -11,7 +12,11 @@ class AppRouter {
             children: [
                 {
                     path: "/",
-                    element: <StartPage />,                    
+                    element: <StartPage />,                                        
+                },
+                {
+                    path: "myboards",
+                    element: <MyBoards />,                          
                 },
                 {
                     path: "editBoard",

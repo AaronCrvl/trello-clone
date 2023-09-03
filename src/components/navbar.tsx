@@ -14,7 +14,7 @@ function NavBar () {
                                 <img className="w-24 h-12" alt="" src={logo}/>
                             </Link>
                         </li>                
-                        <li className={listTailwindCssStyle}>
+                        <li className={`${listTailwindCssStyle} hover:opacity-100`}>
                             {/* <Link to="myBoards"> */}
                                 📋 My Boards (In progress)
                             {/* </Link> */}
