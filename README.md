@@ -18,7 +18,9 @@ Trello clone made with typescript and React JS.
    - Add all types of input in card structure   
 
 ## Gif
-![ezgif com-video-to-gif](https://github.com/AaronCrvl/trello-clone/assets/72924198/3bb768cb-8650-4ae1-a0e3-ec61e5cfc84d)
+https://github.com/AaronCrvl/trello-clone/assets/72924198/eb504c70-c373-46fb-9146-4969e4d9b7db
+
+
 
 ## Execution
 
