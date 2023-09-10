@@ -1,22 +1,21 @@
 import React from 'react';
-import { useLocation } from 'react-router-dom';
-import EditAreaControl from '../controls/editAreaControl';
+import { configObjectType } from "../types/configObjectType";
+import { useLoaderData } from 'react-router-dom';
+import EditAreaControl from '../components/editArea';
 
-function EditBoard() {
-    const location = useLocation()
-    const [templateId, setTemplateId] = React.useState<Number>(-1)
+function EditBoard() {           
 
-    React.useEffect(() => {    
-        if(location.state!= null && location.state.template != null) {
-            setTemplateId(location.state.template === undefined ? -1 : location.state.template)                  
-        }
-    })
+    // get loader request data 
+    const loaderData = useLoaderData();
+    const rawData = { boardName: '', configs: loaderData as Array<configObjectType>  } 
 
     return (
-        <React.Fragment>
-            {EditAreaControl(templateId!)}                            
-        </React.Fragment>
+        <div>
+            <EditAreaControl 
+                configObj={rawData}
+            />
+        </div>
     )    
 }
 
-export default EditBoard;
+export default EditBoard; // !_☄

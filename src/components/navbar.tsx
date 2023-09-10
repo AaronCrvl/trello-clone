@@ -15,9 +15,9 @@ function NavBar () {
                             </Link>
                         </li>                
                         <li className={`${listTailwindCssStyle} hover:opacity-100`}>
-                            {/* <Link to="myBoards"> */}
-                                📋 My Boards (In progress)
-                            {/* </Link> */}
+                            <Link to="boardTemplates">
+                                📋 Board Templates
+                            </Link>
                         </li>
                         <li className={`${listTailwindCssStyle} hover:opacity-100`}>
                             <Link to="https:www.github.com/AaronCrvl/">

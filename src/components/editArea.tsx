@@ -1,28 +1,23 @@
 import React from "react";
-import BoardArea from "../components/boardArea";
-import expandIcon from '../assets/expand-icon.png'
+import BoardContainer from "./boardContainer";
 import { initialDataType } from "../types/initialDataType";
-import DataGeneratorControl from "./dataGeneratorControl";
 import { configObjectType } from "../types/configObjectType";
 import SystemColors from "../types/enums/systemColors";
-import SystemBoardTemplates from "../types/enums/SystemBoardTemplates";
+import pattern from '../assets/pattern3.svg'
 
-function EditAreaControl ( templateId : Number ) {           
+function EditAreaControl ({ configObj } : initialDataType) {           
     const newBoadModalId : string = 'myModal' + Math.random()
-    const boardModalId : string = 'myBoardModal' + Math.random()
-    const dataControl = new DataGeneratorControl()
+    const boardModalId : string = 'myBoardModal' + Math.random()    
+
     // enums
-    const appColors = new SystemColors()
-    const appBoardTemplates = new SystemBoardTemplates()
-    // Side Nav
-    const [showSideNav, setShowSideNav] = React.useState(false)      
-    // Top Options
-    const [showTopOptions, setShowTopOptions] = React.useState(false) 
-    // Board Color    
+    const appColors = new SystemColors()    
+
+    // Board Options
+    const [showTopOptions, setShowTopOptions] = React.useState(false)       
     const [showBoardColors, setShowBoardColors] = React.useState<Boolean>(false)
 
     // Component data    
-    let [data, setData] = React.useState<initialDataType>({
+    const [data, setData] = React.useState<initialDataType>({
         configObj: {
             boardName: '',
             configs: 
@@ -32,7 +27,8 @@ function EditAreaControl ( templateId : Number ) {
                     name: 'Area Name',
                     boardColor : ' bg-transparent',
                     ready: false,
-                    tasks : []
+                    tasks : [],
+                    parentCallback: () =>{}
                 }                 
             }]
         }
@@ -66,7 +62,8 @@ function EditAreaControl ( templateId : Number ) {
                     name: '',
                     boardColor : data.configObj.configs[0].configObject.boardColor,
                     ready: false,
-                    tasks: []
+                    tasks: [],
+                    parentCallback: () =>{}
                 }
             }
 
@@ -79,7 +76,8 @@ function EditAreaControl ( templateId : Number ) {
                         name: '',
                         boardColor : data.configObj.configs[0].configObject.boardColor,
                         ready: false,
-                        tasks: []
+                        tasks: [],
+                        parentCallback: () =>{}
                     }
                 }
                 arr.push(r)
@@ -90,35 +88,28 @@ function EditAreaControl ( templateId : Number ) {
         }        
     }
 
-    function changeBoardAreaOpacity() {    
-        let div = document.getElementById('externalBoardArea')! as HTMLElement        
-        showSideNav ? div.style.opacity = '100%' : div.style.opacity = '25%'
-        showSideNav ? div.style.pointerEvents = '' : div.style.pointerEvents = 'none'    
-        setShowSideNav(!showSideNav)
-    }
-
     function clearData() {        
-        setData({ configObj: { boardName: '', configs: [{ configObject : { name : '', boardColor : '', ready : false, tasks: [] } }] } })                
+        setData({ configObj: { boardName: '', configs: [{ configObject : { name : '', boardColor : '', ready : false, tasks: [], parentCallback: () =>{} } }] } })                
         handleModalClose(boardModalId)
     }
 
     function handleModalOpen(selectedModalId : string) {
-        if(selectedModalId == newBoadModalId) {
+        if(selectedModalId === newBoadModalId) {
             let myDialog : any = document.getElementById(newBoadModalId)
             myDialog.showModal()
         }
-        if(selectedModalId == boardModalId) {
+        if(selectedModalId === boardModalId) {
             let myDialog : any = document.getElementById(boardModalId)
             myDialog.showModal()
         }
     } 
 
     function handleModalClose(selectedModalId : string) {
-        if(selectedModalId == newBoadModalId) {
+        if(selectedModalId === newBoadModalId) {
             let myDialog : any = document.getElementById(newBoadModalId)
             myDialog.close()
         }
-        if(selectedModalId == boardModalId) {
+        if(selectedModalId === boardModalId) {
             let myDialog : any = document.getElementById(boardModalId)
             myDialog.close()
         }
@@ -134,91 +125,19 @@ function EditAreaControl ( templateId : Number ) {
         else {
             console.log("Something went wrong setting the colors.");
         }        
-    }
+    }     
 
-    // Board Template Select
-    function chooseBoardModel(boardModelId : any) {                
-        clearData()
-        changeBoardAreaOpacity()
-
-        if (appBoardTemplates.eBoardsTemplates.hasOwnProperty(boardModelId)) {
-            appBoardTemplates.getBoardTemplate(boardModelId).then(resConfig => {
-                setData({ configObj: { boardName: '', configs: resConfig}})
-            })
-        }
-        else {
-            console.log("Something went wrong setting the colors.");
-        }                        
-    }  
-
+    
     // Load Initial Board View
     React.useEffect(()=> {
-        if(data.configObj.configs[0].configObject.name === 'Area Name' && templateId === -1) {      
-            appBoardTemplates.getBoardTemplate(-1).then(resConfigs => {
-                setData({ configObj: { boardName: 'New 📋', configs: resConfigs } })
-            })      
-        }
-        if(templateId != -1)
-        {
-            appBoardTemplates.getBoardTemplate(templateId).then(resConfigs => {
-                setData({ configObj: { boardName: 'New 📋', configs: resConfigs } })
-            })   
-        }
-    })
-
-    // Side Nav
-    function sideNav () {
-        let ml10 = 'float-right', ml0 = 'z-10 float',
-        transitionListDiv = 'select-none z-10 text-2xl select-none hover:cursor-pointer p-5 rounded transition ease-in-out delay-150 bg-zinc-600 hover:-translate-y-1 hover:scale-110 hover:bg-orange-400 duration-300',
-        expandBtnDiv = 'select-none z-10 rounded-full w-12 h-12 mt-5 hover:cursor-pointer transition ease-in-out delay-350 bg-zinc-600 hover:-translate-y-1 hover:scale-110 hover:bg-orange-400 duration-100'
-
-        return(
-            <div 
-                className='select-none space-y-8 text-white text-lg font-bold p-2'
-            >            
-                {/* Expand Icon */}
-                <div className={showSideNav ? ml10 : ml0}>                              
-                    <img 
-                        id="expandIcon"
-                        alt='Expand' 
-                        src={expandIcon}
-                        className={expandBtnDiv}
-                        onClick={changeBoardAreaOpacity}
-                    />
-                </div>      
-                {/* Side nav control */}
-                <React.Fragment>
-                    {                             
-                        showSideNav ? 
-                        (
-                            // Expanded side nav
-                            <div className="z-10 ">
-                                <p className='underline select-none text-xl font-bold ml-5 mb-10 text-orange-400'>Board Templates</p>
-                                <ul className='space-y-8 p-5'>
-                                    <li className={transitionListDiv} onClick={()=>chooseBoardModel(0)}>Project Managment</li>
-                                    <li className={transitionListDiv} onClick={()=>chooseBoardModel(1)}>Habit Control</li>
-                                    <li className={transitionListDiv} onClick={()=>chooseBoardModel(2)}>Editorial Calendar</li>
-                                    <li className={transitionListDiv} onClick={()=>chooseBoardModel(3)}>Integration of New Employees</li>
-                                </ul>
-                            </div>
-                        )
-                        :
-                        (
-                            // Closed side nav
-                            <div className='w-0'></div>
-                        )
-                    }  
-                </React.Fragment>        
-            </div>   
-        )
-    }
+        if(data.configObj.configs[0].configObject.name === 'Area Name') {                 
+            setData({ configObj: { boardName: configObj.boardName, configs: configObj.configs } })            
+        }    
+    }, [configObj])
 
     return (
-        <div className="bg-zinc-900">  
-            <div className="flex shadow-2xl">
-                <div className="h-auto bg-zinc-900">
-                    {sideNav()}
-                </div>
+        <div style={{ height:'100vh', backgroundImage: `url(${pattern})` }}>    
+            <div className="flex shadow-2xl">   
                 {/* Boards, Card Area, Cards */}
                 <div id="externalBoardArea" className="h-full w-full overflow-x-hidden">     
                     <div 
@@ -226,7 +145,8 @@ function EditAreaControl ( templateId : Number ) {
                         onMouseEnter={()=>setShowTopOptions(true)}
                         onMouseLeave={()=>setShowTopOptions(false)}
                     >
-                        {
+                        {/* Board Edit Options */}
+                        {/* {
                             showTopOptions ?
                             (
                                 <div className="flex text-center items-center justify-center w-full bg-zinc-800 p-5 text-gray-300 font-bold">
@@ -276,15 +196,18 @@ function EditAreaControl ( templateId : Number ) {
                                     <p className="w-full opacity-50 text-center text-sm">Expand Options</p>                                    
                                 </div>
                             )
-                        }   
-                    </div>                                           
+                        }    */}
+                    </div>     
+                    {/* Board Area */}
                     <div className="w-full">
-                        <BoardArea
-                            configObj={data.configObj}
+                        <BoardContainer
+                            configObj={configObj}
                         />                            
                     </div>                     
                 </div>
-            </div>          
+            </div>        
+
+            {/* Hidden Modals --------------------------------------------------------------------------------------------------------------   */}
             {/* New Board Modal */}
             <dialog id={newBoadModalId} className="modal p-5 bg-zinc-800">                
                 <form method="dialog" className="modal-box rounded text-white p-2 ">

@@ -3,17 +3,20 @@ import Card from "./card";
 import { cardType } from "../types/cardType";
 import { configObjectType } from "../types/configObjectType";
 import editIcon from '../assets/edit-icon.png'
+import { tagType } from "../types/tagType";
 
-function CardArea({ configObject } : configObjectType) {  
+function CardContainer({ configObject : { name, boardColor, ready, tasks, parentCallback }} : configObjectType) {  
     const cardsDivId : string = 'dragCardDiv' + Math.random()    
     const areaId : string = 'dragThisAreaDiv' + Math.random()       
 
-    // Component dynamic data
+    // Drag & Drop
     const [dropConfig, setDropConfig] = React.useState<HTMLElement>()  
-    const [dragConfig, setDragConfig] = React.useState<HTMLElement>()                               
+    const [dragConfig, setDragConfig] = React.useState<HTMLElement>()    
+
+    // Component dynamic data                               
     const [cardArea, setCardArea] = React.useState({
         titleTextEdit : {
-            name : configObject.name,
+            name : name,
             edit : false,
             new : false,
             save : ()=> {
@@ -23,6 +26,17 @@ function CardArea({ configObject } : configObjectType) {
             }
         }
     })
+
+    // card list    
+    const [containerData, setContainerData] = React.useState<configObjectType>({
+        configObject : {
+            name: name,
+            boardColor: boardColor,
+            ready: ready,
+            tasks: tasks,
+            parentCallback : parentCallback,
+        }
+    })    
         
     // card functions
     function addNewCard() : void {
@@ -34,31 +48,24 @@ function CardArea({ configObject } : configObjectType) {
                 text :  txt.value,
                 description : [],
                 tags : [],
-                owner: '' 
-            }             
-
-            configObject.tasks.push(newCard)                      
-            let titleTextEdit : typeof cardArea.titleTextEdit = {name: cardArea.titleTextEdit.name, edit: false, new: false, save : cardArea.titleTextEdit.save}
-            setCardArea({titleTextEdit})
+                owner: '',
+                color: '',
+                parentCallback : callback,
+            }    
+                        
+            containerData.configObject.tasks.push(newCard)
+            setContainerData({ configObject : containerData.configObject })     
+            parentCallback(name)                
         }
     }
 
-    function removeCardFromList(key : string) : void
-    {        
-        let index : number = configObject.tasks.findIndex((x) => { 
-            return x.uniqueKey === key ? x.uniqueKey : 0
-        })
-        
-        console.log('Index: ' + index)
-        if(index >= 0)
-        {                        
-            configObject.tasks.splice(index, 1)            
-            let titleTextEdit : typeof cardArea.titleTextEdit = {name: cardArea.titleTextEdit.name, edit: false, new: false, save : cardArea.titleTextEdit.save}
-            setCardArea({titleTextEdit})            
-        }
+    // Callback--- ---------------------------------------------------------------------------------------------------------
+    function callback(key :  any, operation : String) {
+        parentCallback(key, operation)
     }
+    //----------------------------------------------------------------------------------------------------------------------
 
-    // Card drop on this component
+    // Drag & Drop ---------------------------------------------------------------------------------------------------------    
     React.useEffect(() : void => {
         setDropConfig(document.getElementById(cardsDivId)!)
         if(dropConfig !== undefined)
@@ -69,18 +76,40 @@ function CardArea({ configObject } : configObjectType) {
             }
 
             dropConfig.ondragleave = function (e) {                
-                e.preventDefault()                
+                e.preventDefault()    
+                dropConfig.style.border = ""            
             }
 
-            dropConfig.ondrop = function (e) {                        
-                let _id = e.dataTransfer!.getData("card") // card id                
-                
-                // get card with exclude button div
-                let element = document.getElementById(_id)!                
-                dropConfig.appendChild(element)      
+            dropConfig.ondrop = function (e) {  
+                e.preventDefault()   
 
-                // get card data and edit array                
+                // remove drag div highlight
                 dropConfig.style.border = ""
+
+                // get event data            
+                //let _id = e.dataTransfer!.getData("card")                 
+                let key = e.dataTransfer!.getData("key") 
+                let text = e.dataTransfer!.getData("text")                                                                  
+                let color = e.dataTransfer!.getData("color") 
+                let owner = e.dataTransfer!.getData("owner")                
+                let description = e.dataTransfer!.getData("description")  
+                let tags_colorHex = e.dataTransfer!.getData("tags_colorHex")                                        
+                let tags_description = e.dataTransfer!.getData("tags_description")            
+                
+                let tags : tagType[] = []
+                let hexArr = tags_colorHex.split(':')
+                let descArr = tags_description.split(':')                
+
+                for(let i = 0; i < hexArr.length; ++i) {
+                    tags.push({colorHex: hexArr[i], description: descArr[i]})
+                }
+
+                // insert new card and update obj state
+                containerData.configObject.tasks.push({uniqueKey: 'Card' + Math.random(), text: text, description: [description], tags: tags, color: color, owner: owner, parentCallback : callback })                                
+                setContainerData({ configObject : containerData.configObject })                
+
+                // remove dragged card from older cardContainer                
+                parentCallback(key, 'excludeCard')  
             }            
         }
     })
@@ -99,19 +128,20 @@ function CardArea({ configObject } : configObjectType) {
             
             dragConfig.ondrag = function(e) {
                 if((e.target as Element).id === areaId) {                    
-                    // console.log(`Area ${areaId} is beeing dragged.`)
+                    console.log(`Area ${areaId} is beeing dragged.`)
                 }
             }        
         }
     })
+    // -------------------------------------------------------------------------------------------------------------------
  
     return (
         <div           
             id={areaId}
             draggable
-            className="rounded Content h-auto p-3 w-96 "            
+            className="rounded Content h-auto p-2 w-96"            
         >               
-            <div className={'rounded-lg border-2 border-zinc-100 p-10 hover:cursor-grab ' + configObject.boardColor}>                
+            <div className={'rounded-lg border-2 border-zinc-100 p-4 hover:cursor-grab ' + boardColor}>                
                 {/* Title */}
                 <div className="w-full p-1 mb-3">                                
                     {
@@ -119,7 +149,7 @@ function CardArea({ configObject } : configObjectType) {
                         (
                             // Edit Card Area Title
                             <React.Fragment>                            
-                                <div className="relative mb-3" data-te-input-wrapper-init>
+                                <div className="relative mb-3 cursor-pointer" data-te-input-wrapper-init>
                                     <input                                    
                                         className="peer block min-h-[auto] w-full rounded border-0 bg-transparent px-3 py-[0.32rem] leading-[1.6] outline-none transition-all duration-200 ease-linear focus:placeholder:opacity-100 peer-focus:text-primary data-[te-input-state-active]:placeholder:opacity-100 motion-reduce:transition-none dark:text-neutral-200 dark:placeholder:text-neutral-200 dark:peer-focus:text-primary [&:not([data-te-input-placeholder-active])]:placeholder:opacity-0"                                    
                                         type="text"                                     
@@ -134,8 +164,8 @@ function CardArea({ configObject } : configObjectType) {
                                     </label>
                                 </div>
                                 <div className="flex mt-1">
-                                    <div className="btn p-1 select-none rounded bg-sky-500 text-white text-lg mr-1" onClick={cardArea.titleTextEdit.save}>Save</div>
-                                    <div className="btn p-1 select-none rounded bg-zinc-500 text-white text-lg" onClick={()=>{                                    
+                                    <div className="btn p-1 select-none rounded bg-sky-500 text-white text-md mr-1" onClick={cardArea.titleTextEdit.save}>Save</div>
+                                    <div className="btn p-1 select-none rounded bg-zinc-500 text-white text-md" onClick={()=>{                                    
                                         let titleTextEdit : typeof cardArea.titleTextEdit = {name: cardArea.titleTextEdit.name, edit: false, new: false, save : cardArea.titleTextEdit.save}
                                         setCardArea({titleTextEdit})
                                     }}>Close</div>
@@ -145,52 +175,56 @@ function CardArea({ configObject } : configObjectType) {
                         :
                         (
                             // Title div
-                            <div className="flex">                                
+                            <div className="flex w-auto">       
+                                <h1 className="select-none ml-2 text-lg text-white">{cardArea.titleTextEdit.name}</h1>                                                                                                                                                        
                                 <div 
                                     className='btn h-10 rounded hover:cursor-pointer transition ease-in-out delay-150 hover:-translate-y-1 hover:scale-110 duration-300' 
                                     onClick={()=>{
                                         let titleTextEdit : typeof cardArea.titleTextEdit = {name: cardArea.titleTextEdit.name, edit: true, new: false, save : cardArea.titleTextEdit.save}
                                         setCardArea({titleTextEdit})
                                     }}
-                                >
+                                >                                    
                                     <img 
                                         alt='edit' 
                                         src={editIcon} 
-                                        className='select-none w-10 h-10 p-1 justify-right invert hover:bg-red-500'
-                                    />                                     
-                                </div>                                                                                                              
-                                <h1 className="select-none ml-2 text-2xl text-white">{cardArea.titleTextEdit.name}</h1>                                                                                                                               
+                                        className='select-none ml-auto w-8 h-8 p-1 justify-right invert hover:bg-red-500'
+                                    />                                    
+                                </div>                                                                                                                                              
                             </div>
                         )
                     }                                   
                 </div>
-                {/* Cards */}
+                {/* Cards ------------------------------------------------------------------------------------------------- */}
                 <div
                     id={cardsDivId} 
-                    className="rounded bg-zinc-800 p-5 h-auto w-full"
+                    className="rounded bg-transparent p-8 h-auto w-full"
                 >
                     {
-                        configObject.tasks === undefined ?
+                        containerData.configObject.tasks === undefined ?
                         (
                             <div></div>
                         )
                         :
                         (
-                            configObject.tasks.map((card : cardType) => {                         
+                            containerData.configObject.tasks.map((card : cardType) => {                         
                                 {/* Card */}                       
                                 return (                                                                                                                                                                                                                 
-                                    <Card             
+                                    <Card   
+                                        key={Math.random()}
                                         uniqueKey={card.uniqueKey}                                                                                  
                                         text={card.text}
                                         description={card.description}
                                         tags={card.tags}
                                         owner={card.owner}
+                                        color={card.color}
+                                        parentCallback={callback}
                                     />                                                                                                                                                         
                                 )
                             })           
                         )
                     }          
                 </div>    
+                {/* ------------------------------------------------------------------------------------------------- */}
                 {/* Add new Card */}
                 <div className="flex text-center mt-5">
                     {
@@ -238,4 +272,4 @@ function CardArea({ configObject } : configObjectType) {
     );
 }
 
-export default CardArea; // !_☄
+export default CardContainer; // !_☄

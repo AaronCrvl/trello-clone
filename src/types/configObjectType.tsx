@@ -10,5 +10,7 @@ export type configObjectType = {
         ready : boolean, 
         // card in the card Area (configObjectType)
         tasks : Array<cardType>
+        // callback
+        parentCallback : Function
     }
 }

@@ -1,0 +1,8 @@
+#startPageBg {
+    background-image: url('../../assets/pattern.svg');
+}
+
+#boardTemplateBg {    
+    background-image: url('../../assets/pattern2.svg');
+    height:100vh;
+}

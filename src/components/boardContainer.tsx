@@ -1,11 +1,12 @@
 import React from 'react';
-import CardArea from './cardArea';
+import CardContainer from './cardContainer';
 import editIcon from '../assets/edit-icon.png'
 import trashIcon from '../assets/trashcan-icon.png';
 import { initialDataType } from '../types/initialDataType';
 import { configObjectType } from '../types/configObjectType';
+import './css/main.css';
 
-function BoardArea({ configObj } : initialDataType) {    
+function BoardContainer({ configObj } : initialDataType) {    
     const id = 'BoardAreaItem' + Math.random()    
     const excludeAreaId : string = 'ExcludeArea' + Math.random()       
     const excludeCardId : string = 'ExcludeCard' + Math.random()       
@@ -14,12 +15,12 @@ function BoardArea({ configObj } : initialDataType) {
     const [showExclusionArea, setShowExclusionArea] = React.useState<Boolean>(false)
     const [arr, setArr] = React.useState<Array<configObjectType>>(configObj.configs)
     const [dropConfig, setDropConfig] = React.useState<HTMLElement>()       
-    const [cardDropConfig, setCardDropConfig] = React.useState<HTMLElement>()  
-    
+    const [cardDropConfig, setCardDropConfig] = React.useState<HTMLElement>()      
+
     // Component dynamic data
     const [board, setBoard] = React.useState({
         mainTitle : {
-          title : '',
+          title : 'New Board🏂',
           edit : false,
           save : () => {
             let txt = document.getElementById("cardTitle")! as HTMLInputElement
@@ -37,9 +38,11 @@ function BoardArea({ configObj } : initialDataType) {
                     name : '',
                     boardColor: configObj.configs[0].configObject.boardColor,
                     ready : false, 
-                    tasks : []
+                    tasks : [],
+                    parentCallback : callback,
                 }
             }      
+            
             configObj.configs.push(newArea)                 
             setArr(configObj.configs)        
 
@@ -51,6 +54,8 @@ function BoardArea({ configObj } : initialDataType) {
         }
     } 
     
+    // force object update 
+    // call just when need to update state wihtout acessing inner setState
     function fakeInsertUpdate () {   
         // ..... define dynamic length size
         if(configObj.configs.length < 15) {
@@ -59,7 +64,8 @@ function BoardArea({ configObj } : initialDataType) {
                     name : '',
                     boardColor: configObj.configs[0].configObject.boardColor,
                     ready : false, 
-                    tasks : []
+                    tasks : [],
+                    parentCallback : callback,
                 }
             }      
             configObj.configs.push(newArea)                 
@@ -73,19 +79,31 @@ function BoardArea({ configObj } : initialDataType) {
             alert(`I bet you dont need more than ${configObj.configs.length} boards!`)
         }
     } 
+    
+    // Callback -----------------------------------------------------------------------------------------------------------------------
+    // Get key from specific card in cardContainer and delete the node
+    // activate's when card is dropped
+    const callback = (key : any, operation : String) :void => {                  
+        if(operation === 'excludeCard') {
+            configObj.configs.forEach(config => {
+                
+                // removing card from old container
+                let index = config.configObject.tasks.findIndex(element => {                    
+                    return element ? element.uniqueKey === key : -1
+                })
 
-    // !_🖥 
-    // this fix the configObject useState problem.
-    // when a template is selected the board area don't change automatically 
-    // because of the asynchronous hook call
-    React.useEffect(()=> {                 
-        fakeInsertUpdate()
-        if(board.mainTitle.title === '' || board.mainTitle.title === 'New 📋') {            
-            let mainTitle :typeof  board.mainTitle = {title: configObj.boardName, edit: false, save: board.mainTitle.save}
-            setBoard({mainTitle})
+                if(index > -1) {
+                    config.configObject.tasks.splice(index, 1)
+                    setArr(configObj.configs)                                  
+                }               
+            })        
         }
-    }, [configObj])
+            
+        fakeInsertUpdate()     
+    }
+    // ---------------------------------------------------------------------------------------------------------------------------------    
 
+    // Drag & Drop -----------------------------------------------------------------------------------------------------------------------
     // Exclude area drop config
     React.useEffect(() : any => {
         setDropConfig(document.getElementById(excludeAreaId)!)
@@ -168,7 +186,7 @@ function BoardArea({ configObj } : initialDataType) {
                     let boardIndex : number = -1, cardIndex : number = -1                     
                     configObj.configs.forEach(board => {
                         board.configObject.tasks.forEach(cardInBoard => {
-                            if(cardInBoard.uniqueKey == key) {
+                            if(cardInBoard.uniqueKey === key) {
                                 boardIndex = configObj.configs.indexOf(board)                                
                                 cardIndex = configObj.configs[configObj.configs.indexOf(board)].configObject.tasks.indexOf(cardInBoard)
                             }
@@ -187,12 +205,13 @@ function BoardArea({ configObj } : initialDataType) {
             }            
         }
     })  
+    // ---------------------------------------------------------------------------------------------------------------------------------    
 
     return (
-        <div id={id}>                
+        <div id={id} className='boardContainerBg'>                    
             <React.Fragment>        
                 {/* Board Title */}
-                <div className='flex w-full p-7 text-white font-bold bg-zinc-700'>   
+                <div className='flex w-full p-5 text-white font-bold bg-transparent'>   
                     <React.Fragment>
                     {
                         // Edit title
@@ -298,14 +317,20 @@ function BoardArea({ configObj } : initialDataType) {
                     </div>              
                 </div>
                 {/* Cards Area */}
-                <div className='flex w-auto h-screen bg-zinc-700'>          
-                    <div id={cardAreaId} className='inline-flex flex-nowrap p-2 Flipped bg-zinc-700 mt-10 overflow-x-auto'>
+                <div id='cardContainerDiv' className='flex w-auto h-screen bg-transparent p-8'>          
+                    <div id={cardAreaId} className='inline-flex flex-nowrap p-2 Flipped overflow-x-auto'>
                         {
                             arr.map((config : configObjectType) => {
                                 return (                                                           
-                                    <CardArea                                    
-                                        key={'cArea' + Math.random()}          
-                                        configObject={config.configObject}
+                                    <CardContainer                                    
+                                        key={'cArea' + Math.random()}                                                                                     
+                                        configObject={{
+                                            name : config.configObject.name,
+                                            boardColor : config.configObject.boardColor,
+                                            ready : false,
+                                            tasks : config.configObject.tasks,
+                                            parentCallback : callback
+                                        }}                                        
                                     />                                                                                  
                                 )
                             })
@@ -317,4 +342,4 @@ function BoardArea({ configObj } : initialDataType) {
     );
 }
 
-export default BoardArea; // !_☄
+export default BoardContainer; // !_☄

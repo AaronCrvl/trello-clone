@@ -3,6 +3,7 @@ import { RouterProvider } from 'react-router-dom';
 
 function App() {
   const router = new AppRouter().mapRoutes()
+  
   return (
     <div className='App'>
       <div className='w-auto h-auto font-poppins'>        
