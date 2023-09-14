@@ -10,7 +10,7 @@ function App() {
         <RouterProvider router={router} />
       </div>
     </div>
-  );
+  )
 }
 
 export default App; // !_☄

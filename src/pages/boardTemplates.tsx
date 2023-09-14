@@ -2,8 +2,8 @@ import React from 'react';
 import { Link } from 'react-router-dom';
 import './css/main.css'
 
-function BoardTemplates() {                
-    const templateDisplayConfig = [
+function BoardTemplates() {       
+    const templateDisplayConfig = React.useMemo(()=> [
         [0,'Management', 'Project Managment'],
         [1,'Personal', 'Habit Control'], 
         [2,'Calendar','Editorial Calendar'], 
@@ -11,7 +11,7 @@ function BoardTemplates() {
         [4,'Management', 'Scrum Project Model'],
         [5,'Human Resources', 'Employee Manual'],      
         [6,'Personal', 'Family Management'], 
-    ]                
+    ], [])
 
     return (                            
         <div className='bg-zinc-700 w-full h-screen'>            
@@ -32,9 +32,9 @@ function BoardTemplates() {
                                                     key={Math.random()}
                                                     className='text-xl text-white rounded-lg p-2 hover:text-white mb-2 transition ease-in-out bg-blue-500 hover:-translate-y-1 hover:scale-110 hover:bg-sky-500 duration-100'>
                                                     <Link id={Math.random().toString()} to={`/editBoard/${template[0]}`}>
-                                                        <div>                             
+                                                        <React.Fragment>                             
                                                             {template[2]}                          
-                                                        </div>
+                                                        </React.Fragment>
                                                     </Link>
                                                 </li>
                                             )
@@ -55,9 +55,9 @@ function BoardTemplates() {
                                                     key={Math.random()}
                                                     className='text-xl text-white rounded-lg p-2 hover:text-white mb-2 transition ease-in-out bg-green-500 hover:-translate-y-1 hover:scale-110 hover:bg-lime-500 duration-100'>
                                                     <Link id={Math.random().toString()} to={`/editBoard/${template[0]}`}>
-                                                        <div>                             
+                                                        <React.Fragment>                             
                                                             {template[2]}                          
-                                                        </div>
+                                                        </React.Fragment>
                                                     </Link>
                                                 </li>
                                             )
@@ -78,9 +78,9 @@ function BoardTemplates() {
                                                     key={Math.random()}
                                                     className='text-xl text-white rounded-lg p-2 hover:text-white mb-2 transition ease-in-out bg-orange-500 hover:-translate-y-1 hover:scale-110 hover:bg-red-500 duration-100'>
                                                     <Link id={Math.random().toString()} to={`/editBoard/${template[0]}`}>
-                                                        <div>                             
+                                                        <React.Fragment>                             
                                                             {template[2]}                          
-                                                        </div>
+                                                        </React.Fragment>
                                                     </Link>
                                                 </li>
                                             )
@@ -101,9 +101,9 @@ function BoardTemplates() {
                                                     key={Math.random()}
                                                     className='text-xl text-white rounded-lg p-2 hover:text-white mb-2 transition ease-in-out bg-purple-500 hover:-translate-y-1 hover:scale-110 hover:bg-indigo-500 duration-100'>
                                                     <Link id={Math.random().toString()} to={`/editBoard/${template[0]}`}>
-                                                        <div>                             
+                                                        <React.Fragment>                             
                                                             {template[2]}                          
-                                                        </div>
+                                                        </React.Fragment>
                                                     </Link>
                                                 </li>  
                                             )

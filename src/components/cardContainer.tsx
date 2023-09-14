@@ -6,8 +6,9 @@ import editIcon from '../assets/edit-icon.png'
 import { tagType } from "../types/tagType";
 
 function CardContainer({ configObject : { name, boardColor, ready, tasks, parentCallback }} : configObjectType) {  
-    const cardsDivId : string = 'dragCardDiv' + Math.random()    
-    const areaId : string = 'dragThisAreaDiv' + Math.random()       
+    const cardsDivId : string = React.useMemo(()=> 'dragCardDiv' + Math.random(), [])
+    const areaId : string = React.useMemo(()=>  'dragThisAreaDiv' + Math.random(), [])
+    const [isPending, startTransition] = React.useTransition();
 
     // Drag & Drop
     const [dropConfig, setDropConfig] = React.useState<HTMLElement>()  
@@ -40,29 +41,31 @@ function CardContainer({ configObject : { name, boardColor, ready, tasks, parent
         
     // card functions
     function addNewCard() : void {
-        if(cardArea.titleTextEdit.new)
-        {
-            let txt = document.getElementById("newCardInput")! as HTMLInputElement            
-            let newCard : cardType = {
-                uniqueKey : 'Card' + Math.random(),
-                text :  txt.value,
-                description : [],
-                tags : [],
-                owner: '',
-                color: '',
-                parentCallback : callback,
-            }    
-                        
-            containerData.configObject.tasks.push(newCard)
-            setContainerData({ configObject : containerData.configObject })     
-            parentCallback(name)                
-        }
+        startTransition(()=> {
+            if(cardArea.titleTextEdit.new)
+            {
+                let txt = document.getElementById("newCardInput")! as HTMLInputElement            
+                let newCard : cardType = {
+                    uniqueKey : 'Card' + Math.random(),
+                    text :  txt.value,
+                    description : [],
+                    tags : [],
+                    owner: '',
+                    color: '',
+                    parentCallback : callback,
+                }    
+                            
+                containerData.configObject.tasks.push(newCard)
+                setContainerData({ configObject : containerData.configObject })     
+                parentCallback(name)                
+            }
+        })
     }
 
     // Callback--- ---------------------------------------------------------------------------------------------------------
-    function callback(key :  any, operation : String) {
+    const callback = React.useCallback((key :  any, operation : string) => {
         parentCallback(key, operation)
-    }
+    }, [parentCallback])
     //----------------------------------------------------------------------------------------------------------------------
 
     // Drag & Drop ---------------------------------------------------------------------------------------------------------    
@@ -80,6 +83,8 @@ function CardContainer({ configObject : { name, boardColor, ready, tasks, parent
                 dropConfig.style.border = ""            
             }
 
+            // dont use React.UseTransition on drag and drop features
+            // drop config should block UI for a very short limited time
             dropConfig.ondrop = function (e) {  
                 e.preventDefault()   
 
@@ -105,14 +110,14 @@ function CardContainer({ configObject : { name, boardColor, ready, tasks, parent
                 }
 
                 // insert new card and update obj state
-                containerData.configObject.tasks.push({uniqueKey: 'Card' + Math.random(), text: text, description: [description], tags: tags, color: color, owner: owner, parentCallback : callback })                                
+                containerData.configObject.tasks.push({uniqueKey: 'Card' + Math.random(), text: text, description: description.split(':'), tags: tags, color: color, owner: owner, parentCallback : callback })                                
                 setContainerData({ configObject : containerData.configObject })                
 
                 // remove dragged card from older cardContainer                
                 parentCallback(key, 'excludeCard')  
             }            
         }
-    })
+    }, [dropConfig])
 
     // Card area drag
     React.useEffect(() : void => {        
@@ -132,7 +137,7 @@ function CardContainer({ configObject : { name, boardColor, ready, tasks, parent
                 }
             }        
         }
-    })
+    }, [dragConfig])
     // -------------------------------------------------------------------------------------------------------------------
  
     return (
@@ -141,7 +146,7 @@ function CardContainer({ configObject : { name, boardColor, ready, tasks, parent
             draggable
             className="rounded Content h-auto p-2 w-96"            
         >               
-            <div className={'rounded-lg border-2 border-zinc-100 p-4 hover:cursor-grab ' + boardColor}>                
+            <div className={'rounded-lg ring-2 ring-zinc-500 p-4 hover:cursor-grab ' + boardColor}>                
                 {/* Title */}
                 <div className="w-full p-1 mb-3">                                
                     {

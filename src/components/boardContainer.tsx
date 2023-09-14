@@ -7,11 +7,12 @@ import { configObjectType } from '../types/configObjectType';
 import './css/main.css';
 
 function BoardContainer({ configObj } : initialDataType) {    
-    const id = 'BoardAreaItem' + Math.random()    
-    const excludeAreaId : string = 'ExcludeArea' + Math.random()       
-    const excludeCardId : string = 'ExcludeCard' + Math.random()       
-    const cardAreaId : string = 'CardAreaOnBoad' + Math.random()       
+    const id = React.useMemo(()=> 'BoardAreaItem' + Math.random(), [])
+    const excludeAreaId : string = React.useMemo(()=> 'ExcludeArea' + Math.random(), [])
+    const excludeCardId : string = React.useMemo(()=> 'ExcludeCard' + Math.random(), [])
+    const cardAreaId : string = React.useMemo(()=> 'CardAreaOnBoad' + Math.random(), [])
 
+    const [isPending, startTransition] = React.useTransition();
     const [showExclusionArea, setShowExclusionArea] = React.useState<Boolean>(false)
     const [arr, setArr] = React.useState<Array<configObjectType>>(configObj.configs)
     const [dropConfig, setDropConfig] = React.useState<HTMLElement>()       
@@ -31,32 +32,34 @@ function BoardContainer({ configObj } : initialDataType) {
     })         
 
     function addNewCardArea () {   
-        // ..... define dynamic length size
-        if(configObj.configs.length < 15) {
-            let newArea : configObjectType = {
-                configObject: {
-                    name : '',
-                    boardColor: configObj.configs[0].configObject.boardColor,
-                    ready : false, 
-                    tasks : [],
-                    parentCallback : callback,
-                }
-            }      
-            
-            configObj.configs.push(newArea)                 
-            setArr(configObj.configs)        
+        startTransition(()=> {
+            // ..... define dynamic length size
+            if(configObj.configs.length < 15) {
+                let newArea : configObjectType = {
+                    configObject: {
+                        name : '',
+                        boardColor: configObj.configs[0].configObject.boardColor,
+                        ready : false, 
+                        tasks : [],
+                        parentCallback : callback,
+                    }
+                }      
+                
+                configObj.configs.push(newArea)                 
+                setArr(configObj.configs)        
 
-            let mainTitle :typeof  board.mainTitle = {title: board.mainTitle.title, edit: false, save: board.mainTitle.save}
-            setBoard({mainTitle})            
-        }
-        else {            
-            alert(`I bet you dont need more than ${configObj.configs.length} boards!`)
-        }
-    } 
+                let mainTitle :typeof  board.mainTitle = {title: board.mainTitle.title, edit: false, save: board.mainTitle.save}
+                setBoard({mainTitle})            
+            }
+            else {            
+                alert(`I bet you dont need more than ${configObj.configs.length} boards!`)
+            }
+        }) 
+    }
     
     // force object update 
     // call just when need to update state wihtout acessing inner setState
-    function fakeInsertUpdate () {   
+    function fakeInsertUpdate () {      
         // ..... define dynamic length size
         if(configObj.configs.length < 15) {
             let newArea : configObjectType = {
@@ -83,23 +86,40 @@ function BoardContainer({ configObj } : initialDataType) {
     // Callback -----------------------------------------------------------------------------------------------------------------------
     // Get key from specific card in cardContainer and delete the node
     // activate's when card is dropped
-    const callback = (key : any, operation : String) :void => {                  
-        if(operation === 'excludeCard') {
-            configObj.configs.forEach(config => {
-                
-                // removing card from old container
-                let index = config.configObject.tasks.findIndex(element => {                    
-                    return element ? element.uniqueKey === key : -1
-                })
+    const callback = (key : any, operation : string) :void => {  
+        startTransition(() => {                
+            if(operation === 'excludeCard') {
+                configObj.configs.forEach(config => {
+                    
+                    // removing card from old container
+                    let index = config.configObject.tasks.findIndex(element => {                    
+                        return element ? element.uniqueKey === key : -1
+                    })
 
-                if(index > -1) {
-                    config.configObject.tasks.splice(index, 1)
-                    setArr(configObj.configs)                                  
-                }               
-            })        
-        }
-            
-        fakeInsertUpdate()     
+                    if(index > -1) {
+                        config.configObject.tasks.splice(index, 1)
+                        setArr(configObj.configs)                                  
+                    }               
+                })        
+            }
+
+            if(operation.includes('bg')) {
+                configObj.configs.forEach(config => {
+                    
+                    // removing card from old container
+                    let index = config.configObject.tasks.findIndex(element => {                    
+                        return element ? element.uniqueKey === key : -1
+                    })
+
+                    if(index > -1) {
+                        config.configObject.tasks[index].color = operation
+                        setArr(configObj.configs)                                  
+                    }               
+                }) 
+            }
+                
+            fakeInsertUpdate()     
+        })
     }
     // ---------------------------------------------------------------------------------------------------------------------------------    
 
@@ -155,7 +175,7 @@ function BoardContainer({ configObj } : initialDataType) {
                 }
             }            
         }
-    })  
+    }, [dropConfig])  
     
     // Exclude card drop config
     React.useEffect(() : any => {
@@ -204,7 +224,7 @@ function BoardContainer({ configObj } : initialDataType) {
                 }
             }            
         }
-    })  
+    }, [cardDropConfig])  
     // ---------------------------------------------------------------------------------------------------------------------------------    
 
     return (

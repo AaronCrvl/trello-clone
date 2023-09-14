@@ -2,8 +2,7 @@ import {Fragment} from 'react'
 import logo  from '../assets/trello-clone-logo.png';
 import { Link, Outlet } from 'react-router-dom';
 
-function NavBar () { 
-    const listTailwindCssStyle = 'text-md mt-4 h-full ml-4 hover:bg-zinc-900 p-3 opacity-50 hover:cursor-pointer'
+function NavBar () {     
     return (
         <Fragment>
             <header>
@@ -14,12 +13,12 @@ function NavBar () {
                                 <img className="w-24 h-12" alt="" src={logo}/>
                             </Link>
                         </li>                
-                        <li className={`${listTailwindCssStyle} hover:opacity-100`}>
+                        <li className={`text-md mt-4 h-full ml-4 hover:bg-zinc-900 p-3 opacity-50 hover:cursor-pointer hover:opacity-100`}>
                             <Link to="boardTemplates">
                                 📋 Board Templates
                             </Link>
                         </li>
-                        <li className={`${listTailwindCssStyle} hover:opacity-100`}>
+                        <li className={`text-md mt-4 h-full ml-4 hover:bg-zinc-900 p-3 opacity-50 hover:cursor-pointer hover:opacity-100`}>
                             <Link to="https:www.github.com/AaronCrvl/">
                                 🎆 Other Projects
                             </Link>
@@ -27,7 +26,7 @@ function NavBar () {
                     </ul>
                 </div>
             </header>
-        <Outlet />
+            <Outlet />
         </Fragment>
     )
 }

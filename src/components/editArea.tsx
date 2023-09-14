@@ -5,9 +5,10 @@ import { configObjectType } from "../types/configObjectType";
 import SystemColors from "../types/enums/systemColors";
 import pattern from '../assets/pattern3.svg'
 
-function EditAreaControl ({ configObj } : initialDataType) {           
-    const newBoadModalId : string = 'myModal' + Math.random()
-    const boardModalId : string = 'myBoardModal' + Math.random()    
+function EditArea ({ configObj } : initialDataType) {           
+    const newBoadModalId : string = React.useMemo (()=> 'myModal' + Math.random(), [])
+    const boardModalId : string = React.useMemo(()=> 'myBoardModal' + Math.random(), [])
+    const [isPending, startTransition] = React.useTransition()
 
     // enums
     const appColors = new SystemColors()    
@@ -52,26 +53,12 @@ function EditAreaControl ({ configObj } : initialDataType) {
     }
 
     const createNewBoard = () => {
-        let newBoardName = (document.getElementById('boardName') as HTMLInputElement).value
-        let newBoardAreaNumber = (document.getElementById('boardNumber') as HTMLInputElement).value  
-        if(validaNewBoardData(newBoardName, newBoardAreaNumber) === true)  {
-            clearData()
-            let boardCount : number = parseInt(newBoardAreaNumber)
-            let config : configObjectType = {
-                configObject: {
-                    name: '',
-                    boardColor : data.configObj.configs[0].configObject.boardColor,
-                    ready: false,
-                    tasks: [],
-                    parentCallback: () =>{}
-                }
-            }
-
-            let arr : configObjectType[] = []                
-            arr = [config]            
-
-            for(let i=1; i < (boardCount-1); ++i) {
-                let r : configObjectType = {
+        startTransition(()=> {
+            let newBoardName = (document.getElementById('boardName') as HTMLInputElement).value
+            let newBoardAreaNumber = (document.getElementById('boardNumber') as HTMLInputElement).value  
+            if(validaNewBoardData(newBoardName, newBoardAreaNumber) === true)  {
+                let boardCount : number = parseInt(newBoardAreaNumber)
+                let config : configObjectType = {
                     configObject: {
                         name: '',
                         boardColor : data.configObj.configs[0].configObject.boardColor,
@@ -80,53 +67,62 @@ function EditAreaControl ({ configObj } : initialDataType) {
                         parentCallback: () =>{}
                     }
                 }
-                arr.push(r)
-            }
-          
-            setData({ configObj: { boardName: newBoardName, configs: arr } })
-            handleModalClose(boardModalId)
-        }        
-    }
 
-    function clearData() {        
-        setData({ configObj: { boardName: '', configs: [{ configObject : { name : '', boardColor : '', ready : false, tasks: [], parentCallback: () =>{} } }] } })                
-        handleModalClose(boardModalId)
-    }
+                let arr : configObjectType[] = []                
+                arr = [config]            
 
-    function handleModalOpen(selectedModalId : string) {
-        if(selectedModalId === newBoadModalId) {
-            let myDialog : any = document.getElementById(newBoadModalId)
-            myDialog.showModal()
+                for(let i=1; i < (boardCount-1); ++i) {
+                    let r : configObjectType = {
+                        configObject: {
+                            name: '',
+                            boardColor : data.configObj.configs[0].configObject.boardColor,
+                            ready: false,
+                            tasks: [],
+                            parentCallback: () =>{}
+                        }
+                    }
+                    arr.push(r)
+                }
+            
+                setData({ configObj: { boardName: newBoardName, configs: arr } })
+                //handleModalClose(boardModalId)
+            }        
         }
-        if(selectedModalId === boardModalId) {
-            let myDialog : any = document.getElementById(boardModalId)
-            myDialog.showModal()
-        }
-    } 
+    )}
 
-    function handleModalClose(selectedModalId : string) {
-        if(selectedModalId === newBoadModalId) {
-            let myDialog : any = document.getElementById(newBoadModalId)
-            myDialog.close()
-        }
-        if(selectedModalId === boardModalId) {
-            let myDialog : any = document.getElementById(boardModalId)
-            myDialog.close()
-        }
-    }  
+    // function handleModalOpen(selectedModalId : string) {
+    //     if(selectedModalId === newBoadModalId) {
+    //         let myDialog : any = document.getElementById(newBoadModalId)
+    //         myDialog.showModal()
+    //     }
+    //     if(selectedModalId === boardModalId) {
+    //         let myDialog : any = document.getElementById(boardModalId)
+    //         myDialog.showModal()
+    //     }
+    // } 
 
-    function viewBoardColors () { setShowBoardColors(!showBoardColors) }
+    // function handleModalClose(selectedModalId : string) {
+    //     if(selectedModalId === newBoadModalId) {
+    //         let myDialog : any = document.getElementById(newBoadModalId)
+    //         myDialog.close()
+    //     }
+    //     if(selectedModalId === boardModalId) {
+    //         let myDialog : any = document.getElementById(boardModalId)
+    //         myDialog.close()
+    //     }
+    // }  
 
-    function setColor (color : any) {        
-        if (appColors.eColors.hasOwnProperty(color)) {                        
-            data.configObj.configs.forEach(config => config.configObject.boardColor = appColors.getSystemColors(color).toString())
-            setData({ configObj: { boardName: '', configs: data.configObj.configs } })                
-        } 
-        else {
-            console.log("Something went wrong setting the colors.");
-        }        
-    }     
+    // function viewBoardColors () { setShowBoardColors(!showBoardColors) }
 
+    // function setColor (color : any) {        
+    //     if (appColors.eColors.hasOwnProperty(color)) {                        
+    //         data.configObj.configs.forEach(config => config.configObject.boardColor = appColors.getSystemColors(color).toString())
+    //         setData({ configObj: { boardName: '', configs: data.configObj.configs } })                
+    //     } 
+    //     else {
+    //         console.log("Something went wrong setting the colors.");
+    //     }        
+    // }     
     
     // Load Initial Board View
     React.useEffect(()=> {
@@ -165,9 +161,9 @@ function EditAreaControl ({ configObj } : initialDataType) {
                                     <div 
                                         className = { 
                                             showBoardColors ? 
-                                                "rounded text-center text-teal-200 ml-10 p-1 select-none hover:cursor-pointer"                                        
+                                                "z-10 rounded text-center text-teal-200 ml-10 p-1 select-none hover:cursor-pointer"                                        
                                             :
-                                                "rounded text-center text-teal-200 ml-10 p-1 select-none hover:cursor-pointer transition ease-in-out delay-350 hover:-translate-y-1 hover:scale-110 hover:bg-teal-600 hover:text-white duration-100"                                                                                            
+                                                "z-10 rounded text-center text-teal-200 ml-10 p-1 select-none hover:cursor-pointer transition ease-in-out delay-350 hover:-translate-y-1 hover:scale-110 hover:bg-teal-600 hover:text-white duration-100"                                                                                            
                                         }                            
                                         onClick={viewBoardColors}
                                     >
@@ -176,16 +172,23 @@ function EditAreaControl ({ configObj } : initialDataType) {
                                             showBoardColors ? 
                                             (
                                                 <ul className='mt-5 p-1 z-20 opacity-75'>
-                                                    <li className='hover:bg-red-700 p-1 rounded text-white' onClick={()=> setColor(0)}>Red</li>
-                                                    <li className='hover:bg-sky-700 p-1 rounded text-white' onClick={()=> setColor(1)}>Blue</li>
-                                                    <li className='hover:bg-emerald-700 p-1 rounded text-white' onClick={()=> setColor(2)}>Green</li>                                
-                                                    <li className='hover:bg-amber-700 p-1 rounded text-white' onClick={()=> setColor(3)}>Amber</li>                                
-                                                    <li className='hover:bg-cyan-700 p-1 rounded text-white' onClick={()=> setColor(4)}>Cyan</li>                                
-                                                    <li className='hover:bg-transparent p-1 rounded text-white' onClick={()=> setColor(5)}>Transparent</li>                                
+                                                    <li className='hover:bg-red-700 p-1 rounded text-white cursor-pointer select-none' onClick={()=> setColor(0)}>Red</li>
+                                                    <li className='hover:bg-sky-700 p-1 rounded text-white cursor-pointer select-none' onClick={()=> setColor(1)}>Blue</li>
+                                                    <li className='hover:bg-emerald-700 p-1 rounded text-white cursor-pointer select-none' onClick={()=> setColor(2)}>Green</li>                                
+                                                    <li className='hover:bg-amber-700 p-1 rounded text-white cursor-pointer select-none' onClick={()=> setColor(3)}>Amber</li>                                
+                                                    <li className='hover:bg-cyan-700 p-1 rounded text-white cursor-pointer select-none' onClick={()=> setColor(4)}>Cyan</li>                                
+                                                    <li className='hover:bg-transparent p-1 rounded text-white cursor-pointer select-none' onClick={()=> setColor(5)}>Transparent</li>                                
+                                                    <li className='hover:bg-zinc-700 p-1 rounded text-white cursor-pointer select-none' onClick={()=> setColor(6)}>Zinc</li>                        
+                                                    <li className='hover:bg-orange-700 p-1 rounded text-white cursor-pointer select-none' onClick={()=> setColor(7)}>Orange</li>                        
+                                                    <li className='hover:bg-yellow-700 p-1 rounded text-white cursor-pointer select-none' onClick={()=> setColor(8)}>Yellow</li>                        
+                                                    <li className='hover:bg-emerald-700 p-1 rounded text-white cursor-pointer select-none' onClick={()=> setColor(9)}>Emerald</li>                        
+                                                    <li className='hover:bg-sky-700 p-1 rounded text-white cursor-pointer select-none' onClick={()=> setColor(10)}>Sky</li>                        
+                                                    <li className='hover:bg-fuchsia-700 p-1 rounded text-white cursor-pointer select-none' onClick={()=> setColor(11)}>Fuchsia</li>                        
+                                                    <li className='hover:bg-rose-700 p-1 rounded text-white cursor-pointer select-none' onClick={()=> setColor(11)}>Rose</li>                        
                                                 </ul>
                                             )                                            
                                             :
-                                            (<div></div>)                                            
+                                            (<React.Fragment></React.Fragment>)                                            
                                         }
                                     </div>
                                 </div>
@@ -260,9 +263,9 @@ function EditAreaControl ({ configObj } : initialDataType) {
             </dialog>  
 
             {/* Clear Boards Modal */}
-            <dialog id={boardModalId} className="modal p-5 bg-zinc-800">                
+            {/* <dialog id={boardModalId} className="modal p-5 bg-zinc-800">                
                 <form method="dialog" className="modal-box rounded text-white p-2 ">                 
-                    {/* Modal Body */}
+                    Modal Body
                     <div className="w-full max-w-xs">
                         <form className="bg-zinc-700 text-white shadow-md rounded px-8 pt-6 pb-8 mb-4">
                             <div className="mb-4">
@@ -288,9 +291,9 @@ function EditAreaControl ({ configObj } : initialDataType) {
                         </p>
                     </div>
                 </form>
-            </dialog>  
+            </dialog>   */}
         </div>
     )
 }
 
-export default EditAreaControl; // !_☄
+export default EditArea; // !_☄
