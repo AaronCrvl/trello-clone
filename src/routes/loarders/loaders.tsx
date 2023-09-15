@@ -6,6 +6,7 @@ import ScrumProjectModelTemplate from "./templateLoaders/scrumProjectModelTempla
 import EmployeeManualTemplate from "./templateLoaders/employeeManualTemplate";
 import FamilyManagementTemplate from "./templateLoaders/familyManagementTemplate";
 import { configObjectType } from "../../types/configObjectType";
+import { rejects } from "assert";
 
 export default class Loaders {
   private projectManagement = new ProjectManagementLoader()
@@ -26,6 +27,21 @@ export default class Loaders {
       if(templateId === 4) resolve(this.scrumProjectModelTemplate.getBoards())      
       if(templateId === 5) resolve(this.employeeManualTemplate.getBoards())
       if(templateId === 6) resolve(this.familyManagementTemplate.getBoards())      
+    })
+  }
+
+  public getBoardTemplateList() : Promise<any> {
+    return new Promise((resolve, reject) => {
+      resolve([        
+        // Id, Category, Name
+        [0,'Management', 'Project Managment'],
+        [1,'Personal', 'Habit Control'], 
+        [2,'Calendar','Editorial Calendar'], 
+        [3,'Human Resources','Integration of New Employees'],
+        [4,'Management', 'Scrum Project Model'],
+        [5,'Human Resources', 'Employee Manual'],      
+        [6,'Personal', 'Family Management'], 
+    ])
     })
   }
 } // !_☄

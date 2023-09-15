@@ -6,16 +6,19 @@ import imgIcon from '../assets/imageIcon.png';
 import editIcon from '../assets/edit-icon.png';
 
 function Card({ uniqueKey, text, description, tags, owner, color, parentCallback } : cardType ) {  
+    // Id's ------------------------------>
     const id : string = React.useMemo(()=> 'dragContent' + Math.random(), [])
     const modalId : string = React.useMemo(()=> 'myModal' + Math.random(), [])
 
+    // Types ------------------------------>
+    const appColors = new SystemColors()   
+
+    // Hooks ------------------------------>
+    const [cardTitleOnEdit, setTitleOnEdit] = React.useState<Boolean>(false)
     const [isPending, startTransition] = React.useTransition();
     const [dragConfig, setDragConfig] = React.useState<HTMLElement>()   
-    const [showBoardColors, setShowBoardColors] = React.useState<Boolean>(false)      
-    const appColors = new SystemColors()       
-
-    // Component dynamic data
-    const [card, setCard] = React.useState({
+    const [showBoardColors, setShowBoardColors] = React.useState<Boolean>(false)              
+    const [card, setCard] = React.useState({ // Component dynamic data
         data: { 
             text: text,
             description : description,  
@@ -23,9 +26,14 @@ function Card({ uniqueKey, text, description, tags, owner, color, parentCallback
             owner : owner, 
             color: color,
         }
-    })              
+    })                          
 
+    // Functions ------------------------------>
     function openCardModal() {
+        if(cardTitleOnEdit) {
+            return             
+        }
+
         let myDialog : any = document.getElementById(modalId)
         myDialog.showModal()
     }  
@@ -87,70 +95,117 @@ function Card({ uniqueKey, text, description, tags, owner, color, parentCallback
         }                  
     } 
 
-    // Drag ------------------------------------------------------------------------------------------------
-    // drag settings
+    function alterName() {
+        let txt = document.getElementById("cardsTitle")! as HTMLInputElement
+        card.data.text = txt.value
+        txt.value = ''
+
+        setCard({
+            data: { 
+                text: card.data.text,
+                description : card.data.description,  
+                tags : card.data.tags,
+                owner : card.data.owner, 
+                color: card.data.color,
+            }
+        }) 
+
+        setTitleOnEdit(false)
+    }
+
+    function handleCardDrag( e :DragEvent) {
+        // deconstruct tag obj array members into a single string
+        let tagsDescArr : string[] = [], tagsHexArr : string[] = [] 
+        card.data.tags.forEach(tag => {
+            tagsDescArr.push(tag.description)   
+            tagsHexArr.push(tag.colorHex) 
+        })                            
+
+        // Transfer data
+        e.dataTransfer!.setData("card", id);                                                                
+        e.dataTransfer!.setData("key", uniqueKey);    
+        e.dataTransfer!.setData("text", card.data.text);    
+        e.dataTransfer!.setData("description", card.data.description.join(':'));    
+        e.dataTransfer!.setData("tags_colorHex", tagsHexArr.join(':'));                        
+        e.dataTransfer!.setData("tags_description", tagsDescArr.join(':'));                        
+        e.dataTransfer!.setData("color", card.data.color);    
+        e.dataTransfer!.setData("owner", owner); 
+    }
+
+    // Hooks (useEffect : Drag & Drop) ------------------------------>
+    // Drag 
     React.useEffect(() => {        
         setDragConfig(document.getElementById(id)!)        
         if(dragConfig !== undefined)
-        {                           
-            dragConfig.ondragstart = function (e) {    
-                if((e.target as Element).id === id) {  
-                    let cardM = document.createElement('img')
-                    cardM.src = cardMoving
-                    e.dataTransfer?.setDragImage(cardM, 0, 0)
-
-                    let tagsDescArr : string[] = [], tagsHexArr : string[] = [] 
-                    card.data.tags.forEach(tag => {
-                        tagsDescArr.push(tag.description)   
-                        tagsHexArr.push(tag.colorHex) 
-                    })                            
-
-                    e.dataTransfer!.setData("card", id);                                                                
-                    e.dataTransfer!.setData("key", uniqueKey);    
-                    e.dataTransfer!.setData("text", card.data.text);    
-                    e.dataTransfer!.setData("description", card.data.description.join(':'));    
-                    e.dataTransfer!.setData("tags_colorHex", tagsHexArr.join(':'));                        
-                    e.dataTransfer!.setData("tags_description", tagsDescArr.join(':'));                        
-                    e.dataTransfer!.setData("color", card.data.color);    
-                    e.dataTransfer!.setData("owner", owner);                                           
+        {                              
+            dragConfig.ondragstart = function (e) {                   
+                if((e.target as Element).id === id) {                                                            
+                    handleCardDrag(e)
                 }
             }
             
             dragConfig.ondrag = function(e) {
+                // set card moving image
                 let cardM = document.createElement('img')
                 cardM.src = cardMoving
                 e.dataTransfer?.setDragImage(cardM, 0, 0)
-
-                if((e.target as Element).id === id) {   
-                    console.log(`Card ${id} is beeing dragged.`)                    
-                }
             }        
         }
-    }, [dragConfig])
-    // -----------------------------------------------------------------------------------------------------    
+    }, [dragConfig])    
     
+    // Jsx ------------------------------>
     return (
         <div
             id={id}
-            draggable            
-            onClick={openCardModal}
+            draggable                        
             className={`rounded-lg p-5 mb-2 w-full ring-2 ring-zinc-500 ${card.data.color}`}            
         >
             {/* Title */}
             <div>
-                <div className="flex select-none text-gray-300 text-sm font-bold">
-                    <div>{text}</div>
-                    <div className="invert ml-auto cursor-pointer">
-                        <img 
-                            alt='' 
-                            className='w-4 h-4' 
-                            src={editIcon} 
-                        />
-                    </div>
-                </div>  
-                <div className="flex gap-1 mt-2 w-full">
+                {
+                    cardTitleOnEdit ?
+                    (
+                        <div>                            
+                            <React.Fragment>                            
+                                <div className="relative mb-3 cursor-pointer" data-te-input-wrapper-init>
+                                    <input                                    
+                                        className="peer block min-h-[auto] w-full rounded border-0 bg-transparent px-3 py-[0.32rem] leading-[1.6] outline-none transition-all duration-200 ease-linear focus:placeholder:opacity-100 peer-focus:text-primary data-[te-input-state-active]:placeholder:opacity-100 motion-reduce:transition-none dark:text-neutral-200 dark:placeholder:text-neutral-200 dark:peer-focus:text-primary [&:not([data-te-input-placeholder-active])]:placeholder:opacity-0"                                    
+                                        type="text"                                     
+                                        placeholder={card.data.text}   
+                                        id="cardsTitle"
+                                    />
+                                    <label
+                                        htmlFor="exampleFormControlInput"
+                                        className="pointer-events-none absolute left-3 top-0 mb-0 max-w-[90%] origin-[0_0] truncate pt-[0.37rem] leading-[1.6] text-neutral-500 transition-all duration-200 ease-out peer-focus:-translate-y-[0.9rem] peer-focus:scale-[0.8] peer-focus:text-primary peer-data-[te-input-state-active]:-translate-y-[0.9rem] peer-data-[te-input-state-active]:scale-[0.8] motion-reduce:transition-none dark:text-neutral-200 dark:peer-focus:text-primary"
+                                    >
+                                        {card.data.text}  
+                                    </label>
+                                </div>
+                                <div className="flex mt-1">
+                                    <div className="btn p-1 select-none rounded bg-sky-500 text-white text-md mr-1 cursor-pointer" onClick={alterName}>Save</div>                                    
+                                    <div className="btn p-1 select-none rounded bg-zinc-500 text-white text-md mr-1 cursor-pointer" onClick={()=> setTitleOnEdit(false)}>Close</div> 
+                                </div>
+                            </React.Fragment> 
+                        </div>
+                    )
+                    :
+                    (
+                        <div className="flex select-none text-gray-300 text-sm font-bold">
+                            <div onClick={openCardModal} className="cursor-pointer hover:scale-110 hover:text-lg">{card.data.text}</div>
+                            <div className="invert ml-auto cursor-pointer">
+                                <img 
+                                    alt='' 
+                                    className='w-4 h-4' 
+                                    src={editIcon} 
+                                    onClick={()=> setTitleOnEdit(true)}
+                                />
+                            </div>
+                        </div>  
+                    )
+                }
+                <div className="flex gap-1 mt-2 w-full hover:cursor-pointer" onClick={openCardModal}>
                     {
-                        tags.map((tag) => {
+                        card.data.tags.map((tag) => {
                             return (
                                 <div 
                                     key={Math.random()}
@@ -178,17 +233,19 @@ function Card({ uniqueKey, text, description, tags, owner, color, parentCallback
                     {/* Title Div */}
                     <div className="modal-action text-white flex w-full mb-1 mt-1 ">                    
                         {/* Title Text */}
-                        <h3 className="font-semibold text-left text-4xl w-full p-2 mb-2">{text}</h3>                      
+                        <h3 className="font-semibold text-left text-4xl w-full p-2 mb-2">{card.data.text}</h3>                      
                     </div>
                     
                     {/* Title Image Div */}
-                    <div className="text-white flex w-full mb-12 mt-1">                                            
-                        <h3 className="opacity-20 font-semibold text-left text-4xl w-full p-2 mb-2 border-4 border-zinc-800 rounde-lg">
-                            <img className="items-center justify-center mb-24 ml-80 w-42 h-42" src={imgIcon} />                            
-                        </h3>                                  
+                    <div className="text-white flex w-full mb-12 mt-1">                                                                                   
+                        <div className="opacity-20 w-full p-2 mb-2 border-4 border-zinc-800 rounded-lg">
+                            <img className="items-center font-semibold text-left text-4xl justify-center mb-24 ml-80 w-42 h-42" src={imgIcon} />    
+                            <input className="hover:cursor-pointer" type="file" alt='' />                                 
+                        </div>                                  
                     </div>                                                     
 
                     {/* Body Div */}
+                    {/* History */}
                     <div className="flex w-full">                    
                         <div className="container rounded p-1text-sm p-2 w-full mb-2 mt-2">                             
                             <div className="mt-5"> 
@@ -218,7 +275,7 @@ function Card({ uniqueKey, text, description, tags, owner, color, parentCallback
                                 <div className="mt-2 bg-zinc-800 p-5 rounded-lg">                                                                                                           
                                     <div className="overflow-y-auto">
                                     {                                        
-                                        description.map((item)=>{
+                                        card.data.description.map((item)=>{
                                             return (
                                                 <div key={Math.random()} className="text-white bg-gray-600 rounded p-2 mt-5">                                                    
                                                     <p className="text-right opacity-50 text-sm">{new Date().toTimeString()}</p>
@@ -233,6 +290,8 @@ function Card({ uniqueKey, text, description, tags, owner, color, parentCallback
                                 </div>                                            
                             </div>                     
                         </div>   
+
+                        {/* Tags */}
                         <div>
                             <div className="rounded w-72 p-2 ml-10 mb-2 mt-2 text-white h-fit">                                                                  
                                 <p className="text-xl text-white select-none font-semibold underline mb-5"
@@ -242,7 +301,7 @@ function Card({ uniqueKey, text, description, tags, owner, color, parentCallback
                                 <div className="bg-zinc-800 rounded-lg">                                                             
                                     <ul className="list-none p-3">
                                         {
-                                            tags.map((tag)=> {
+                                            card.data.tags.map((tag)=> {
                                                 return (
                                                     <li
                                                         className="flex"                                                    
@@ -292,6 +351,8 @@ function Card({ uniqueKey, text, description, tags, owner, color, parentCallback
                                     </div>   
                                 </div>
                             </div>  
+                            
+                            {/* Color Hover Set */}
                             <div 
                                 className="rounded w-72 p-2 ml-10 mb-2 mt-2 text-white h-fit"
                                 onMouseEnter={()=> setShowBoardColors(true)}

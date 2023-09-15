@@ -9,11 +9,11 @@ function EditBoard() {
 
     // get loader request data 
     const loaderData = useLoaderData();
-    const rawData = { boardName: '', configs: loaderData as Array<configObjectType>  } 
+    const loadedObj = { boardName: '', configs: loaderData as Array<configObjectType>  } 
 
     return (
         <React.Fragment>
-            <EditAreaControl configObj={rawData} />
+            <EditAreaControl configObj={loadedObj} />
         </React.Fragment>
     )    
 }

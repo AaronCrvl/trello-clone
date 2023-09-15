@@ -6,8 +6,10 @@ import BoardTemplates from "../pages/boardTemplates";
 import ErrorBoundary from "../pages/errorBoundary";
 import Loaders from "./loarders/loaders";
 
-class AppRouter {    
-  mapRoutes () : any {
+class AppRouter {   
+  private loader = new Loaders()
+  
+  public mapRoutes () : any {
     return createBrowserRouter([
     {    
       element: <NavBar />,
@@ -21,12 +23,13 @@ class AppRouter {
           {
             path: "boardTemplates",
             element: <BoardTemplates />,                                    
+            loader: async ({ request, params }) => this.loader.getBoardTemplateList(),
             errorElement: <ErrorBoundary />     
           },
           {                    
             path: "editBoard/:templateId",
             element: <EditBoard />,   
-            loader: async ({ request, params }) => new Loaders().getTemplate(Number.parseInt(params.templateId!)),
+            loader: async ({ request, params }) => this.loader.getTemplate(Number.parseInt(params.templateId!)),
             errorElement: <ErrorBoundary />                                                                   
           },
       ],

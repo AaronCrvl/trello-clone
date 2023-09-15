@@ -1,17 +1,10 @@
 import React from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useLoaderData } from 'react-router-dom';
 import './css/main.css'
 
 function BoardTemplates() {       
-    const templateDisplayConfig = React.useMemo(()=> [
-        [0,'Management', 'Project Managment'],
-        [1,'Personal', 'Habit Control'], 
-        [2,'Calendar','Editorial Calendar'], 
-        [3,'Human Resources','Integration of New Employees'],
-        [4,'Management', 'Scrum Project Model'],
-        [5,'Human Resources', 'Employee Manual'],      
-        [6,'Personal', 'Family Management'], 
-    ], [])
+    const loader = useLoaderData()
+    const templateDisplayConfig = loader as Array<string[] | number[]>
 
     return (                            
         <div className='bg-zinc-700 w-full h-screen'>            
@@ -22,8 +15,7 @@ function BoardTemplates() {
                         <div>
                             <h1 className='text-white text-2xl font-bold mb-10'>Management</h1>
                             <ul>
-                                {
-                                
+                                {                                
                                     // Management
                                     templateDisplayConfig.map(template => {
                                         if(template[1] === 'Management') {

@@ -6,8 +6,8 @@ import SystemColors from "../types/enums/systemColors";
 import pattern from '../assets/pattern3.svg'
 
 function EditArea ({ configObj } : initialDataType) {           
-    const newBoadModalId : string = React.useMemo (()=> 'myModal' + Math.random(), [])
-    const boardModalId : string = React.useMemo(()=> 'myBoardModal' + Math.random(), [])
+    // const newBoadModalId : string = React.useMemo (()=> 'myModal' + Math.random(), [])
+    // const boardModalId : string = React.useMemo(()=> 'myBoardModal' + Math.random(), [])
     const [isPending, startTransition] = React.useTransition()
 
     // enums
@@ -52,24 +52,17 @@ function EditArea ({ configObj } : initialDataType) {
         }        
     }
 
-    const createNewBoard = () => {
-        startTransition(()=> {
-            let newBoardName = (document.getElementById('boardName') as HTMLInputElement).value
-            let newBoardAreaNumber = (document.getElementById('boardNumber') as HTMLInputElement).value  
-            if(validaNewBoardData(newBoardName, newBoardAreaNumber) === true)  {
-                let boardCount : number = parseInt(newBoardAreaNumber)
-                let config : configObjectType = {
-                    configObject: {
-                        name: '',
-                        boardColor : data.configObj.configs[0].configObject.boardColor,
-                        ready: false,
-                        tasks: [],
-                        parentCallback: () =>{}
-                    }
-                }
+    function createNewBoard () {
+        let newBoardName = (document.getElementById('boardName') as HTMLInputElement).value
+        let newBoardAreaNumber = (document.getElementById('boardNumber') as HTMLInputElement).value  
 
-                let arr : configObjectType[] = []                
-                arr = [config]            
+        startTransition(()=> {      
+            if(validaNewBoardData(newBoardName, newBoardAreaNumber) === true)  {                
+                let config : configObjectType = {
+                    configObject: {name: '', boardColor : data.configObj.configs[0].configObject.boardColor, ready: false, tasks: [], parentCallback: ()=> {}}
+                }
+                let boardCount : number = parseInt(newBoardAreaNumber)
+                let arr : configObjectType[] = [config]            
 
                 for(let i=1; i < (boardCount-1); ++i) {
                     let r : configObjectType = {
@@ -123,13 +116,6 @@ function EditArea ({ configObj } : initialDataType) {
     //         console.log("Something went wrong setting the colors.");
     //     }        
     // }     
-    
-    // Load Initial Board View
-    React.useEffect(()=> {
-        if(data.configObj.configs[0].configObject.name === 'Area Name') {                 
-            setData({ configObj: { boardName: configObj.boardName, configs: configObj.configs } })            
-        }    
-    }, [configObj])
 
     return (
         <div style={{ height:'100vh', backgroundImage: `url(${pattern})` }}>    
@@ -212,9 +198,9 @@ function EditArea ({ configObj } : initialDataType) {
 
             {/* Hidden Modals --------------------------------------------------------------------------------------------------------------   */}
             {/* New Board Modal */}
-            <dialog id={newBoadModalId} className="modal p-5 bg-zinc-800">                
+            {/* <dialog id={newBoadModalId} className="modal p-5 bg-zinc-800">                
                 <form method="dialog" className="modal-box rounded text-white p-2 ">
-                    {/* Modal Title  */}
+                    Modal Title 
                     <div className="modal-action text-right p-2">                                            
                         <button 
                             className="btn p-1 w-fit h-fit text-white font-bold rounded bg-sky-600 hover:bg-sky-400"
@@ -222,7 +208,7 @@ function EditArea ({ configObj } : initialDataType) {
                             X
                         </button>
                     </div>          
-                    {/* Modal Body */}
+                    Modal Body 
                     <div className="w-full max-w-xs">
                         <form className="bg-zinc-700 text-white shadow-md rounded px-8 pt-6 pb-8 mb-4">
                             <div className="mb-4">
@@ -260,7 +246,7 @@ function EditArea ({ configObj } : initialDataType) {
                         </p>
                     </div>
                 </form>
-            </dialog>  
+            </dialog>   */}
 
             {/* Clear Boards Modal */}
             {/* <dialog id={boardModalId} className="modal p-5 bg-zinc-800">                

@@ -6,16 +6,16 @@ import editIcon from '../assets/edit-icon.png'
 import { tagType } from "../types/tagType";
 
 function CardContainer({ configObject : { name, boardColor, ready, tasks, parentCallback }} : configObjectType) {  
+    // Id's ------------------------------>
     const cardsDivId : string = React.useMemo(()=> 'dragCardDiv' + Math.random(), [])
     const areaId : string = React.useMemo(()=>  'dragThisAreaDiv' + Math.random(), [])
+    
+    // Hooks ------------------------------>
     const [isPending, startTransition] = React.useTransition();
+    const [dropConfig, setDropConfig] = React.useState<HTMLElement>()  // drag
+    const [dragConfig, setDragConfig] = React.useState<HTMLElement>()  // drop   
 
-    // Drag & Drop
-    const [dropConfig, setDropConfig] = React.useState<HTMLElement>()  
-    const [dragConfig, setDragConfig] = React.useState<HTMLElement>()    
-
-    // Component dynamic data                               
-    const [cardArea, setCardArea] = React.useState({
+    const [cardArea, setCardArea] = React.useState({ // Component dynamic data                               
         titleTextEdit : {
             name : name,
             edit : false,
@@ -27,9 +27,8 @@ function CardContainer({ configObject : { name, boardColor, ready, tasks, parent
             }
         }
     })
-
-    // card list    
-    const [containerData, setContainerData] = React.useState<configObjectType>({
+      
+    const [containerData, setContainerData] = React.useState<configObjectType>({ // card list  
         configObject : {
             name: name,
             boardColor: boardColor,
@@ -39,7 +38,7 @@ function CardContainer({ configObject : { name, boardColor, ready, tasks, parent
         }
     })    
         
-    // card functions
+    // Functions ------------------------------>
     function addNewCard() : void {
         startTransition(()=> {
             if(cardArea.titleTextEdit.new)
@@ -62,72 +61,91 @@ function CardContainer({ configObject : { name, boardColor, ready, tasks, parent
         })
     }
 
-    // Callback--- ---------------------------------------------------------------------------------------------------------
+    function handleCardDrop(e : DragEvent) {        
+        // remove drag div highlight
+        dropConfig!.style.border = ""
+
+        // get event data            
+        //let _id = e.dataTransfer!.getData("card")   
+        let key = e.dataTransfer?.getData("key")                               
+        let text = e.dataTransfer!.getData("text")                                                                  
+        let color = e.dataTransfer!.getData("color") 
+        let owner = e.dataTransfer!.getData("owner")                
+        let description = e.dataTransfer!.getData("description")  
+        let tags_colorHex = e.dataTransfer!.getData("tags_colorHex")                                        
+        let tags_description = e.dataTransfer!.getData("tags_description")            
+        
+        let tags : tagType[] = []
+        let hexArr = tags_colorHex.split(':')
+        let descArr = tags_description.split(':')                
+
+        for(let i = 0; i < hexArr.length; ++i) {
+            tags.push({colorHex: hexArr[i], description: descArr[i]})
+        }
+
+        // insert new card and update obj state
+        containerData.configObject.tasks.push({uniqueKey: 'Card' + Math.random(), text: text, description: description.split(':'), tags: tags, color: color, owner: owner, parentCallback : callback })                                
+        setContainerData({ configObject : containerData.configObject })                
+
+        // remove dragged card from older cardContainer                
+        parentCallback(key, 'excludeCard')  
+    }
+
+    
+    // Callback ⚠ - Refers to callback in board container
     const callback = React.useCallback((key :  any, operation : string) => {
         parentCallback(key, operation)
     }, [parentCallback])
-    //----------------------------------------------------------------------------------------------------------------------
 
-    // Drag & Drop ---------------------------------------------------------------------------------------------------------    
+
+    // Hooks (useEffect : Drag & Drop) ------------------------------>
+    // Drop 
     React.useEffect(() : void => {
         setDropConfig(document.getElementById(cardsDivId)!)
         if(dropConfig !== undefined)
         {
-            dropConfig.ondragover = function (e) {                
+            dropConfig.ondragover = function (e) {                  
                 e.preventDefault()
-                dropConfig.style.border = "4px solid white"        
+                dropConfig.style.border = "2px solid white"      
+
+                let name = e.dataTransfer?.getData('Name')                
+                let area = e.dataTransfer?.getData('Area')
+                if(
+                    (area && area !== undefined)
+                    && (name && name !== undefined)) {
+
+                    dropConfig.style.position = "absolute"      
+                }
+  
             }
 
             dropConfig.ondragleave = function (e) {                
                 e.preventDefault()    
-                dropConfig.style.border = ""            
+                dropConfig.style.border = ""      
+                dropConfig.style.position = "relative"            
             }
 
             // dont use React.UseTransition on drag and drop features
             // drop config should block UI for a very short limited time
             dropConfig.ondrop = function (e) {  
                 e.preventDefault()   
-
-                // remove drag div highlight
-                dropConfig.style.border = ""
-
-                // get event data            
-                //let _id = e.dataTransfer!.getData("card")                 
-                let key = e.dataTransfer!.getData("key") 
-                let text = e.dataTransfer!.getData("text")                                                                  
-                let color = e.dataTransfer!.getData("color") 
-                let owner = e.dataTransfer!.getData("owner")                
-                let description = e.dataTransfer!.getData("description")  
-                let tags_colorHex = e.dataTransfer!.getData("tags_colorHex")                                        
-                let tags_description = e.dataTransfer!.getData("tags_description")            
-                
-                let tags : tagType[] = []
-                let hexArr = tags_colorHex.split(':')
-                let descArr = tags_description.split(':')                
-
-                for(let i = 0; i < hexArr.length; ++i) {
-                    tags.push({colorHex: hexArr[i], description: descArr[i]})
+                let key = e.dataTransfer?.getData("key") 
+                if(key && key!== undefined) {
+                    handleCardDrop(e)                    
                 }
-
-                // insert new card and update obj state
-                containerData.configObject.tasks.push({uniqueKey: 'Card' + Math.random(), text: text, description: description.split(':'), tags: tags, color: color, owner: owner, parentCallback : callback })                                
-                setContainerData({ configObject : containerData.configObject })                
-
-                // remove dragged card from older cardContainer                
-                parentCallback(key, 'excludeCard')  
             }            
         }
     }, [dropConfig])
 
-    // Card area drag
+    // drag
     React.useEffect(() : void => {        
         setDragConfig(document.getElementById(areaId)!)        
         if(dragConfig !== undefined)
         {               
             dragConfig.ondragstart = function (e) {     
                 if((e.target as Element).id === areaId) {
-                    e.dataTransfer!.setData("dragCardArea", areaId);                                            
-                    e.dataTransfer!.setData("cardAreaName", cardArea.titleTextEdit.name);                                            
+                    e.dataTransfer!.setData("Name", containerData.configObject.name);                                            
+                    e.dataTransfer!.setData("Area", areaId);                                            
                 }
             }
             
@@ -138,15 +156,15 @@ function CardContainer({ configObject : { name, boardColor, ready, tasks, parent
             }        
         }
     }, [dragConfig])
-    // -------------------------------------------------------------------------------------------------------------------
- 
+
+    // Jsx ------------------------------>
     return (
         <div           
             id={areaId}
             draggable
             className="rounded Content h-auto p-2 w-96"            
         >               
-            <div className={'rounded-lg ring-2 ring-zinc-500 p-4 hover:cursor-grab ' + boardColor}>                
+            <div className={`rounded-lg ring-2 ring-zinc-500 p-4 hover:cursor-grab ${boardColor} scale-95 hover:scale-100`}>                
                 {/* Title */}
                 <div className="w-full p-1 mb-3">                                
                     {
@@ -202,7 +220,7 @@ function CardContainer({ configObject : { name, boardColor, ready, tasks, parent
                 {/* Cards ------------------------------------------------------------------------------------------------- */}
                 <div
                     id={cardsDivId} 
-                    className="rounded bg-transparent p-8 h-auto w-full"
+                    className="rounded bg-transparent p-8 h-auto w-full hover:scale-110"
                 >
                     {
                         containerData.configObject.tasks === undefined ?
