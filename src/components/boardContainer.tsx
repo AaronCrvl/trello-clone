@@ -12,6 +12,12 @@ function BoardContainer({ configObj } : initialDataType) {
     const excludeAreaId : string = React.useMemo(()=> 'ExcludeArea' + Math.random(), [])    
     const cardAreaId : string = React.useMemo(()=> 'CardAreaOnBoad' + Math.random(), [])    
 
+    // Refs ------------------------------>
+    const boardTitleInputRef = React.useRef(null)
+    const excludeDivRef = React.useRef(null)
+    const cardContainerDivRef = React.useRef(null)
+    const cardContainer_AreaDivRef = React.useRef(null)
+
     // Hooks ------------------------------>
     const [isPending, startTransition] = React.useTransition();    
     const [arr, setArr] = React.useState<Array<configObjectType>>(configObj.configs)
@@ -23,7 +29,7 @@ function BoardContainer({ configObj } : initialDataType) {
           title : 'New Board🏂',
           edit : false,
           save : () => {
-            let txt = document.getElementById("cardTitle")! as HTMLInputElement
+            let txt = boardTitleInputRef.current! as HTMLInputElement
             let mainTitle = {title: txt.value, edit : false, save: board.mainTitle.save}
             setBoard({mainTitle}) 
           }
@@ -219,7 +225,7 @@ function BoardContainer({ configObj } : initialDataType) {
     // Hooks (useEffect : Drag & Drop) ------------------------------>
     // Exclude board area drop config
     React.useEffect(() : any => {
-        setExclusionDropConfig(document.getElementById(excludeAreaId)!)
+        setExclusionDropConfig(excludeDivRef.current!)
         if(excludeDropConfig !== undefined)
         {
             excludeDropConfig.ondragover = function (e) {                
@@ -242,7 +248,7 @@ function BoardContainer({ configObj } : initialDataType) {
     
     // container drop
     React.useEffect(() : any => {
-        setCardContainerDropConfig(document.getElementById('cardContainerDiv')!)
+        setCardContainerDropConfig(cardContainerDivRef.current!)
         if(cardContainerDropConfig !== undefined)
         {
             cardContainerDropConfig.ondragover = function (e) {                
@@ -280,6 +286,7 @@ function BoardContainer({ configObj } : initialDataType) {
                                         type="text"    
                                         placeholder='Change'                                                                     
                                         id="cardTitle" 
+                                        ref={boardTitleInputRef}
                                     />
                                     <label
                                         htmlFor="exampleFormControlInput1"
@@ -330,7 +337,7 @@ function BoardContainer({ configObj } : initialDataType) {
                         className='flex w-full'                                                                                              
                     >                                                   
                         <div className='ml-auto'>
-                            <div id={excludeAreaId} className='rounded ml-auto bg-zinc-900 w-16 h-16 p-2'>                                                                            
+                            <div id={excludeAreaId} ref={excludeDivRef} className='rounded ml-auto bg-zinc-900 w-16 h-16 p-2'>                                                                            
                                 <img className='invert w-12 h-12 ml-auto' alt='' src={trashIcon}/>                                                                            
                             </div>
                             <p className='select-none ml-auto bg-transparent text-sm p-5 opacity-25 animate-pulse'>Drag here to delete</p>
@@ -338,8 +345,8 @@ function BoardContainer({ configObj } : initialDataType) {
                     </div>              
                 </div>
                 {/* Cards Area */}
-                <div id='cardContainerDiv' className='flex w-auto h-screen bg-transparent p-8'>          
-                    <div id={cardAreaId} className='inline-flex flex-nowrap p-2 Flipped overflow-x-auto'>
+                <div id='cardContainerDiv' ref={cardContainerDivRef } className='flex w-auto h-screen bg-transparent p-8'>          
+                    <div id={cardAreaId} ref={cardContainer_AreaDivRef} className='inline-flex flex-nowrap p-2 Flipped overflow-x-auto'>
                         {
                             arr.map((config : configObjectType) => {
                                 return (                                                           

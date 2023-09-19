@@ -9,24 +9,17 @@ function CardContainer({ configObject : { name, boardColor, ready, tasks, parent
     // Id's ------------------------------>
     const cardsDivId : string = React.useMemo(()=> 'dragCardDiv' + Math.random(), [])
     const areaId : string = React.useMemo(()=>  'dragThisAreaDiv' + Math.random(), [])
+
+    // Refs ------------------------------>
+    const cardAreaTitleInputRef = React.useRef(null)
+    const newCardNameInputRef = React.useRef(null)
     
     // Hooks ------------------------------>
     const [isPending, startTransition] = React.useTransition();
     const [dropConfig, setDropConfig] = React.useState<HTMLElement>()  // drag
     const [dragConfig, setDragConfig] = React.useState<HTMLElement>()  // drop   
-
-    const [cardArea, setCardArea] = React.useState({ // Component dynamic data                               
-        titleTextEdit : {
-            name : name,
-            edit : false,
-            new : false,
-            save : ()=> {
-                let txt = document.getElementById("cardAreaTitle")! as HTMLInputElement
-                let titleTextEdit : typeof cardArea.titleTextEdit = {name: txt.value, edit: false, new: false, save : cardArea.titleTextEdit.save}
-                setCardArea({titleTextEdit})
-            }
-        }
-    })
+    const [onEditTitle, setOnEditTitle] = React.useState<Boolean>(false)
+    const [onAddNewCard, setOnAddNewCard] = React.useState<Boolean>(false)
       
     const [containerData, setContainerData] = React.useState<configObjectType>({ // card list  
         configObject : {
@@ -40,24 +33,21 @@ function CardContainer({ configObject : { name, boardColor, ready, tasks, parent
         
     // Functions ------------------------------>
     function addNewCard() : void {
-        startTransition(()=> {
-            if(cardArea.titleTextEdit.new)
-            {
-                let txt = document.getElementById("newCardInput")! as HTMLInputElement            
-                let newCard : cardType = {
-                    uniqueKey : 'Card' + Math.random(),
-                    text :  txt.value,
-                    description : [],
-                    tags : [],
-                    owner: '',
-                    color: '',
-                    parentCallback : callback,
-                }    
-                            
-                containerData.configObject.tasks.push(newCard)
-                setContainerData({ configObject : containerData.configObject })     
-                parentCallback(name)                
-            }
+        startTransition(()=> {                        
+            let txt = newCardNameInputRef.current! as HTMLInputElement            
+            let newCard : cardType = {
+                uniqueKey : 'Card' + Math.random(),
+                text :  txt.value,
+                description : [],
+                tags : [],
+                owner: '',
+                color: '',
+                parentCallback : callback,
+            }    
+                        
+            containerData.configObject.tasks.push(newCard)
+            setContainerData({ configObject : containerData.configObject })     
+            parentCallback(name)                            
         })
     }
 
@@ -168,7 +158,7 @@ function CardContainer({ configObject : { name, boardColor, ready, tasks, parent
                 {/* Title */}
                 <div className="w-full p-1 mb-3">                                
                     {
-                        cardArea.titleTextEdit.edit ? 
+                        onEditTitle ? 
                         (
                             // Edit Card Area Title
                             <React.Fragment>                            
@@ -176,21 +166,28 @@ function CardContainer({ configObject : { name, boardColor, ready, tasks, parent
                                     <input                                    
                                         className="peer block min-h-[auto] w-full rounded border-0 bg-transparent px-3 py-[0.32rem] leading-[1.6] outline-none transition-all duration-200 ease-linear focus:placeholder:opacity-100 peer-focus:text-primary data-[te-input-state-active]:placeholder:opacity-100 motion-reduce:transition-none dark:text-neutral-200 dark:placeholder:text-neutral-200 dark:peer-focus:text-primary [&:not([data-te-input-placeholder-active])]:placeholder:opacity-0"                                    
                                         type="text"                                     
-                                        placeholder={cardArea.titleTextEdit.name}   
+                                        placeholder={containerData.configObject.name}   
                                         id="cardAreaTitle"
+                                        ref={cardAreaTitleInputRef}
                                     />
                                     <label
                                         htmlFor="exampleFormControlInput1"
                                         className="pointer-events-none absolute left-3 top-0 mb-0 max-w-[90%] origin-[0_0] truncate pt-[0.37rem] leading-[1.6] text-neutral-500 transition-all duration-200 ease-out peer-focus:-translate-y-[0.9rem] peer-focus:scale-[0.8] peer-focus:text-primary peer-data-[te-input-state-active]:-translate-y-[0.9rem] peer-data-[te-input-state-active]:scale-[0.8] motion-reduce:transition-none dark:text-neutral-200 dark:peer-focus:text-primary"
                                     >
-                                        {cardArea.titleTextEdit.name}  
+                                        {name}  
                                     </label>
                                 </div>
                                 <div className="flex mt-1">
-                                    <div className="btn p-1 select-none rounded bg-sky-500 text-white text-md mr-1" onClick={cardArea.titleTextEdit.save}>Save</div>
-                                    <div className="btn p-1 select-none rounded bg-zinc-500 text-white text-md" onClick={()=>{                                    
-                                        let titleTextEdit : typeof cardArea.titleTextEdit = {name: cardArea.titleTextEdit.name, edit: false, new: false, save : cardArea.titleTextEdit.save}
-                                        setCardArea({titleTextEdit})
+                                    <div className="btn p-1 select-none rounded bg-sky-500 text-white text-md mr-1" onClick={()=>{
+                                        let txt : string | undefined  = (cardAreaTitleInputRef.current! as HTMLInputElement).value
+                                        if(txt !== undefined) {
+                                            name = txt
+                                            setContainerData({configObject : {name : name, boardColor : boardColor, ready: ready, tasks : containerData.configObject.tasks, parentCallback : parentCallback }})
+                                            setOnEditTitle(false)
+                                        }
+                                    }}>Save</div>
+                                    <div className="btn p-1 select-none rounded bg-zinc-500 text-white text-md" onClick={()=>{
+                                        setOnEditTitle(false)
                                     }}>Close</div>
                                 </div>
                             </React.Fragment>    
@@ -199,13 +196,10 @@ function CardContainer({ configObject : { name, boardColor, ready, tasks, parent
                         (
                             // Title div
                             <div className="flex w-auto">       
-                                <h1 className="select-none ml-2 text-lg text-white">{cardArea.titleTextEdit.name}</h1>                                                                                                                                                        
+                                <h1 className="select-none ml-2 text-lg text-white">{containerData.configObject.name}</h1>                                                                                                                                                        
                                 <div 
                                     className='btn h-10 rounded hover:cursor-pointer transition ease-in-out delay-150 hover:-translate-y-1 hover:scale-110 duration-300' 
-                                    onClick={()=>{
-                                        let titleTextEdit : typeof cardArea.titleTextEdit = {name: cardArea.titleTextEdit.name, edit: true, new: false, save : cardArea.titleTextEdit.save}
-                                        setCardArea({titleTextEdit})
-                                    }}
+                                    onClick={()=>{}}
                                 >                                    
                                     <img 
                                         alt='edit' 
@@ -251,7 +245,7 @@ function CardContainer({ configObject : { name, boardColor, ready, tasks, parent
                 {/* Add new Card */}
                 <div className="flex text-center mt-5">
                     {
-                        cardArea.titleTextEdit.new ?
+                        onAddNewCard ?
                         (
                             <div className="flex">
                                 <div className="relative mb-3 bg-zinc-800 rounded" data-te-input-wrapper-init>
@@ -259,8 +253,9 @@ function CardContainer({ configObject : { name, boardColor, ready, tasks, parent
                                         type="text"                    
                                         id="newCardInput"
                                         placeholder="Enter Name"
-                                        defaultValue='New Card Title'   
+                                        defaultValue='New 📇 Title'   
                                         className="peer block min-h-[auto] w-full rounded border-0 bg-transparent px-3 py-[0.32rem] leading-[1.6] outline-none transition-all duration-200 ease-linear focus:placeholder:opacity-100 peer-focus:text-primary data-[te-input-state-active]:placeholder:opacity-100 motion-reduce:transition-none dark:text-neutral-200 dark:placeholder:text-neutral-200 dark:peer-focus:text-primary [&:not([data-te-input-placeholder-active])]:placeholder:opacity-0"                                                                                                                                                     
+                                        ref={newCardNameInputRef}
                                     />
                                     <label                                
                                         className="pointer-events-none absolute left-3 top-0 mb-0 max-w-[90%] origin-[0_0] truncate pt-[0.37rem] leading-[1.6] text-neutral-500 transition-all duration-200 ease-out peer-focus:-translate-y-[0.9rem] peer-focus:scale-[0.8] peer-focus:text-primary peer-data-[te-input-state-active]:-translate-y-[0.9rem] peer-data-[te-input-state-active]:scale-[0.8] motion-reduce:transition-none dark:text-neutral-200 dark:peer-focus:text-primary"
@@ -279,9 +274,7 @@ function CardContainer({ configObject : { name, boardColor, ready, tasks, parent
                         (
                             <div 
                                 className="btn select-none rounded text-white w-full text-left hover:bg-zinc-600 hover:cursor-pointer"
-                                onClick={()=>{
-                                        let titleTextEdit : typeof cardArea.titleTextEdit = {name : cardArea.titleTextEdit.name, edit : false, new : true, save : cardArea.titleTextEdit.save}
-                                        setCardArea({titleTextEdit})
+                                onClick={()=>{                                        
                                     }
                                 }
                             >

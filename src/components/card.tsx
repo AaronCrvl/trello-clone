@@ -10,12 +10,16 @@ function Card({ uniqueKey, text, description, tags, owner, color, parentCallback
     const id : string = React.useMemo(()=> 'dragContent' + Math.random(), [])
     const modalId : string = React.useMemo(()=> 'myModal' + Math.random(), [])
 
+    // Refs ------------------------------>
+    const modalDivRef = React.useRef(null)
+    const titleInputRef = React.useRef(null)
+
     // Types ------------------------------>
     const appColors = new SystemColors()   
 
     // Hooks ------------------------------>
     const [cardTitleOnEdit, setTitleOnEdit] = React.useState<Boolean>(false)
-    const [isPending, startTransition] = React.useTransition();
+    const [isPending, startTransition] = React.useTransition()
     const [dragConfig, setDragConfig] = React.useState<HTMLElement>()   
     const [showBoardColors, setShowBoardColors] = React.useState<Boolean>(false)              
     const [card, setCard] = React.useState({ // Component dynamic data
@@ -34,13 +38,13 @@ function Card({ uniqueKey, text, description, tags, owner, color, parentCallback
             return             
         }
 
-        let myDialog : any = document.getElementById(modalId)
+        let myDialog : any = modalDivRef.current!
         myDialog.showModal()
     }  
     
     function addTextToHistory () {    
         startTransition(() => {                            
-            let myDialog : any = document.getElementById(modalId)!                                
+            let myDialog : any = modalDivRef.current!
             let txt = (myDialog.getElementsByTagName('input')[0] as HTMLInputElement)        
             card.data.description.push(txt.value)            
             txt.value = '' 
@@ -59,7 +63,7 @@ function Card({ uniqueKey, text, description, tags, owner, color, parentCallback
     
     function addTextToTag () {  
         startTransition(() => {
-            let myDialog : any = document.getElementById(modalId)!                                
+            let myDialog : any = modalDivRef.current!                                
             let txt = (myDialog.getElementsByTagName('input')[1] as HTMLInputElement)        
             card.data.tags.push({colorHex:  '', description: txt.value})            
             txt.value = ''       
@@ -95,11 +99,11 @@ function Card({ uniqueKey, text, description, tags, owner, color, parentCallback
         }                  
     } 
 
-    function alterName() {
-        let txt = document.getElementById("cardsTitle")! as HTMLInputElement
-        card.data.text = txt.value
-        txt.value = ''
-
+    function alterName() { 
+        let input = (titleInputRef.current! as HTMLInputElement)        
+        card.data.text = input.value
+        input.value = ''
+        
         setCard({
             data: { 
                 text: card.data.text,
@@ -172,6 +176,7 @@ function Card({ uniqueKey, text, description, tags, owner, color, parentCallback
                                         className="peer block min-h-[auto] w-full rounded border-0 bg-transparent px-3 py-[0.32rem] leading-[1.6] outline-none transition-all duration-200 ease-linear focus:placeholder:opacity-100 peer-focus:text-primary data-[te-input-state-active]:placeholder:opacity-100 motion-reduce:transition-none dark:text-neutral-200 dark:placeholder:text-neutral-200 dark:peer-focus:text-primary [&:not([data-te-input-placeholder-active])]:placeholder:opacity-0"                                    
                                         type="text"                                     
                                         placeholder={card.data.text}   
+                                        ref={titleInputRef}
                                         id="cardsTitle"
                                     />
                                     <label
@@ -219,7 +224,7 @@ function Card({ uniqueKey, text, description, tags, owner, color, parentCallback
             </div>
             
             {/* Modal --------------------------------------------------------------------------------------------------------- */}            
-            <dialog id={modalId} className="modal rounded-lg w-1/2 h-3/4 p-5 bg-zinc-700 border-2 border-gray-500 cursor-auto origin-bottom">                                
+            <dialog id={modalId} ref={modalDivRef} className="modal rounded-lg w-1/2 h-3/4 p-5 bg-zinc-700 border-2 border-gray-500 cursor-auto origin-bottom">                                
                 <form method="dialog" className="modal-box rounded p-2 ">
                     {/* Close Button */}
                     <div className="modal-action text-white flex w-full mb-0 mt-1">                                                                        

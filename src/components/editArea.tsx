@@ -53,35 +53,36 @@ function EditArea ({ configObj } : initialDataType) {
     }
 
     function createNewBoard () {
-        let newBoardName = (document.getElementById('boardName') as HTMLInputElement).value
-        let newBoardAreaNumber = (document.getElementById('boardNumber') as HTMLInputElement).value  
+        // let newBoardName = (document.getElementById('boardName') as HTMLInputElement).value
+        // let newBoardAreaNumber = (document.getElementById('boardNumber') as HTMLInputElement).value  
 
-        startTransition(()=> {      
-            if(validaNewBoardData(newBoardName, newBoardAreaNumber) === true)  {                
-                let config : configObjectType = {
-                    configObject: {name: '', boardColor : data.configObj.configs[0].configObject.boardColor, ready: false, tasks: [], parentCallback: ()=> {}}
-                }
-                let boardCount : number = parseInt(newBoardAreaNumber)
-                let arr : configObjectType[] = [config]            
+        // startTransition(()=> {      
+        //     if(validaNewBoardData(newBoardName, newBoardAreaNumber) === true)  {                
+        //         let config : configObjectType = {
+        //             configObject: {name: '', boardColor : data.configObj.configs[0].configObject.boardColor, ready: false, tasks: [], parentCallback: ()=> {}}
+        //         }
+        //         let boardCount : number = parseInt(newBoardAreaNumber)
+        //         let arr : configObjectType[] = [config]            
 
-                for(let i=1; i < (boardCount-1); ++i) {
-                    let r : configObjectType = {
-                        configObject: {
-                            name: '',
-                            boardColor : data.configObj.configs[0].configObject.boardColor,
-                            ready: false,
-                            tasks: [],
-                            parentCallback: () =>{}
-                        }
-                    }
-                    arr.push(r)
-                }
+        //         for(let i=1; i < (boardCount-1); ++i) {
+        //             let r : configObjectType = {
+        //                 configObject: {
+        //                     name: '',
+        //                     boardColor : data.configObj.configs[0].configObject.boardColor,
+        //                     ready: false,
+        //                     tasks: [],
+        //                     parentCallback: () =>{}
+        //                 }
+        //             }
+        //             arr.push(r)
+        //         }
             
-                setData({ configObj: { boardName: newBoardName, configs: arr } })
-                //handleModalClose(boardModalId)
-            }        
-        }
-    )}
+        //         setData({ configObj: { boardName: newBoardName, configs: arr } })
+        //         //handleModalClose(boardModalId)
+        //     }        
+        // }
+        //)
+    }
 
     // function handleModalOpen(selectedModalId : string) {
     //     if(selectedModalId === newBoadModalId) {
