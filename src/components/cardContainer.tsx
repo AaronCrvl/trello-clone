@@ -199,7 +199,7 @@ function CardContainer({ configObject : { name, boardColor, ready, tasks, parent
                                 <h1 className="select-none ml-2 text-lg text-white">{containerData.configObject.name}</h1>                                                                                                                                                        
                                 <div 
                                     className='btn h-10 rounded hover:cursor-pointer transition ease-in-out delay-150 hover:-translate-y-1 hover:scale-110 duration-300' 
-                                    onClick={()=>{}}
+                                    onClick={()=>{setOnEditTitle(true)}}
                                 >                                    
                                     <img 
                                         alt='edit' 
@@ -274,7 +274,8 @@ function CardContainer({ configObject : { name, boardColor, ready, tasks, parent
                         (
                             <div 
                                 className="btn select-none rounded text-white w-full text-left hover:bg-zinc-600 hover:cursor-pointer"
-                                onClick={()=>{                                        
+                                onClick={()=>{ 
+                                        setOnAddNewCard(true)                                       
                                     }
                                 }
                             >

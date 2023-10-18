@@ -5,6 +5,7 @@ import EditBoard from '../pages/editBoard';
 import BoardTemplates from "../pages/boardTemplates";
 import ErrorBoundary from "../pages/errorBoundary";
 import Loaders from "./loarders/loaders";
+import MyBoards from "../pages/myBoards";
 
 class AppRouter {   
   private loader = new Loaders()
@@ -30,6 +31,11 @@ class AppRouter {
             path: "editBoard/:templateId",
             element: <EditBoard />,   
             loader: async ({ request, params }) => this.loader.getTemplate(Number.parseInt(params.templateId!)),
+            errorElement: <ErrorBoundary />                                                                   
+          },
+          {                    
+            path: "myBoards",
+            element: <MyBoards />,               
             errorElement: <ErrorBoundary />                                                                   
           },
       ],
