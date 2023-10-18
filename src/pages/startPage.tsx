@@ -16,8 +16,8 @@ function StartPage() {
                         <button className='select-none rounded-lg opacity-75 shadow-2xl ml-24 text-4xl text-white font-bold p-10 bg-transparent hover:opacity-100'>
                             <Link to={`/editBoard/${-1}`}>Create Empty Board📋</Link>
                         </button>   
-                        <button className='select-none rounded-lg opacity-10 shadow-2xl ml-24 text-4xl text-white font-bold p-10 bg-transparent hover:opacity-100'>
-                            <Link to=''>My Boards📋</Link>
+                        <button className='select-none rounded-lg opacity-75 shadow-2xl ml-24 text-4xl text-white font-bold p-10 bg-transparent hover:opacity-100'>
+                            <Link to='/myboards'>My Boards📋</Link>
                         </button>                
                     </div> 
                 </div>

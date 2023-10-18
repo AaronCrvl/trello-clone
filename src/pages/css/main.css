@@ -1,8 +1,19 @@
 #startPageBg {
     background-image: url('../../assets/pattern.svg');
+    background-size: cover;
+    background-repeat: no-repeat;
 }
 
 #boardTemplateBg {    
     background-image: url('../../assets/pattern2.svg');
+    background-size: cover;
+    background-repeat: no-repeat;
     height:100vh;
+}
+
+#myBoardsBg {    
+    background-image: url('../../assets/bgMyBoards.svg');
+    background-size: cover;
+    background-repeat: no-repeat;
+    height:100vh;    
 }

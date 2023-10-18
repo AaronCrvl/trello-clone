@@ -6,8 +6,8 @@ import SystemColors from "../types/enums/systemColors";
 import pattern from '../assets/pattern3.svg'
 
 function EditArea ({ configObj } : initialDataType) {           
-    // const newBoadModalId : string = React.useMemo (()=> 'myModal' + Math.random(), [])
-    // const boardModalId : string = React.useMemo(()=> 'myBoardModal' + Math.random(), [])
+    const newBoadModalId : string = React.useMemo (()=> 'myModal' + Math.random(), [])
+    const boardModalId : string = React.useMemo(()=> 'myBoardModal' + Math.random(), [])
     const [isPending, startTransition] = React.useTransition()
 
     // enums
@@ -84,40 +84,72 @@ function EditArea ({ configObj } : initialDataType) {
         //)
     }
 
-    // function handleModalOpen(selectedModalId : string) {
-    //     if(selectedModalId === newBoadModalId) {
-    //         let myDialog : any = document.getElementById(newBoadModalId)
-    //         myDialog.showModal()
-    //     }
-    //     if(selectedModalId === boardModalId) {
-    //         let myDialog : any = document.getElementById(boardModalId)
-    //         myDialog.showModal()
-    //     }
-    // } 
+    function handleModalOpen(selectedModalId : string) {
+        if(selectedModalId === newBoadModalId) {
+            let myDialog : any = document.getElementById(newBoadModalId)
+            myDialog.showModal()
+        }
+        if(selectedModalId === boardModalId) {
+            let myDialog : any = document.getElementById(boardModalId)
+            myDialog.showModal()
+        }
+    } 
 
-    // function handleModalClose(selectedModalId : string) {
-    //     if(selectedModalId === newBoadModalId) {
-    //         let myDialog : any = document.getElementById(newBoadModalId)
-    //         myDialog.close()
-    //     }
-    //     if(selectedModalId === boardModalId) {
-    //         let myDialog : any = document.getElementById(boardModalId)
-    //         myDialog.close()
-    //     }
-    // }  
+    function handleModalClose(selectedModalId : string) {
+        if(selectedModalId === newBoadModalId) {
+            let myDialog : any = document.getElementById(newBoadModalId)
+           myDialog.close()
+        }
+        if(selectedModalId === boardModalId) {
+            let myDialog : any = document.getElementById(boardModalId)
+            myDialog.close()
+        }
+    }  
 
-    // function viewBoardColors () { setShowBoardColors(!showBoardColors) }
+    function viewBoardColors () { setShowBoardColors(!showBoardColors) }
 
-    // function setColor (color : any) {        
-    //     if (appColors.eColors.hasOwnProperty(color)) {                        
-    //         data.configObj.configs.forEach(config => config.configObject.boardColor = appColors.getSystemColors(color).toString())
-    //         setData({ configObj: { boardName: '', configs: data.configObj.configs } })                
-    //     } 
-    //     else {
-    //         console.log("Something went wrong setting the colors.");
-    //     }        
-    // }     
+    function setColor (color : any) {        
+        if (appColors.eColors.hasOwnProperty(color)) {                        
+            data.configObj.configs.forEach(config => config.configObject.boardColor = appColors.getSystemColors(color).toString())
+            setData({ configObj: { boardName: '', configs: data.configObj.configs } })                
+        } 
+        else {
+            console.log("Something went wrong setting the colors.");
+        }        
+    }     
 
+    function salvarQuadro() {
+        for(let i = 1; i <= 3; ++i) {  
+            if(localStorage.getItem(`quadro${i}`) !== null) {
+                if((JSON.parse(localStorage.getItem(`quadro${i}`)!) as configObjectType).configObject?.tasks[0]?.uniqueKey 
+                    === configObj.configs[0].configObject?.tasks[0]?.uniqueKey) {
+                    localStorage.removeItem(`quadro${i}`)
+                    alert('Board updated sucessfully!')                                        
+                    return 
+                }                
+            }    
+        }
+
+        // conter criação de mais de 3 quadros
+        let quadros = [localStorage.getItem('quadro1'), localStorage.getItem('quadro2'), localStorage.getItem('quadro3')]                
+        if(quadros[0] === null) {            
+            localStorage.setItem('quadro1', JSON.stringify(configObj.configs))
+        }     
+        else if(quadros[1] === null) {            
+            localStorage.setItem('quadro2', JSON.stringify(configObj.configs))
+        }     
+        else if(quadros[3] === null) {            
+            localStorage.setItem('quadro3', JSON.stringify(configObj.configs))
+        }     
+        else {
+            alert('The 3 custom board allowed for the user is already created, edit one of then.')
+            return 
+        }   
+
+        alert('Board saved sucessfully, check out my boards page.')
+    }
+
+    // jsx
     return (
         <div style={{ height:'100vh', backgroundImage: `url(${pattern})` }}>    
             <div className="flex shadow-2xl">   
@@ -129,22 +161,16 @@ function EditArea ({ configObj } : initialDataType) {
                         onMouseLeave={()=>setShowTopOptions(false)}
                     >
                         {/* Board Edit Options */}
-                        {/* {
+                        {
                             showTopOptions ?
                             (
                                 <div className="flex text-center items-center justify-center w-full bg-zinc-800 p-5 text-gray-300 font-bold">
                                     <div 
-                                        className="rounded text-center text-yellow-200 ml-10 p-1 select-none hover:cursor-pointer transition ease-in-out delay-350 hover:-translate-y-1 hover:scale-110 hover:bg-yellow-600 hover:text-white duration-100"
-                                        onClick={()=> handleModalOpen(newBoadModalId)}
+                                        className="rounded text-center text-yellow-200 ml-10 p-1 select-none hover:cursor-pointer transition ease-in-out delay-350 hover:-translate-y-1 hover:scale-110 hover:bg-yellow-600 hover:text-white duration-100"                                        
+                                        onClick={()=> salvarQuadro()}
                                     >
-                                        New Board
-                                    </div>
-                                    <div 
-                                        className="rounded text-center text-blue-200 ml-10 p-1 select-none hover:cursor-pointer transition ease-in-out delay-350 hover:-translate-y-1 hover:scale-110 hover:bg-blue-600 hover:text-white duration-100"
-                                        onClick={()=> handleModalOpen(boardModalId)}
-                                    >
-                                        Clear Board
-                                    </div>
+                                        Save Board
+                                    </div>                                
                                     <div 
                                         className = { 
                                             showBoardColors ? 
@@ -186,7 +212,7 @@ function EditArea ({ configObj } : initialDataType) {
                                     <p className="w-full opacity-50 text-center text-sm">Expand Options</p>                                    
                                 </div>
                             )
-                        }    */}
+                        }   
                     </div>     
                     {/* Board Area */}
                     <div className="w-full">
@@ -199,7 +225,7 @@ function EditArea ({ configObj } : initialDataType) {
 
             {/* Hidden Modals --------------------------------------------------------------------------------------------------------------   */}
             {/* New Board Modal */}
-            {/* <dialog id={newBoadModalId} className="modal p-5 bg-zinc-800">                
+            <dialog id={newBoadModalId} className="modal p-5 bg-zinc-800">                
                 <form method="dialog" className="modal-box rounded text-white p-2 ">
                     Modal Title 
                     <div className="modal-action text-right p-2">                                            
@@ -247,10 +273,10 @@ function EditArea ({ configObj } : initialDataType) {
                         </p>
                     </div>
                 </form>
-            </dialog>   */}
+            </dialog>            
 
             {/* Clear Boards Modal */}
-            {/* <dialog id={boardModalId} className="modal p-5 bg-zinc-800">                
+            <dialog id={boardModalId} className="modal p-5 bg-zinc-800">                
                 <form method="dialog" className="modal-box rounded text-white p-2 ">                 
                     Modal Body
                     <div className="w-full max-w-xs">
@@ -261,7 +287,7 @@ function EditArea ({ configObj } : initialDataType) {
                                 </label>
                                 <div className="flex gap-10">
                                     <div 
-                                        onClick={clearData}
+                                        // onClick={clearData}
                                         className="btn font-bold select-none rounded p-2 bg-sky-500 hover:bg-sky-600 hover:cursor-pointer">
                                             Continue                                        
                                     </div>
@@ -278,7 +304,7 @@ function EditArea ({ configObj } : initialDataType) {
                         </p>
                     </div>
                 </form>
-            </dialog>   */}
+            </dialog>  
         </div>
     )
 }

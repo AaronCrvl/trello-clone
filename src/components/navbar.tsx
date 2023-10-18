@@ -19,6 +19,11 @@ function NavBar () {
                             </Link>
                         </li>
                         <li className={`text-md mt-4 h-full ml-4 hover:bg-zinc-900 p-3 opacity-50 hover:cursor-pointer hover:opacity-100`}>
+                            <Link to="/myBoards">
+                                🅱 My Boards
+                            </Link>
+                        </li>
+                        <li className={`text-md mt-4 h-full ml-4 hover:bg-zinc-900 p-3 opacity-50 hover:cursor-pointer hover:opacity-100`}>
                             <Link to="https:www.github.com/AaronCrvl/">
                                 🎆 Other Projects
                             </Link>
