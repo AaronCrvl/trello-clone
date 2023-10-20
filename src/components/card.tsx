@@ -4,26 +4,28 @@ import SystemColors from "../types/enums/systemColors";
 import cardMoving from '../assets/cardMoving.png';
 import imgIcon from '../assets/imageIcon.png';
 import editIcon from '../assets/edit-icon.png';
+import { useRef, useMemo, useState } from "react";
 
 function Card({ uniqueKey, text, description, tags, owner, color, parentCallback } : cardType ) {  
     // Id's ------------------------------>
-    const id : string = React.useMemo(()=> 'dragContent' + Math.random(), [])
-    const modalId : string = React.useMemo(()=> 'myModal' + Math.random(), [])
+    const id : string = useMemo(()=> 'dragContent' + Math.random(), [])
+    const modalId : string = useMemo(()=> 'myModal' + Math.random(), [])
 
     // Refs ------------------------------>
-    const modalDivRef = React.useRef(null)
-    const titleInputRef = React.useRef(null)
+    const modalDivRef = useRef(null)
+    const titleInputRef = useRef(null)
 
     // Types ------------------------------>
     const appColors = new SystemColors()   
 
-    // Hooks ------------------------------>
-    const [cardTitleOnEdit, setTitleOnEdit] = React.useState<Boolean>(false)
+    // Hooks ------------------------------> ------------------------------>
     const [isPending, startTransition] = React.useTransition()
-    const [dragConfig, setDragConfig] = React.useState<HTMLElement>()   
-    const [showBoardColors, setShowBoardColors] = React.useState<Boolean>(false)              
-    const [card, setCard] = React.useState({ // Component dynamic data
+    const [cardTitleOnEdit, setTitleOnEdit] = useState<Boolean>(false)    
+    const [dragConfig, setDragConfig] = useState<HTMLElement>()   
+    const [showBoardColors, setShowBoardColors] = useState<Boolean>(false)              
+    const [card, setCard] = useState({ // Component dynamic data
         data: { 
+            uniqueKey : uniqueKey,
             text: text,
             description : description,  
             tags : tags,
@@ -47,10 +49,11 @@ function Card({ uniqueKey, text, description, tags, owner, color, parentCallback
             let myDialog : any = modalDivRef.current!
             let txt = (myDialog.getElementsByTagName('input')[0] as HTMLInputElement)        
             card.data.description.push(txt.value)            
-            txt.value = '' 
+            txt.defaultValue = '' 
             
             setCard({
                 data: { 
+                    uniqueKey : uniqueKey,
                     text: card.data.text,
                     description : card.data.description,  
                     tags : card.data.tags,
@@ -66,10 +69,11 @@ function Card({ uniqueKey, text, description, tags, owner, color, parentCallback
             let myDialog : any = modalDivRef.current!                                
             let txt = (myDialog.getElementsByTagName('input')[1] as HTMLInputElement)        
             card.data.tags.push({colorHex:  '', description: txt.value})            
-            txt.value = ''       
+            txt.defaultValue = ''       
             
             setCard({
                 data: { 
+                    uniqueKey : uniqueKey,
                     text: card.data.text,
                     description : card.data.description,  
                     tags : card.data.tags,
@@ -86,26 +90,27 @@ function Card({ uniqueKey, text, description, tags, owner, color, parentCallback
 
             setCard({
                 data: { 
+                    uniqueKey : uniqueKey,
                     text: card.data.text,
                     description : card.data.description,  
                     tags : card.data.tags,
                     owner : card.data.owner, 
                     color: card.data.color,
                 }
-            })                              
-        } 
-        else {
-            console.log("Something went wrong setting the colors.");
-        }                  
+            })               
+
+            parentCallback(card.data.uniqueKey, 'updateColor', card.data.color)
+        }                      
     } 
 
     function alterName() { 
         let input = (titleInputRef.current! as HTMLInputElement)        
         card.data.text = input.value
-        input.value = ''
+        input.defaultValue = ''
         
         setCard({
             data: { 
+                uniqueKey : uniqueKey,
                 text: card.data.text,
                 description : card.data.description,  
                 tags : card.data.tags,
@@ -136,7 +141,7 @@ function Card({ uniqueKey, text, description, tags, owner, color, parentCallback
         e.dataTransfer!.setData("owner", owner); 
     }
 
-    // Hooks (useEffect : Drag & Drop) ------------------------------>
+    // Hooks ------------------------------> (useEffect : Drag & Drop) ------------------------------>
     // Drag 
     React.useEffect(() => {        
         setDragConfig(document.getElementById(id)!)        
@@ -157,7 +162,7 @@ function Card({ uniqueKey, text, description, tags, owner, color, parentCallback
         }
     }, [dragConfig])    
     
-    // Jsx ------------------------------>
+    // Jsx------------------------------> ------------------------------>
     return (
         <div
             id={id}
@@ -318,7 +323,7 @@ function Card({ uniqueKey, text, description, tags, owner, color, parentCallback
                                                             <input 
                                                                 type="color" 
                                                                 className="rounded-full w-5 h-5"                                                           
-                                                                value={(tag.colorHex === undefined ? '#FDFEFE' : tag.colorHex)}
+                                                                defaultValue={(tag.colorHex === undefined ? '#FDFEFE' : tag.colorHex)}
                                                             />
                                                         </div>                                          
                                                         <div className="">
@@ -365,8 +370,7 @@ function Card({ uniqueKey, text, description, tags, owner, color, parentCallback
                             >
                                 <p className="opacity-25">Hover</p>Card Color
                                 {
-                                    showBoardColors ? 
-                                    (
+                                    showBoardColors &&                                     
                                         <ul className='mt-5 p-1 z-20 opacity-75'>
                                             <li className='hover:bg-red-700 p-1 rounded text-white cursor-pointer select-none' onClick={()=> setColor(0)}>Red</li>
                                             <li className='hover:bg-sky-700 p-1 rounded text-white cursor-pointer select-none' onClick={()=> setColor(1)}>Blue</li>
@@ -381,10 +385,7 @@ function Card({ uniqueKey, text, description, tags, owner, color, parentCallback
                                             <li className='hover:bg-sky-700 p-1 rounded text-white cursor-pointer select-none' onClick={()=> setColor(10)}>Sky</li>                        
                                             <li className='hover:bg-fuchsia-700 p-1 rounded text-white cursor-pointer select-none' onClick={()=> setColor(11)}>Fuchsia</li>                        
                                             <li className='hover:bg-rose-700 p-1 rounded text-white cursor-pointer select-none' onClick={()=> setColor(11)}>Rose</li>                        
-                                        </ul>
-                                    )                                            
-                                    :
-                                    (<div></div>)                                            
+                                        </ul>                                    
                                 }                      
                             </div>    
                         </div>                                               

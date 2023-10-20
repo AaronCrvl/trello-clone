@@ -18,20 +18,20 @@ export default class Loaders {
   private familyManagementTemplate = new FamilyManagementTemplate()
 
   public getTemplate (templateId : any) : Promise<Array<configObjectType> | null> {
-    return new Promise((resolve, reject) => {
-      if(templateId === -1)resolve(EmptyObj())      
+    return new Promise((resolve) => {      
       if(templateId === 0) resolve(this.projectManagement.getBoards())
-      if(templateId === 1) resolve(this.habitControl.getBoards())
-      if(templateId === 2) resolve(this.editorialCalendar.getBoards())
-      if(templateId === 3) resolve(this.integrationOfNewEmployees.getBoards())
-      if(templateId === 4) resolve(this.scrumProjectModelTemplate.getBoards())      
-      if(templateId === 5) resolve(this.employeeManualTemplate.getBoards())
-      if(templateId === 6) resolve(this.familyManagementTemplate.getBoards())      
+      else if(templateId === 1) resolve(this.habitControl.getBoards())
+      else if(templateId === 2) resolve(this.editorialCalendar.getBoards())
+      else if(templateId === 3) resolve(this.integrationOfNewEmployees.getBoards())
+      else if(templateId === 4) resolve(this.scrumProjectModelTemplate.getBoards())      
+      else if(templateId === 5) resolve(this.employeeManualTemplate.getBoards())
+      else if(templateId === 6) resolve(this.familyManagementTemplate.getBoards())      
+      else resolve(EmptyObj())      
     })
   }
 
   public getBoardTemplateList() : Promise<any> {
-    return new Promise((resolve, reject) => {
+    return new Promise((resolve) => {
       resolve([        
         // Id, Category, Name
         [0,'Management', 'Project Managment'],

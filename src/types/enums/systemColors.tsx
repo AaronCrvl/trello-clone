@@ -17,19 +17,19 @@ export default class SystemColor {
 
     getSystemColors (colorId : Number) : String {
         if(colorId === 0) return "bg-red-700";
-        if(colorId === 1) return "bg-blue-700";
-        if(colorId === 2) return "bg-green-700";
-        if(colorId === 3) return "bg-amber-700";
-        if(colorId === 4) return "bg-cyan-700 ";
-        if(colorId === 5) return "bg-transparent";
-        if(colorId === 6) return "bg-zinc-700";
-        if(colorId === 7) return "bg-orange-700";
-        if(colorId === 8) return "bg-yellow-700";
-        if(colorId === 9) return "bg-emerald-700";
-        if(colorId === 10) return "bg-sky-700";
-        if(colorId === 11) return "bg-fuchsia-700";
-        if(colorId === 12) return "bg-rose-700";
-        return ''    
+        else if(colorId === 1) return "bg-blue-700";
+        else if(colorId === 2) return "bg-green-700";
+        else if(colorId === 3) return "bg-amber-700";
+        else if(colorId === 4) return "bg-cyan-700 ";
+        else if(colorId === 5) return "bg-transparent";
+        else if(colorId === 6) return "bg-zinc-700";
+        else if(colorId === 7) return "bg-orange-700";
+        else if(colorId === 8) return "bg-yellow-700";
+        else if(colorId === 9) return "bg-emerald-700";
+        else if(colorId === 10) return "bg-sky-700";
+        else if(colorId === 11) return "bg-fuchsia-700";
+        else if(colorId === 12) return "bg-rose-700";
+        else return ''
     }
 
     constructor(){}

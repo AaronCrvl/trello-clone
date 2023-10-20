@@ -4,24 +4,25 @@ import { cardType } from "../types/cardType";
 import { configObjectType } from "../types/configObjectType";
 import editIcon from '../assets/edit-icon.png'
 import { tagType } from "../types/tagType";
+import { useMemo, useRef, useState } from "react";
 
 function CardContainer({ configObject : { name, boardColor, ready, tasks, parentCallback }} : configObjectType) {  
     // Id's ------------------------------>
-    const cardsDivId : string = React.useMemo(()=> 'dragCardDiv' + Math.random(), [])
-    const areaId : string = React.useMemo(()=>  'dragThisAreaDiv' + Math.random(), [])
+    const cardsDivId : string = useMemo(()=> 'dragCardDiv' + Math.random(), [])
+    const areaId : string = useMemo(()=>  'dragThisAreaDiv' + Math.random(), [])
 
     // Refs ------------------------------>
-    const cardAreaTitleInputRef = React.useRef(null)
-    const newCardNameInputRef = React.useRef(null)
+    const cardAreaTitleInputRef = useRef(null)
+    const newCardNameInputRef = useRef(null)
     
-    // Hooks ------------------------------>
+    // Hooks ------------------------------> ------------------------------>
     const [isPending, startTransition] = React.useTransition();
-    const [dropConfig, setDropConfig] = React.useState<HTMLElement>()  // drag
-    const [dragConfig, setDragConfig] = React.useState<HTMLElement>()  // drop   
-    const [onEditTitle, setOnEditTitle] = React.useState<Boolean>(false)
-    const [onAddNewCard, setOnAddNewCard] = React.useState<Boolean>(false)
+    const [dropConfig, setDropConfig] = useState<HTMLElement>()  // drag
+    const [dragConfig, setDragConfig] = useState<HTMLElement>()  // drop   
+    const [onEditTitle, setOnEditTitle] = useState<Boolean>(false)
+    const [onAddNewCard, setOnAddNewCard] = useState<Boolean>(false)
       
-    const [containerData, setContainerData] = React.useState<configObjectType>({ // card list  
+    const [containerData, setContainerData] = useState<configObjectType>({ // card list  
         configObject : {
             name: name,
             boardColor: boardColor,
@@ -42,7 +43,7 @@ function CardContainer({ configObject : { name, boardColor, ready, tasks, parent
                 tags : [],
                 owner: '',
                 color: '',
-                parentCallback : callback,
+                parentCallback : parentCallback,
             }    
                         
             containerData.configObject.tasks.push(newCard)
@@ -74,21 +75,14 @@ function CardContainer({ configObject : { name, boardColor, ready, tasks, parent
         }
 
         // insert new card and update obj state
-        containerData.configObject.tasks.push({uniqueKey: 'Card' + Math.random(), text: text, description: description.split(':'), tags: tags, color: color, owner: owner, parentCallback : callback })                                
+        containerData.configObject.tasks.push({uniqueKey: 'Card' + Math.random(), text: text, description: description.split(':'), tags: tags, color: color, owner: owner, parentCallback : parentCallback })                                
         setContainerData({ configObject : containerData.configObject })                
 
         // remove dragged card from older cardContainer                
         parentCallback(key, 'excludeCard')  
-    }
+    }     
 
-    
-    // Callback ⚠ - Refers to callback in board container
-    const callback = React.useCallback((key :  any, operation : string) => {
-        parentCallback(key, operation)
-    }, [parentCallback])
-
-
-    // Hooks (useEffect : Drag & Drop) ------------------------------>
+    // Hooks ------------------------------> (useEffect : Drag & Drop) ------------------------------>
     // Drop 
     React.useEffect(() : void => {
         setDropConfig(document.getElementById(cardsDivId)!)
@@ -106,7 +100,6 @@ function CardContainer({ configObject : { name, boardColor, ready, tasks, parent
 
                     dropConfig.style.position = "absolute"      
                 }
-  
             }
 
             dropConfig.ondragleave = function (e) {                
@@ -139,15 +132,15 @@ function CardContainer({ configObject : { name, boardColor, ready, tasks, parent
                 }
             }
             
-            dragConfig.ondrag = function(e) {
-                if((e.target as Element).id === areaId) {                    
-                    console.log(`Area ${areaId} is beeing dragged.`)
-                }
-            }        
+            // dragConfig.ondrag = function(e) {
+            //     if((e.target as Element).id === areaId) {                    
+            //         // console.log(`Area ${areaId} is beeing dragged.`)
+            //     }
+            // }        
         }
     }, [dragConfig])
 
-    // Jsx ------------------------------>
+    // Jsx------------------------------> ------------------------------>
     return (
         <div           
             id={areaId}
@@ -217,12 +210,7 @@ function CardContainer({ configObject : { name, boardColor, ready, tasks, parent
                     className="rounded bg-transparent p-8 h-auto w-full hover:scale-110"
                 >
                     {
-                        containerData.configObject.tasks === undefined ?
-                        (
-                            <div></div>
-                        )
-                        :
-                        (
+                        containerData.configObject.tasks &&                      
                             containerData.configObject.tasks.map((card : cardType) => {                         
                                 {/* Card */}                       
                                 return (                                                                                                                                                                                                                 
@@ -234,11 +222,10 @@ function CardContainer({ configObject : { name, boardColor, ready, tasks, parent
                                         tags={card.tags}
                                         owner={card.owner}
                                         color={card.color}
-                                        parentCallback={callback}
+                                        parentCallback={parentCallback}
                                     />                                                                                                                                                         
                                 )
-                            })           
-                        )
+                            })                                   
                     }          
                 </div>    
                 {/* ------------------------------------------------------------------------------------------------- */}

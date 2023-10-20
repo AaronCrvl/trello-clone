@@ -4,27 +4,28 @@ import editIcon from '../assets/edit-icon.png'
 import trashIcon from '../assets/trashcan-icon.png';
 import { initialDataType } from '../types/initialDataType';
 import { configObjectType } from '../types/configObjectType';
+import { useRef, useMemo, useState } from "react";
 import './css/main.css';
 
 function BoardContainer({ configObj } : initialDataType) {    
     // Id's ------------------------------>
     const id = React.useMemo(()=> 'BoardAreaItem' + Math.random(), [])
-    const excludeAreaId : string = React.useMemo(()=> 'ExcludeArea' + Math.random(), [])    
-    const cardAreaId : string = React.useMemo(()=> 'CardAreaOnBoad' + Math.random(), [])    
+    const excludeAreaId : string = useMemo(()=> 'ExcludeArea' + Math.random(), [])    
+    const cardAreaId : string = useMemo(()=> 'CardAreaOnBoad' + Math.random(), [])    
 
     // Refs ------------------------------>
-    const boardTitleInputRef = React.useRef(null)
-    const excludeDivRef = React.useRef(null)
-    const cardContainerDivRef = React.useRef(null)
-    const cardContainer_AreaDivRef = React.useRef(null)
+    const boardTitleInputRef = useRef(null)
+    const excludeDivRef = useRef(null)
+    const cardContainerDivRef = useRef(null)
+    const cardContainer_AreaDivRef = useRef(null)
 
-    // Hooks ------------------------------>
+    // Hooks ------------------------------> ------------------------------>
     const [isPending, startTransition] = React.useTransition();    
-    const [arr, setArr] = React.useState<Array<configObjectType>>(configObj.configs)
-    const [excludeDropConfig, setExclusionDropConfig] = React.useState<HTMLElement>()           
-    const [cardContainerDropConfig, setCardContainerDropConfig] = React.useState<HTMLElement>()      
+    const [arr, setArr] = useState<Array<configObjectType>>(configObj.configs)
+    const [excludeDropConfig, setExclusionDropConfig] = useState<HTMLElement>()           
+    const [cardContainerDropConfig, setCardContainerDropConfig] = useState<HTMLElement>()      
     
-    const [board, setBoard] = React.useState({ // Component dynamic data
+    const [board, setBoard] = useState({ // Component dynamic data
         mainTitle : {
           title : 'New Board🏂',
           edit : false,
@@ -99,7 +100,7 @@ function BoardContainer({ configObj } : initialDataType) {
         then delete the old card object and create a new object, 
         with a new key on the destination card container.    
     */   
-    const callback = (key : any, operation : string) :void => {  
+    const callback = (key : any, operation : string, data? : string) :void => {  
         startTransition(() => {                
             if(operation === 'excludeCard') {
                 configObj.configs.forEach(config => {
@@ -114,7 +115,22 @@ function BoardContainer({ configObj } : initialDataType) {
                         setArr(configObj.configs)                                  
                     }               
                 })        
-            }          
+            }  
+            
+            if(operation === 'updateColor') {
+                configObj.configs.forEach(config => {
+                    
+                    // removing card from old container
+                    let index = config?.configObject?.tasks?.findIndex(element => {                    
+                        return element ? element.uniqueKey === key : -1
+                    })
+
+                    if(index > -1) {
+                        config.configObject.tasks[index].color = data!
+                        setArr(configObj.configs)                                  
+                    }               
+                })        
+            }  
                 
             fakeInsertUpdate()     
         })
@@ -163,7 +179,7 @@ function BoardContainer({ configObj } : initialDataType) {
                         && config.configObject.name === name ) 
                     {                            
                         let index : number = configObj.configs.findIndex((x) => { 
-                            return (x !== undefined && x.configObject != undefined) ? x.configObject.name === name : 0                                
+                            return (x !== undefined && x.configObject !== undefined) ? x.configObject.name === name : 0                                
                         })
 
                         if(index > 0) {                        
@@ -171,11 +187,7 @@ function BoardContainer({ configObj } : initialDataType) {
                             // using "delete" create future problems for card manipulation on Card Area     
                             configObj.configs.splice(index, 1) 
                             setArr(configObj.configs)                                   
-                        }
-                        else {                         
-                            console.log('configObj not found')                                                                                    
-                            return 
-                        }                                                
+                        }                                                                       
                     }                        
                 })
 
@@ -222,7 +234,7 @@ function BoardContainer({ configObj } : initialDataType) {
         }
     }
 
-    // Hooks (useEffect : Drag & Drop) ------------------------------>
+    // Hooks ------------------------------> (useEffect : Drag & Drop) ------------------------------>
     // Exclude board area drop config
     React.useEffect(() : any => {
         setExclusionDropConfig(excludeDivRef.current!)
@@ -268,7 +280,7 @@ function BoardContainer({ configObj } : initialDataType) {
         }
     }, [cardContainerDropConfig]) 
 
-    // Jsx ------------------------------>
+    // Jsx------------------------------> ------------------------------>
     return (
         <div id={id} className='boardContainerBg'>                    
             <React.Fragment>        
@@ -345,7 +357,7 @@ function BoardContainer({ configObj } : initialDataType) {
                     </div>              
                 </div>
                 {/* Cards Area */}
-                <div id='cardContainerDiv' ref={cardContainerDivRef } className='flex w-auto h-screen bg-transparent p-8'>          
+                <div id='cardContainerDiv' ref={cardContainerDivRef} className='flex w-auto h-screen bg-transparent p-8'>          
                     <div id={cardAreaId} ref={cardContainer_AreaDivRef} className='inline-flex flex-nowrap p-2 Flipped overflow-x-auto'>
                         {
                             arr.map((config : configObjectType) => {
