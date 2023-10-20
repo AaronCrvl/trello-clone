@@ -8,10 +8,9 @@ function EditBoard() {
     const location = useLocation()        
     const loaderData = useLoaderData() // get loader request data         
     const myboard = location.state === null ? false : true
-
-    const loadedObj = (location.pathname.includes('-1') && myboard) ? 
-        { boardName: 'My Board🦘', configs: JSON.parse(location.state.data) }
-        : { boardName: '', configs: loaderData as Array<configObjectType> } 
+    const loadedObj = myboard ?         
+        { boardName: 'My Board🦘', configs: (JSON.parse(location.state.data) as configObjectType[]) }        
+        :{ boardName: '', configs: loaderData as Array<configObjectType> } 
 
     return (
         <React.Fragment>

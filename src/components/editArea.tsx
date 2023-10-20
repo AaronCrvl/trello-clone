@@ -1,23 +1,27 @@
 import React from "react";
 import BoardContainer from "./boardContainer";
 import { initialDataType } from "../types/initialDataType";
-import { configObjectType } from "../types/configObjectType";
 import SystemColors from "../types/enums/systemColors";
-import pattern from '../assets/pattern3.svg'
+import { useLocation } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
+import { MyBoardsType } from "../types/myBoardsType";
+import "./css/main.css"
 
-function EditArea ({ configObj } : initialDataType) {           
+function EditArea ({ configObj } : initialDataType) {    
+    const nav = useNavigate()
+    const location = useLocation()       
     const newBoadModalId : string = React.useMemo (()=> 'myModal' + Math.random(), [])
     const boardModalId : string = React.useMemo(()=> 'myBoardModal' + Math.random(), [])
     const [isPending, startTransition] = React.useTransition()
 
-    // enums
+    // enums ------------------------------>
     const appColors = new SystemColors()    
 
-    // Board Options
+    // Board Options ------------------------------>
     const [showTopOptions, setShowTopOptions] = React.useState(false)       
     const [showBoardColors, setShowBoardColors] = React.useState<Boolean>(false)
 
-    // Component data    
+    // Component data ------------------------------>
     const [data, setData] = React.useState<initialDataType>({
         configObj: {
             boardName: '',
@@ -35,7 +39,8 @@ function EditArea ({ configObj } : initialDataType) {
         }
     })
 
-    function validaNewBoardData(name:string, count:string) : Boolean {
+    // Functions ------------------------------>
+    function validateNewBoard(name:string, count:string) : Boolean {
         let res = false
         if(name === undefined || count === undefined) {
             return res
@@ -104,54 +109,75 @@ function EditArea ({ configObj } : initialDataType) {
             let myDialog : any = document.getElementById(boardModalId)
             myDialog.close()
         }
-    }  
+    }      
 
-    function viewBoardColors () { setShowBoardColors(!showBoardColors) }
-
-    function setColor (color : any) {        
-        if (appColors.eColors.hasOwnProperty(color)) {                        
-            data.configObj.configs.forEach(config => config.configObject.boardColor = appColors.getSystemColors(color).toString())
-            setData({ configObj: { boardName: '', configs: data.configObj.configs } })                
-        } 
-        else {
-            console.log("Something went wrong setting the colors.");
-        }        
+    function setColor (color : any) {  
+        try{      
+            if (appColors.eColors.hasOwnProperty(color)) {                        
+                data.configObj.configs.forEach(config => config.configObject.boardColor = appColors.getSystemColors(color).toString())
+                setData({ configObj: { boardName: '', configs: data.configObj.configs } })                
+            } 
+            else {
+                console.log("Something went wrong setting the colors.");
+            }   
+        }
+        catch(e) {
+            alert('Error setting board color. Check the console for more details.')
+            console.log("Open an issue on www.github.com/AaronCrvl/trello-clone. Messgae:" + e)
+        }         
     }     
 
-    function salvarQuadro() {
-        for(let i = 1; i <= 3; ++i) {  
-            if(localStorage.getItem(`quadro${i}`) !== null) {
-                if((JSON.parse(localStorage.getItem(`quadro${i}`)!) as configObjectType).configObject?.tasks[0]?.uniqueKey 
-                    === configObj.configs[0].configObject?.tasks[0]?.uniqueKey) {
-                    localStorage.removeItem(`quadro${i}`)
-                    alert('Board updated sucessfully!')                                        
+    function saveBoardOnLocalStorage() {
+        try {
+            let cont = 1, updated = false            
+            const pathBoard = location.pathname.replace('/editBoard/', '').includes('.') ? 
+                Number.parseFloat(location.pathname.replace('/editBoard/', '')) 
+                : Number.parseInt(location.pathname.replace('/editBoard/', ''))            
+
+            const onTemplatePath = !location.pathname.replace('/editBoard/', '').includes('.')
+            const thisBoardCode = (onTemplatePath && configObj.boardCode !== undefined) ? configObj.boardCode : pathBoard
+
+            let boards = [localStorage.getItem('board1'), localStorage.getItem('board2'), localStorage.getItem('board3')]            
+            boards.forEach(board => {  
+                if(board !== null) {
+                    if((JSON.parse(board) as MyBoardsType)?.boardCode === thisBoardCode) {
+                        configObj.boardCode = thisBoardCode
+                        localStorage.setItem(`board${cont}`, JSON.stringify(configObj))
+                        alert(`Board ${thisBoardCode} updated sucessfully!`)                                        
+                        updated = true                    
+                    }                
+                }    
+                ++cont
+            })
+                    
+            if(onTemplatePath && !updated) {
+                let newCardid = Math.random(), created = false,  internalIndex = 0
+                configObj.boardCode = newCardid
+                
+                for(let i = 1; i < 3; ++i) {
+                    if(boards[internalIndex] === null && !created) {                        
+                        created = true                            
+                        localStorage.setItem(`board${i}`, JSON.stringify(configObj))                                                                                                                 
+                        alert(`Board ${configObj.boardCode} saved sucessfully, check out my boards page.`)                                            
+                    }
+
+                    ++internalIndex
+                }         
+                if(!created) {                
+                    alert(`The 3 custom board allowed for the user is already created, edit one of then.`)
                     return 
-                }                
-            }    
+                }           
+            }
         }
-
-        // conter criação de mais de 3 quadros
-        let quadros = [localStorage.getItem('quadro1'), localStorage.getItem('quadro2'), localStorage.getItem('quadro3')]                
-        if(quadros[0] === null) {            
-            localStorage.setItem('quadro1', JSON.stringify(configObj.configs))
-        }     
-        else if(quadros[1] === null) {            
-            localStorage.setItem('quadro2', JSON.stringify(configObj.configs))
-        }     
-        else if(quadros[3] === null) {            
-            localStorage.setItem('quadro3', JSON.stringify(configObj.configs))
-        }     
-        else {
-            alert('The 3 custom board allowed for the user is already created, edit one of then.')
-            return 
-        }   
-
-        alert('Board saved sucessfully, check out my boards page.')
+        catch(e) {
+            alert('Error saving custom board color. Check the console for more details.')
+            console.log("Open an issue on www.github.com/AaronCrvl/trello-clone. Messgae:" + e)
+        }        
     }
 
-    // jsx
+    // Jsx ------------------------------> ------------------------------>
     return (
-        <div style={{ height:'100vh', backgroundImage: `url(${pattern})` }}>    
+        <div className="editArea">    
             <div className="flex shadow-2xl">   
                 {/* Boards, Card Area, Cards */}
                 <div id="externalBoardArea" className="h-full w-full overflow-x-hidden">     
@@ -167,11 +193,11 @@ function EditArea ({ configObj } : initialDataType) {
                                 <div className="flex text-center items-center justify-center w-full bg-zinc-800 p-5 text-gray-300 font-bold">
                                     <div 
                                         className="rounded text-center text-yellow-200 ml-10 p-1 select-none hover:cursor-pointer transition ease-in-out delay-350 hover:-translate-y-1 hover:scale-110 hover:bg-yellow-600 hover:text-white duration-100"                                        
-                                        onClick={()=> salvarQuadro()}
+                                        onClick={()=> saveBoardOnLocalStorage()}
                                     >
                                         Save Board
                                     </div>                                
-                                    <div 
+                                    {/* <div 
                                         className = { 
                                             showBoardColors ? 
                                                 "z-10 rounded text-center text-teal-200 ml-10 p-1 select-none hover:cursor-pointer"                                        
@@ -181,9 +207,8 @@ function EditArea ({ configObj } : initialDataType) {
                                         onClick={viewBoardColors}
                                     >
                                         Set Boards Color
-                                        {
-                                            showBoardColors ? 
-                                            (
+                                        {                                        
+                                            showBoardColors &&                                            
                                                 <ul className='mt-5 p-1 z-20 opacity-75'>
                                                     <li className='hover:bg-red-700 p-1 rounded text-white cursor-pointer select-none' onClick={()=> setColor(0)}>Red</li>
                                                     <li className='hover:bg-sky-700 p-1 rounded text-white cursor-pointer select-none' onClick={()=> setColor(1)}>Blue</li>
@@ -198,12 +223,9 @@ function EditArea ({ configObj } : initialDataType) {
                                                     <li className='hover:bg-sky-700 p-1 rounded text-white cursor-pointer select-none' onClick={()=> setColor(10)}>Sky</li>                        
                                                     <li className='hover:bg-fuchsia-700 p-1 rounded text-white cursor-pointer select-none' onClick={()=> setColor(11)}>Fuchsia</li>                        
                                                     <li className='hover:bg-rose-700 p-1 rounded text-white cursor-pointer select-none' onClick={()=> setColor(11)}>Rose</li>                        
-                                                </ul>
-                                            )                                            
-                                            :
-                                            (<React.Fragment></React.Fragment>)                                            
+                                                </ul>                                            
                                         }
-                                    </div>
+                                    </div> */}
                                 </div>
                             )
                             :
