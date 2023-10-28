@@ -67,6 +67,7 @@ function BoardContainer({ configObj } : initialDataType) {
     // Function created to force main board object to update. In some cases, the original setState update
     // wasn't completed when the object was acessed once again, so this function 
     // was made to solve cases like those.
+    const handleUpdate = React.useMemo(()=> fakeInsertUpdate, [])
     function fakeInsertUpdate () {      
         startTransition(() => {                 
             if(configObj.configs.length < 15) // The maximum number of boards is 15 right now.   
@@ -100,7 +101,8 @@ function BoardContainer({ configObj } : initialDataType) {
         then delete the old card object and create a new object, 
         with a new key on the destination card container.    
     */   
-    const callback = (key : any, operation : string, data? : string) :void => {  
+    const callback = React.useMemo(()=> callbackCode, []);
+    function callbackCode (key : any, operation : string, data? : string) :void {  
         startTransition(() => {                
             if(operation === 'excludeCard') {
                 configObj.configs.forEach(config => {
@@ -132,10 +134,11 @@ function BoardContainer({ configObj } : initialDataType) {
                 })        
             }  
                 
-            fakeInsertUpdate()     
+            handleUpdate()     
         })
     }    
 
+    const handleDelete = React.useMemo(()=> handleExclusion, [configObj])
     function handleExclusion(e : DragEvent) {
         startTransition(()=> {
             // delete card condition 🦹‍♂️ 
@@ -196,10 +199,10 @@ function BoardContainer({ configObj } : initialDataType) {
             }
         })
     }
-
-    function handleCardDropOnContainer(e : DragEvent) {
+    
+    const handleDrop = React.useMemo(()=> handleCardDropOnContainer, [])
+    function handleCardDropOnContainer(e : DragEvent) : void {
         cardContainerDropConfig!.style.border = ""
-
         let name = e.dataTransfer?.getData('Name')!                
         let area = e.dataTransfer?.getData('Area')!  
 
@@ -252,7 +255,7 @@ function BoardContainer({ configObj } : initialDataType) {
 
             excludeDropConfig.ondrop = function (e) : void {                                        
                 e.preventDefault()                
-                handleExclusion(e)
+                handleDelete(e)
                 excludeDropConfig.style.border = ""               
             }            
         }
@@ -343,7 +346,6 @@ function BoardContainer({ configObj } : initialDataType) {
                         )
                     }   
                     </React.Fragment>    
-
                     {/* Exclusion Area */}
                     <div
                         className='flex w-full'                                                                                              

@@ -33,6 +33,7 @@ function CardContainer({ configObject : { name, boardColor, ready, tasks, parent
     })    
         
     // Functions ------------------------------>
+    const handleCardAdd = React.useMemo(()=> addNewCard, []);
     function addNewCard() : void {
         startTransition(()=> {                        
             let txt = newCardNameInputRef.current! as HTMLInputElement            
@@ -251,7 +252,7 @@ function CardContainer({ configObject : { name, boardColor, ready, tasks, parent
                                 </div>
                                 <div 
                                     className="rounded bg-sky-800 h-fit text-white p-2 ml-3 hover:bg-sky-700 hover:cursor-pointer"
-                                    onClick={addNewCard}
+                                    onClick={handleCardAdd}
                                 >
                                     Save
                                 </div>
