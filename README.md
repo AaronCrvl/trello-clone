@@ -20,8 +20,6 @@ Trello clone made with typescript and React JS.
 ## Gif
 https://github.com/AaronCrvl/trello-clone/assets/72924198/eb504c70-c373-46fb-9146-4969e4d9b7db
 
-
-
 ## Execution
 
 Terminal:
