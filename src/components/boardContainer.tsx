@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { KeyboardEvent } from 'react';
 import CardContainer from './cardContainer';
 import editIcon from '../assets/edit-icon.png'
 import trashIcon from '../assets/trashcan-icon.png';
@@ -311,11 +311,30 @@ function BoardContainer({ configObj } : initialDataType) {
                                     </label>
                                 </div>
                                 <div className="flex mt-1">
-                                    <div className="btn p-1 select-none rounded bg-sky-500 text-white text-lg mr-1" onClick={board.mainTitle.save}>Save</div>
-                                    <div className="btn p-1 select-none rounded bg-zinc-500 text-white text-lg" onClick={()=>{                                    
-                                        let mainTitle : typeof board.mainTitle = {title: board.mainTitle.title, edit: false, save: board.mainTitle.save}
-                                        setBoard({mainTitle})
-                                    }}>
+                                    <div 
+                                        className="btn p-1 select-none rounded bg-sky-500 text-white text-lg mr-1" 
+                                        onClick={board.mainTitle.save}
+                                        onKeyDown={(event : KeyboardEvent) => {
+                                            if(event.key === 'Enter') {
+                                                board.mainTitle.save
+                                            }
+                                        }}
+                                    >
+                                        Save
+                                    </div>
+                                    <div 
+                                        className="btn p-1 select-none rounded bg-zinc-500 text-white text-lg" 
+                                        onClick={()=>{                                    
+                                            let mainTitle : typeof board.mainTitle = {title: board.mainTitle.title, edit: false, save: board.mainTitle.save}
+                                            setBoard({mainTitle})
+                                        }}
+                                        onKeyDown={(event : KeyboardEvent)=> {
+                                            if(event.key === 'Enter') {
+                                                let mainTitle : typeof board.mainTitle = {title: board.mainTitle.title, edit: false, save: board.mainTitle.save}
+                                                setBoard({mainTitle})
+                                            }
+                                        }}
+                                    >
                                         Close
                                     </div>
                                 </div>
@@ -325,10 +344,19 @@ function BoardContainer({ configObj } : initialDataType) {
                         (
                             // Title
                             <div className='flex w-full mt-7'>
-                                <div className='btn w-10 h-12 rounded ml-10' onClick={()=>{
+                                <div 
+                                    className='btn w-10 h-12 rounded ml-10' 
+                                    onClick={()=>{
                                         let mainTitle = {title: board.mainTitle.title, edit : true, save: board.mainTitle.save}
                                         setBoard({mainTitle})
-                                    }}>
+                                    }}
+                                    onKeyDown={(event) => {
+                                        if(event.key === 'Enter') {
+                                            let mainTitle = {title: board.mainTitle.title, edit : true, save: board.mainTitle.save}
+                                            setBoard({mainTitle})
+                                        }
+                                    }}
+                                >
                                     <img 
                                         alt='edit' 
                                         src={editIcon} 
@@ -339,6 +367,11 @@ function BoardContainer({ configObj } : initialDataType) {
                                 <div 
                                     className="select-none w-24 text-md ml-16 h-12 ml-2 p-3 hover:cursor-pointer transition ease-in-out delay-350 bg-zinc-600 hover:-translate-y-1 hover:scale-110 hover:bg-cyan-700 duration-100" 
                                     onClick={()=>addNewCardArea()}
+                                    onKeyDown={(event : KeyboardEvent) => {
+                                        if(event.key === 'Enter') {
+                                            addNewCardArea()
+                                        }
+                                    }}
                                 >
                                     Add Area
                                 </div>                                                                                    

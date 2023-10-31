@@ -1,4 +1,4 @@
-import React from "react";
+import React, { KeyboardEvent } from "react";
 import { cardType } from "../types/cardType";
 import SystemColors from "../types/enums/systemColors";
 import cardMoving from '../assets/cardMoving.png';
@@ -192,8 +192,28 @@ function Card({ uniqueKey, text, description, tags, owner, color, parentCallback
                                     </label>
                                 </div>
                                 <div className="flex mt-1">
-                                    <div className="btn p-1 select-none rounded bg-sky-500 text-white text-md mr-1 cursor-pointer" onClick={alterName}>Save</div>                                    
-                                    <div className="btn p-1 select-none rounded bg-zinc-500 text-white text-md mr-1 cursor-pointer" onClick={()=> setTitleOnEdit(false)}>Close</div> 
+                                    <div 
+                                        className="btn p-1 select-none rounded bg-sky-500 text-white text-md mr-1 cursor-pointer" 
+                                        onClick={alterName}
+                                        onKeyDown={(event : KeyboardEvent) => {
+                                            if(event.key === 'Enter') {
+                                                alterName
+                                            }
+                                        }}
+                                    >
+                                        Save
+                                    </div>                                    
+                                    <div 
+                                        className="btn p-1 select-none rounded bg-zinc-500 text-white text-md mr-1 cursor-pointer" 
+                                        onClick={()=> setTitleOnEdit(false)}
+                                        onKeyDown={(event : KeyboardEvent) => {
+                                            if(event.key === 'Enter') {
+                                                setTitleOnEdit(false)
+                                            }
+                                        }}
+                                    >
+                                        Close
+                                    </div> 
                                 </div>
                             </React.Fragment> 
                         </div>
@@ -208,6 +228,11 @@ function Card({ uniqueKey, text, description, tags, owner, color, parentCallback
                                     className='w-4 h-4' 
                                     src={editIcon} 
                                     onClick={()=> setTitleOnEdit(true)}
+                                    onKeyDown={(event : KeyboardEvent) => {
+                                        if(event.key === 'Enter') {
+                                            setTitleOnEdit(true)
+                                        }
+                                    }}
                                 />
                             </div>
                         </div>  
@@ -372,19 +397,19 @@ function Card({ uniqueKey, text, description, tags, owner, color, parentCallback
                                 {
                                     showBoardColors &&                                     
                                         <ul className='mt-5 p-1 z-20 opacity-75'>
-                                            <li className='hover:bg-red-700 p-1 rounded text-white cursor-pointer select-none' onClick={()=> setColor(0)}>Red</li>
-                                            <li className='hover:bg-sky-700 p-1 rounded text-white cursor-pointer select-none' onClick={()=> setColor(1)}>Blue</li>
-                                            <li className='hover:bg-emerald-700 p-1 rounded text-white cursor-pointer select-none' onClick={()=> setColor(2)}>Green</li>                                
-                                            <li className='hover:bg-amber-700 p-1 rounded text-white cursor-pointer select-none' onClick={()=> setColor(3)}>Amber</li>                                
-                                            <li className='hover:bg-cyan-700 p-1 rounded text-white cursor-pointer select-none' onClick={()=> setColor(4)}>Cyan</li>                                
-                                            <li className='hover:bg-transparent p-1 rounded text-white cursor-pointer select-none' onClick={()=> setColor(5)}>Transparent</li>                                
-                                            <li className='hover:bg-zinc-800 p-1 rounded text-white cursor-pointer select-none' onClick={()=> setColor(6)}>Zinc</li>                        
-                                            <li className='hover:bg-orange-700 p-1 rounded text-white cursor-pointer select-none' onClick={()=> setColor(7)}>Orange</li>                        
-                                            <li className='hover:bg-yellow-700 p-1 rounded text-white cursor-pointer select-none' onClick={()=> setColor(8)}>Yellow</li>                        
-                                            <li className='hover:bg-emerald-700 p-1 rounded text-white cursor-pointer select-none' onClick={()=> setColor(9)}>Emerald</li>                        
-                                            <li className='hover:bg-sky-700 p-1 rounded text-white cursor-pointer select-none' onClick={()=> setColor(10)}>Sky</li>                        
-                                            <li className='hover:bg-fuchsia-700 p-1 rounded text-white cursor-pointer select-none' onClick={()=> setColor(11)}>Fuchsia</li>                        
-                                            <li className='hover:bg-rose-700 p-1 rounded text-white cursor-pointer select-none' onClick={()=> setColor(11)}>Rose</li>                        
+                                            <li className='hover:bg-red-700 p-1 rounded text-white cursor-pointer select-none' onClick={()=> setColor(0)} onKeyDown={()=>{}}>Red</li>
+                                            <li className='hover:bg-sky-700 p-1 rounded text-white cursor-pointer select-none' onClick={()=> setColor(1)} onKeyDown={()=>{}}>Blue</li>
+                                            <li className='hover:bg-emerald-700 p-1 rounded text-white cursor-pointer select-none' onClick={()=> setColor(2)} onKeyDown={()=>{}}>Green</li>                                
+                                            <li className='hover:bg-amber-700 p-1 rounded text-white cursor-pointer select-none' onClick={()=> setColor(3)} onKeyDown={()=>{}}>Amber</li>                                
+                                            <li className='hover:bg-cyan-700 p-1 rounded text-white cursor-pointer select-none' onClick={()=> setColor(4)} onKeyDown={()=>{}}>Cyan</li>                                
+                                            <li className='hover:bg-transparent p-1 rounded text-white cursor-pointer select-none' onClick={()=> setColor(5)} onKeyDown={()=>{}}>Transparent</li>                                
+                                            <li className='hover:bg-zinc-800 p-1 rounded text-white cursor-pointer select-none' onClick={()=> setColor(6)} onKeyDown={()=>{}}>Zinc</li>                        
+                                            <li className='hover:bg-orange-700 p-1 rounded text-white cursor-pointer select-none' onClick={()=> setColor(7)} onKeyDown={()=>{}}>Orange</li>                        
+                                            <li className='hover:bg-yellow-700 p-1 rounded text-white cursor-pointer select-none' onClick={()=> setColor(8)} onKeyDown={()=>{}}>Yellow</li>                        
+                                            <li className='hover:bg-emerald-700 p-1 rounded text-white cursor-pointer select-none' onClick={()=> setColor(9)} onKeyDown={()=>{}}>Emerald</li>                        
+                                            <li className='hover:bg-sky-700 p-1 rounded text-white cursor-pointer select-none' onClick={()=> setColor(10)} onKeyDown={()=>{}}>Sky</li>                        
+                                            <li className='hover:bg-fuchsia-700 p-1 rounded text-white cursor-pointer select-none' onClick={()=> setColor(11)} onKeyDown={()=>{}}>Fuchsia</li>                        
+                                            <li className='hover:bg-rose-700 p-1 rounded text-white cursor-pointer select-none' onClick={()=> setColor(11)} onKeyDown={()=>{}}>Rose</li>                        
                                         </ul>                                    
                                 }                      
                             </div>    

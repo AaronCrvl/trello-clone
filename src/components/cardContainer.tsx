@@ -1,4 +1,4 @@
-import React from "react";
+import React, { KeyboardEvent } from "react";
 import Card from "./card";
 import { cardType } from "../types/cardType";
 import { configObjectType } from "../types/configObjectType";
@@ -172,17 +172,41 @@ function CardContainer({ configObject : { name, boardColor, ready, tasks, parent
                                     </label>
                                 </div>
                                 <div className="flex mt-1">
-                                    <div className="btn p-1 select-none rounded bg-sky-500 text-white text-md mr-1" onClick={()=>{
-                                        let txt : string | undefined  = (cardAreaTitleInputRef.current! as HTMLInputElement).value
-                                        if(txt !== undefined) {
-                                            name = txt
-                                            setContainerData({configObject : {name : name, boardColor : boardColor, ready: ready, tasks : containerData.configObject.tasks, parentCallback : parentCallback }})
+                                    <div 
+                                        className="btn p-1 select-none rounded bg-sky-500 text-white text-md mr-1" 
+                                        onClick={()=>{
+                                            let txt : string | undefined  = (cardAreaTitleInputRef.current! as HTMLInputElement).value
+                                            if(txt !== undefined) {
+                                                name = txt
+                                                setContainerData({configObject : {name : name, boardColor : boardColor, ready: ready, tasks : containerData.configObject.tasks, parentCallback : parentCallback }})
+                                                setOnEditTitle(false)
+                                            }
+                                        }}
+                                        onKeyDown={(event : KeyboardEvent) => {
+                                            if(event.key === 'Enter') {
+                                                let txt : string | undefined  = (cardAreaTitleInputRef.current! as HTMLInputElement).value
+                                                if(txt !== undefined) {
+                                                    name = txt
+                                                    setContainerData({configObject : {name : name, boardColor : boardColor, ready: ready, tasks : containerData.configObject.tasks, parentCallback : parentCallback }})
+                                                    setOnEditTitle(false)
+                                                }
+                                            }
+                                        }}
+                                    >
+                                        Save
+                                    </div>
+                                    <div className="btn p-1 select-none rounded bg-zinc-500 text-white text-md" 
+                                        onClick={()=>{
                                             setOnEditTitle(false)
-                                        }
-                                    }}>Save</div>
-                                    <div className="btn p-1 select-none rounded bg-zinc-500 text-white text-md" onClick={()=>{
-                                        setOnEditTitle(false)
-                                    }}>Close</div>
+                                        }}
+                                        onKeyDown={(event : KeyboardEvent) => {
+                                            if(event.key === 'Enter') {
+                                                setOnEditTitle(false)
+                                            }
+                                        }}
+                                    >
+                                        Close
+                                    </div>
                                 </div>
                             </React.Fragment>    
                         )
@@ -194,6 +218,11 @@ function CardContainer({ configObject : { name, boardColor, ready, tasks, parent
                                 <div 
                                     className='btn h-10 rounded hover:cursor-pointer transition ease-in-out delay-150 hover:-translate-y-1 hover:scale-110 duration-300' 
                                     onClick={()=>{setOnEditTitle(true)}}
+                                    onKeyDown={(event : KeyboardEvent) => {
+                                        if(event.key === 'Enter') {
+                                            setOnEditTitle(true)
+                                        }
+                                    }}
                                 >                                    
                                     <img 
                                         alt='edit' 
@@ -253,6 +282,11 @@ function CardContainer({ configObject : { name, boardColor, ready, tasks, parent
                                 <div 
                                     className="rounded bg-sky-800 h-fit text-white p-2 ml-3 hover:bg-sky-700 hover:cursor-pointer"
                                     onClick={handleCardAdd}
+                                    onKeyDown={(event : KeyboardEvent) => {
+                                        if(event.key === 'Enter') {
+                                            handleCardAdd()
+                                        }
+                                    }}
                                 >
                                     Save
                                 </div>
@@ -266,6 +300,11 @@ function CardContainer({ configObject : { name, boardColor, ready, tasks, parent
                                         setOnAddNewCard(true)                                       
                                     }
                                 }
+                                onKeyDown={(event : KeyboardEvent) => {
+                                    if(event.key === 'Enter') {
+                                        setOnAddNewCard(true)
+                                    }
+                                }}
                             >
                                 + Add new card
                             </div> 
