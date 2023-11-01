@@ -32,5 +32,7 @@ export default class SystemColor {
         else return ''
     }
 
-    constructor(){}
+    constructor(){
+        // this class dont need to start it variables 
+    }
 }

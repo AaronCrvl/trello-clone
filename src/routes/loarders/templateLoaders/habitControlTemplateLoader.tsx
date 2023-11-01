@@ -52,4 +52,8 @@ export default class HabitControlLoader {
         },
     });
   }
+
+  constructor(){
+    // this class dont need to start it variables 
+  }
 } // !_☄

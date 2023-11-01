@@ -1,10 +1,9 @@
-import React, { KeyboardEvent } from 'react';
+import React, { KeyboardEvent, useRef, useMemo, useState  } from 'react';
 import CardContainer from './cardContainer';
 import editIcon from '../assets/edit-icon.png'
 import trashIcon from '../assets/trashcan-icon.png';
 import { initialDataType } from '../types/initialDataType';
 import { configObjectType } from '../types/configObjectType';
-import { useRef, useMemo, useState } from "react";
 import './css/main.css';
 
 function BoardContainer({ configObj } : initialDataType) {    
@@ -19,8 +18,7 @@ function BoardContainer({ configObj } : initialDataType) {
     const cardContainerDivRef = useRef(null)
     const cardContainer_AreaDivRef = useRef(null)
 
-    // Hooks ------------------------------> ------------------------------>
-    const [isPending, startTransition] = React.useTransition();    
+    // Hooks ------------------------------> ------------------------------>    
     const [arr, setArr] = useState<Array<configObjectType>>(configObj.configs)
     const [excludeDropConfig, setExclusionDropConfig] = useState<HTMLElement>()           
     const [cardContainerDropConfig, setCardContainerDropConfig] = useState<HTMLElement>()      
@@ -38,61 +36,57 @@ function BoardContainer({ configObj } : initialDataType) {
     })         
 
     // Functions ------------------------------>
-    function addNewCardArea () {   
-        startTransition(()=> {            
-            if(configObj.configs.length < 15) // ⚠ ..... define dynamic length size is pending
-            {
-                let newArea : configObjectType = {
-                    configObject: {
-                        name : '',
-                        boardColor: configObj.configs[0].configObject.boardColor,
-                        ready : false, 
-                        tasks : [],
-                        parentCallback : callback,
-                    }
-                }      
-                
-                configObj.configs.push(newArea)                 
-                setArr(configObj.configs)        
+    function addNewCardArea () {                 
+        if(configObj.configs.length < 15) // ⚠ ..... define dynamic length size is pending
+        {
+            let newArea : configObjectType = {
+                configObject: {
+                    name : '',
+                    boardColor: configObj.configs[0].configObject.boardColor,
+                    ready : false, 
+                    tasks : [],
+                    parentCallback : callback,
+                }
+            }      
+            
+            configObj.configs.push(newArea)                 
+            setArr(configObj.configs)        
 
-                let mainTitle :typeof  board.mainTitle = {title: board.mainTitle.title, edit: false, save: board.mainTitle.save}
-                setBoard({mainTitle})            
-            }
-            else {            
-                alert(`I bet you dont need more than ${configObj.configs.length} boards!`)
-            }
-        }) 
+            let mainTitle :typeof  board.mainTitle = {title: board.mainTitle.title, edit: false, save: board.mainTitle.save}
+            setBoard({mainTitle})            
+        }
+        else {            
+            alert(`I bet you dont need more than ${configObj.configs.length} boards!`)
+        }        
     }
     
     // Function created to force main board object to update. In some cases, the original setState update
     // wasn't completed when the object was acessed once again, so this function 
     // was made to solve cases like those.
     const handleUpdate = React.useMemo(()=> fakeInsertUpdate, [])
-    function fakeInsertUpdate () {      
-        startTransition(() => {                 
-            if(configObj.configs.length < 15) // The maximum number of boards is 15 right now.   
-            { 
-                let newArea : configObjectType = {
-                    configObject: {
-                        name : '',
-                        boardColor: configObj.configs[0].configObject.boardColor,
-                        ready : false, 
-                        tasks : [],
-                        parentCallback : callback,
-                    }
-                }      
+    function fakeInsertUpdate () {                  
+        if(configObj.configs.length < 15) // The maximum number of boards is 15 right now.   
+        { 
+            let newArea : configObjectType = {
+                configObject: {
+                    name : '',
+                    boardColor: configObj.configs[0].configObject.boardColor,
+                    ready : false, 
+                    tasks : [],
+                    parentCallback : callback,
+                }
+            }      
 
-                configObj.configs.push(newArea)                 
-                setArr(configObj.configs)                
-                arr.pop() // pop to prevent new card area to be created    
+            configObj.configs.push(newArea)                 
+            setArr(configObj.configs)                
+            arr.pop() // pop to prevent new card area to be created    
 
-                let mainTitle :typeof  board.mainTitle = {title: board.mainTitle.title, edit: false, save: board.mainTitle.save}
-                setBoard({mainTitle})            
-            }
-            else {            
-                alert(`I bet you dont need more than ${configObj.configs.length} boards!`)
-            }
-        })
+            let mainTitle :typeof  board.mainTitle = {title: board.mainTitle.title, edit: false, save: board.mainTitle.save}
+            setBoard({mainTitle})            
+        }
+        else {            
+            alert(`I bet you dont need more than ${configObj.configs.length} boards!`)
+        }        
     } 
             
     /* 
@@ -102,105 +96,84 @@ function BoardContainer({ configObj } : initialDataType) {
         with a new key on the destination card container.    
     */   
     const callback = React.useMemo(()=> callbackCode, []);
-    function callbackCode (key : any, operation : string, data? : string) :void {  
-        startTransition(() => {                
-            if(operation === 'excludeCard') {
-                configObj.configs.forEach(config => {
-                    
-                    // removing card from old container
-                    let index = config.configObject.tasks.findIndex(element => {                    
-                        return element ? element.uniqueKey === key : -1
-                    })
+    function callbackCode (key : any, operation : string, data? : string) :void {                                
+        configObj.configs.forEach(config => {                            
+            let index = config.configObject.tasks.findIndex(element => element ? element.uniqueKey === key : -1)
 
-                    if(index > -1) {
-                        config.configObject.tasks.splice(index, 1)
-                        setArr(configObj.configs)                                  
-                    }               
-                })        
-            }  
-            
-            if(operation === 'updateColor') {
-                configObj.configs.forEach(config => {
-                    
-                    // removing card from old container
-                    let index = config?.configObject?.tasks?.findIndex(element => {                    
-                        return element ? element.uniqueKey === key : -1
-                    })
-
-                    if(index > -1) {
-                        config.configObject.tasks[index].color = data!
-                        setArr(configObj.configs)                                  
-                    }               
-                })        
-            }  
-                
-            handleUpdate()     
-        })
+            if(index > -1) {
+                if(operation === 'excludeCard') {
+                    config.configObject.tasks.splice(index, 1)
+                    setArr(configObj.configs)        
+                }  
+                else if(operation === 'updateColor') {
+                    config.configObject.tasks[index].color = data!
+                    setArr(configObj.configs)   
+                }                        
+            }               
+        })                
+        handleUpdate()                                    
     }    
 
     const handleDelete = React.useMemo(()=> handleExclusion, [configObj])
-    function handleExclusion(e : DragEvent) {
-        startTransition(()=> {
-            // delete card condition 🦹‍♂️ 
-            let key : string | undefined = e.dataTransfer?.getData("key")                
-            if(key !== undefined && key !== '' && key.includes('Card')) {                                                                                                                                                             
-                configObj.configs.forEach((config : configObjectType) : void => {                        
-                    if (config.configObject === undefined) 
-                    {                                                                                                 
-                        return      
-                    }                        
+    function handleExclusion(e : DragEvent) {        
+        // delete card condition 🦹‍♂️ 
+        let key : string | undefined = e.dataTransfer?.getData("key")                
+        if(key !== undefined && key !== '' && key.includes('Card')) {                                                                                                                                                             
+            configObj.configs.forEach((config : configObjectType) : void => {                        
+                if (config.configObject === undefined) 
+                {                                                                                                 
+                    return      
+                }                        
+            })
+                                        
+            let boardIndex : number = -1, cardIndex : number = -1                     
+            configObj.configs.forEach(board => {
+                board.configObject.tasks.forEach(cardInBoard => {
+                    if(cardInBoard.uniqueKey === key) {
+                        boardIndex = configObj.configs.indexOf(board)                                
+                        cardIndex = configObj.configs[configObj.configs.indexOf(board)].configObject.tasks.indexOf(cardInBoard)
+                    }
                 })
-                                            
-                let boardIndex : number = -1, cardIndex : number = -1                     
-                configObj.configs.forEach(board => {
-                    board.configObject.tasks.forEach(cardInBoard => {
-                        if(cardInBoard.uniqueKey === key) {
-                            boardIndex = configObj.configs.indexOf(board)                                
-                            cardIndex = configObj.configs[configObj.configs.indexOf(board)].configObject.tasks.indexOf(cardInBoard)
-                        }
-                    })
-                })
-                                                            
-                if(boardIndex > -1 && cardIndex > -1)
-                {                        
-                    configObj.configs[boardIndex].configObject.tasks.splice(cardIndex, 1)
-                    setArr(configObj.configs)       
-
-                    let mainTitle : typeof board.mainTitle = {title: board.mainTitle.title, edit: false, save: board.mainTitle.save}
-                    setBoard({mainTitle})
-                }                                        
-            }
-
-            // delete board condition 🦹‍♂️             
-            let name : string | undefined= e.dataTransfer?.getData("Name")                          
-            let area : string | undefined= e.dataTransfer?.getData("Area")                          
-            if(name !== undefined && name !== '' && area?.includes('dragThisAreaDiv')) {                                                                                                                                                             
-                configObj.configs.forEach((config : configObjectType) : void => {                        
-                    if ( 
-                        config !== undefined 
-                        && config.configObject !== undefined 
-                        && config.configObject.name === name ) 
-                    {                            
-                        let index : number = configObj.configs.findIndex((x) => { 
-                            return (x !== undefined && x.configObject !== undefined) ? x.configObject.name === name : 0                                
-                        })
-
-                        if(index > 0) {                        
-                            // use this instead of delete, because "delete arr[index]" set arr[index] to undefined
-                            // using "delete" create future problems for card manipulation on Card Area     
-                            configObj.configs.splice(index, 1) 
-                            setArr(configObj.configs)                                   
-                        }                                                                       
-                    }                        
-                })
+            })
+                                                        
+            if(boardIndex > -1 && cardIndex > -1)
+            {                        
+                configObj.configs[boardIndex].configObject.tasks.splice(cardIndex, 1)
+                setArr(configObj.configs)       
 
                 let mainTitle : typeof board.mainTitle = {title: board.mainTitle.title, edit: false, save: board.mainTitle.save}
                 setBoard({mainTitle})
-            }
-        })
+            }                                        
+        }
+
+        // delete board condition 🦹‍♂️             
+        let name : string | undefined= e.dataTransfer?.getData("Name")                          
+        let area : string | undefined= e.dataTransfer?.getData("Area")                          
+        if(name !== undefined && name !== '' && area?.includes('dragThisAreaDiv')) {                                                                                                                                                             
+            configObj.configs.forEach((config : configObjectType) : void => {                        
+                if ( 
+                    config !== undefined 
+                    && config.configObject !== undefined 
+                    && config.configObject.name === name ) 
+                {                            
+                    let index : number = configObj.configs.findIndex((x) => { 
+                        return (x !== undefined && x.configObject !== undefined) ? x.configObject.name === name : 0                                
+                    })
+
+                    if(index > 0) {                        
+                        // use this instead of delete, because "delete arr[index]" set arr[index] to undefined
+                        // using "delete" create future problems for card manipulation on Card Area     
+                        configObj.configs.splice(index, 1) 
+                        setArr(configObj.configs)                                   
+                    }                                                                       
+                }                        
+            })
+
+            let mainTitle : typeof board.mainTitle = {title: board.mainTitle.title, edit: false, save: board.mainTitle.save}
+            setBoard({mainTitle})
+        }        
     }
-    
-    const handleDrop = React.useMemo(()=> handleCardDropOnContainer, [])
+        
     function handleCardDropOnContainer(e : DragEvent) : void {
         cardContainerDropConfig!.style.border = ""
         let name = e.dataTransfer?.getData('Name')!                

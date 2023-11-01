@@ -42,7 +42,9 @@ class AppRouter {
     },
   ])}
 
-  constructor () {}
+  constructor () {
+    // this class dont need to start it variables 
+  }
 }
 
 export default AppRouter; // !_☄

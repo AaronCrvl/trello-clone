@@ -18,5 +18,7 @@ export default class SystemBoardTemplates {
         })
     }
      
-    constructor(){}
+    constructor(){
+        // this class dont need to start it variables 
+    }
 }
