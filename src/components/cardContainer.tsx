@@ -6,7 +6,7 @@ import editIcon from '../assets/edit-icon.png'
 import { tagType } from "../types/tagType";
 import { useMemo, useRef, useState } from "react";
 
-function CardContainer({ configObject : { name, boardColor, ready, tasks, parentCallback }} : configObjectType) {  
+function CardContainer({ configObject : {uniqId, name, boardColor, ready, tasks, parentCallback }} : configObjectType) {  
     // Id's ------------------------------>
     const cardsDivId : string = useMemo(()=> 'dragCardDiv' + Math.random(), [])
     const areaId : string = useMemo(()=>  'dragThisAreaDiv' + Math.random(), [])
@@ -24,6 +24,7 @@ function CardContainer({ configObject : { name, boardColor, ready, tasks, parent
       
     const [containerData, setContainerData] = useState<configObjectType>({ // card list  
         configObject : {
+            uniqId: uniqId,
             name: name,
             boardColor: boardColor,
             ready: ready,
@@ -128,7 +129,7 @@ function CardContainer({ configObject : { name, boardColor, ready, tasks, parent
         {               
             dragConfig.ondragstart = function (e) {     
                 if((e.target as Element).id === areaId) {
-                    e.dataTransfer!.setData("Name", containerData.configObject.name);                                            
+                    e.dataTransfer!.setData("UniqId", containerData.configObject.uniqId);                                            
                     e.dataTransfer!.setData("Area", areaId);                                            
                 }
             }
@@ -178,7 +179,7 @@ function CardContainer({ configObject : { name, boardColor, ready, tasks, parent
                                             let txt : string | undefined  = (cardAreaTitleInputRef.current! as HTMLInputElement).value
                                             if(txt !== undefined) {
                                                 name = txt
-                                                setContainerData({configObject : {name : name, boardColor : boardColor, ready: ready, tasks : containerData.configObject.tasks, parentCallback : parentCallback }})
+                                                setContainerData({configObject : {uniqId : uniqId, name : name, boardColor : boardColor, ready: ready, tasks : containerData.configObject.tasks, parentCallback : parentCallback }})
                                                 setOnEditTitle(false)
                                             }
                                         }}
@@ -187,7 +188,7 @@ function CardContainer({ configObject : { name, boardColor, ready, tasks, parent
                                                 let txt : string | undefined  = (cardAreaTitleInputRef.current! as HTMLInputElement).value
                                                 if(txt !== undefined) {
                                                     name = txt
-                                                    setContainerData({configObject : {name : name, boardColor : boardColor, ready: ready, tasks : containerData.configObject.tasks, parentCallback : parentCallback }})
+                                                    setContainerData({configObject : {uniqId : uniqId, name : name, boardColor : boardColor, ready: ready, tasks : containerData.configObject.tasks, parentCallback : parentCallback }})
                                                     setOnEditTitle(false)
                                                 }
                                             }
@@ -245,7 +246,7 @@ function CardContainer({ configObject : { name, boardColor, ready, tasks, parent
                                 {/* Card */}                       
                                 return (                                                                                                                                                                                                                 
                                     <Card   
-                                        key={Math.random()}
+                                        key={card.uniqueKey}
                                         uniqueKey={card.uniqueKey}                                                                                  
                                         text={card.text}
                                         description={card.description}

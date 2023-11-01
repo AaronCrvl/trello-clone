@@ -8,11 +8,11 @@ function EditArea ({ configObj } : initialDataType) {
 
     // Functions ------------------------------>
     function saveBoards() {
-        for(let i = 1; i <= 3; ++i) {  
+        for(let i = 0; i < 3; ++i) {  
             if(localStorage.getItem(`quadro${i}`) !== null) {
-                if((JSON.parse(localStorage.getItem(`quadro${i}`)!) as configObjectType).configObject?.tasks[0]?.uniqueKey 
-                    === configObj.configs[0].configObject?.tasks[0]?.uniqueKey) {
-                    localStorage.removeItem(`quadro${i}`)
+                if(JSON.parse(localStorage.getItem(`quadro${i}`)!)[0].configObject.uniqId
+                    === configObj.configs[0].configObject?.uniqId) {
+                    localStorage.setItem(`quadro${i}`, JSON.stringify(configObj.configs))    
                     alert('Board updated sucessfully!')                                        
                     return 
                 }                
@@ -20,18 +20,20 @@ function EditArea ({ configObj } : initialDataType) {
         }
 
         // conter criação de mais de 3 quadros
-        let j = 0, boards = [localStorage.getItem('quadro1'), localStorage.getItem('quadro2'), localStorage.getItem('quadro3')] 
-        boards.forEach(board => {
-            if(j === 3) {
-                alert('The 3 custom board allowed for the user is already created, edit one of then.')                
-                return
-            }
-            if(boards === null) {            
-                localStorage.setItem(`quadro${j}`, JSON.stringify(configObj.configs))                 
+        let j = 0, getOut = false, boards = [localStorage.getItem('quadro0'), localStorage.getItem('quadro1'), localStorage.getItem('quadro2')] 
+        if(boards[0] !== null && boards[1] !== null && boards[2] !== null) {
+            alert('The 3 custom board allowed for the user is already created, edit one of then.')   
+            return 
+        }
+
+        boards.forEach(board => {            
+            if(board === null && !getOut) {            
+                localStorage.setItem(`quadro${j}`, JSON.stringify(configObj.configs))                                 
+                alert('Board saved sucessfully, check out my boards page.')
+                getOut = true
             } 
             ++j;   
-        })                        
-        alert('Board saved sucessfully, check out my boards page.')
+        })                                
     }
 
     // Jsx ------------------------------>

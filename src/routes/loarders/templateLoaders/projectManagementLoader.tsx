@@ -1,4 +1,5 @@
 import { tagType } from "../../../types/tagType";
+import uniqid from 'uniqid';
 
 export default class ProjectManagementLoader {
     public getBoards() : any {
@@ -15,35 +16,35 @@ export default class ProjectManagementLoader {
       const cardsJson = 
       [
         [
-          {"uniqueKey":Math.random(),"text":"Set tags on your cards","description":[""],"tags":tagTypes[0], "color":"bg-amber-700", "owner":""},
-          {"uniqueKey":Math.random(),"text":"Launch Timeline","description":[""],"tags":tagTypes[1], "color":"bg-transparent", "owner":""},
-          {"uniqueKey":Math.random(),"text":"Weekly Updates","description":["Team and project news."],"tags":tagTypes[2], "color":"bg-blue-700", "owner":""}
+          {"uniqueKey":uniqid(),"text":"Set tags on your cards","description":[""],"tags":tagTypes[0], "color":"bg-amber-700", "owner":""},
+          {"uniqueKey":uniqid(),"text":"Launch Timeline","description":[""],"tags":tagTypes[1], "color":"bg-transparent", "owner":""},
+          {"uniqueKey":uniqid(),"text":"Weekly Updates","description":["Team and project news."],"tags":tagTypes[2], "color":"bg-blue-700", "owner":""}
         ],
         [
-          {"uniqueKey":Math.random(),"text":"HTML Problem","description":[""],"tags":tagTypes[3], "color":"bg-transparent", "owner":""},
-          {"uniqueKey":Math.random(),"text":"Unity Tests","description":[""],"tags":["Important","Team"], "color":"bg-transparent", "owner":""}
+          {"uniqueKey":uniqid(),"text":"HTML Problem","description":[""],"tags":tagTypes[3], "color":"bg-transparent", "owner":""},
+          {"uniqueKey":uniqid(),"text":"Unity Tests","description":[""],"tags":["Important","Team"], "color":"bg-transparent", "owner":""}
         ],
         [
-          {"uniqueKey":Math.random(),"text":"Implement Site Banner","description":[""],"tags":[], "color":"bg-red-700", "owner":""},
-          {"uniqueKey":Math.random(),"text":"React Course","description":[""],"tags":tagTypes[4], "color":"bg-amber-700", "owner":""}
+          {"uniqueKey":uniqid(),"text":"Implement Site Banner","description":[""],"tags":[], "color":"bg-red-700", "owner":""},
+          {"uniqueKey":uniqid(),"text":"React Course","description":[""],"tags":tagTypes[4], "color":"bg-amber-700", "owner":""}
         ],
         [
-          {"uniqueKey":Math.random(),"text":"Legal Process","description":[""],"tags":["People Relation"], "color":"bg-lime-700", "owner":""}
+          {"uniqueKey":uniqid(),"text":"Legal Process","description":[""],"tags":["People Relation"], "color":"bg-lime-700", "owner":""}
         ],
         [
-          {"uniqueKey":Math.random(),"text":"Unfinished Tasks","description":[""],"tags":tagTypes[0], "color":"bg-transparent", "owner":""},
-          {"uniqueKey":Math.random(),"text":"Timeline","description":[""],"tags":["Launch","Project"], "color":"bg-transparent", "owner":""},
-          {"uniqueKey":Math.random(),"text":"Finished","description":["Just include tasks that was finished"],"tags":tagTypes[1], "color":"bg-transparent", "owner":""}
+          {"uniqueKey":uniqid(),"text":"Unfinished Tasks","description":[""],"tags":tagTypes[0], "color":"bg-transparent", "owner":""},
+          {"uniqueKey":uniqid(),"text":"Timeline","description":[""],"tags":["Launch","Project"], "color":"bg-transparent", "owner":""},
+          {"uniqueKey":uniqid(),"text":"Finished","description":["Just include tasks that was finished"],"tags":tagTypes[1], "color":"bg-transparent", "owner":""}
         ]
       ]
 
       const dataJson = [
-        {"configObject":{"name":"Project Resources 📰","boardColor":"bg-transparent","ready":false,"tasks":cardsJson[0]}},
-        {"configObject":{"name":"Next Daily Questions 😆","boardColor":"bg-transparent","ready":false,"tasks":cardsJson[1]}},
-        {"configObject":{"name":"To Do","boardColor":"bg-transparent","ready":false,"tasks":cardsJson[2]}},
-        {"configObject":{"name":"Pending","boardColor":"bg-transparent","ready":false,"tasks":cardsJson[3]}},
-        {"configObject":{"name":"Mental Block","boardColor":"bg-transparent","ready":false,"tasks":cardsJson[4]}},
-        {"configObject":{"name":"Done☑ 🆕","boardColor":"bg-transparent","ready":false,"tasks":cardsJson[5]}}
+        {"configObject":{"uniqId" : uniqid(), "name":"Project Resources 📰","boardColor":"bg-transparent","ready":false,"tasks":cardsJson[0]}},
+        {"configObject":{"uniqId" : uniqid(), "name":"Next Daily Questions 😆","boardColor":"bg-transparent","ready":false,"tasks":cardsJson[1]}},
+        {"configObject":{"uniqId" : uniqid(),  "name":"To Do","boardColor":"bg-transparent","ready":false,"tasks":cardsJson[2]}},
+        {"configObject":{"uniqId" : uniqid(),  "name":"Pending","boardColor":"bg-transparent","ready":false,"tasks":cardsJson[3]}},
+        {"configObject":{"uniqId" : uniqid(), "name":"Mental Block","boardColor":"bg-transparent","ready":false,"tasks":cardsJson[4]}},
+        {"configObject":{"uniqId" : uniqid(), "name":"Done☑ 🆕","boardColor":"bg-transparent","ready":false,"tasks":cardsJson[5]}}
       ]
       
       return new Response(JSON.stringify(dataJson), {

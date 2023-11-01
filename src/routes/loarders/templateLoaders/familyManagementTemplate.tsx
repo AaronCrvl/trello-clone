@@ -1,4 +1,5 @@
 import { tagType } from "../../../types/tagType";
+import uniqid from 'uniqid';
 
 export default class FamilyManagementTemplate {
     public getBoards() : any {
@@ -17,41 +18,41 @@ export default class FamilyManagementTemplate {
       const cardsJson = 
       [
         [
-          {"uniqueKey":'Card'+Math.random(),"text":"Hi Family!😄","description":[""],"tags":tagTypes[4], "color":"bg-red-700", "owner":""},                   
+          {"uniqueKey":'Card'+uniqid(),"text":"Hi Family!😄","description":[""],"tags":tagTypes[4], "color":"bg-red-700", "owner":""},                   
         ],
         [
-          {"uniqueKey":'Card'+Math.random(),"text":"Training👟","description":[""],"tags":tagTypes[0], "color":"bg-transparent", "owner":""},
-          {"uniqueKey":'Card'+Math.random(),"text":"Baby room👉","description":[""],"tags":[], "color":"bg-red", "owner":""},        
+          {"uniqueKey":'Card'+uniqid(),"text":"Training👟","description":[""],"tags":tagTypes[0], "color":"bg-transparent", "owner":""},
+          {"uniqueKey":'Card'+uniqid(),"text":"Baby room👉","description":[""],"tags":[], "color":"bg-red", "owner":""},        
         ],
         [
-          {"uniqueKey":'Card'+Math.random(),"text":"Day Off Policy🚨","description":[""],"tags":[], "color":"bg-transparent", "owner":""},
-          {"uniqueKey":'Card'+Math.random(),"text":"Medical License👨‍⚕️","description":[""],"tags":[], "color":"bg-transparent", "owner":""},
+          {"uniqueKey":'Card'+uniqid(),"text":"Day Off Policy🚨","description":[""],"tags":[], "color":"bg-transparent", "owner":""},
+          {"uniqueKey":'Card'+uniqid(),"text":"Medical License👨‍⚕️","description":[""],"tags":[], "color":"bg-transparent", "owner":""},
         ],
         [],
         [],        
         [
-          {"uniqueKey":'Card'+Math.random(),"text":"Home Office Policy🚨","description":[""],"tags":tagTypes[5], "color":"bg-transparent", "owner":""},
+          {"uniqueKey":'Card'+uniqid(),"text":"Home Office Policy🚨","description":[""],"tags":tagTypes[5], "color":"bg-transparent", "owner":""},
         ],
         [],
         [
-          {"uniqueKey":'Card'+Math.random(),"text":"Banana🍌","description":[""],"tags":tagTypes[1],"color":"bg-transparent", "owner":""},
-          {"uniqueKey":'Card'+Math.random(),"text":"Melon🍈","description":[""],"tags":[],"color":"bg-transparent", "owner":""},
-          {"uniqueKey":'Card'+Math.random(),"text":"Grapes🍇","description":[""],"tags":[],"color":"bg-transparent", "owner":""},
-          {"uniqueKey":'Card'+Math.random(),"text":"Lemon🍋","description":[""],"tags":[],"color":"bg-transparent", "owner":""},
-          {"uniqueKey":'Card'+Math.random(),"text":"Tangerine🍊","description":[""],"tags":tagTypes[3],"color":"bg-transparent", "owner":""},
+          {"uniqueKey":'Card'+uniqid(),"text":"Banana🍌","description":[""],"tags":tagTypes[1],"color":"bg-transparent", "owner":""},
+          {"uniqueKey":'Card'+uniqid(),"text":"Melon🍈","description":[""],"tags":[],"color":"bg-transparent", "owner":""},
+          {"uniqueKey":'Card'+uniqid(),"text":"Grapes🍇","description":[""],"tags":[],"color":"bg-transparent", "owner":""},
+          {"uniqueKey":'Card'+uniqid(),"text":"Lemon🍋","description":[""],"tags":[],"color":"bg-transparent", "owner":""},
+          {"uniqueKey":'Card'+uniqid(),"text":"Tangerine🍊","description":[""],"tags":tagTypes[3],"color":"bg-transparent", "owner":""},
         ],      
       ]
   
       const dataJson = 
       [
-        {"configObject":{"name":"Let's organize!🏡","boardColor":"bg-transparent","ready":false,"tasks": cardsJson[0]}},
-        {"configObject":{"name":"Goals⚡","boardColor":"bg-transparent","ready":false,"tasks": cardsJson[1]}},
-        {"configObject":{"name":"Dates📅","boardColor":"bg-transparent","ready":false,"tasks": cardsJson[2]}},
-        {"configObject":{"name":"Finance💰","boardColor":"bg-transparent","ready":false,"tasks": cardsJson[3]}},
-        {"configObject":{"name":"Family Tasks😔","boardColor":"bg-transparent","ready":false,"tasks": cardsJson[4]}},
-        {"configObject":{"name":"House Tasks🏠","boardColor":"bg-transparent","ready":false,"tasks": cardsJson[5]}},
-        {"configObject":{"name":"Week Menu🍲","boardColor":"bg-transparent","ready":false,"tasks": cardsJson[6]}},
-        {"configObject":{"name":"Groceries🍌","boardColor":"bg-transparent","ready":false,"tasks": cardsJson[7]}}
+        {"configObject":{"uniqId" : uniqid(), "name":"Let's organize!🏡","boardColor":"bg-transparent","ready":false,"tasks": cardsJson[0]}},
+        {"configObject":{"uniqId" : uniqid(),"name":"Goals⚡","boardColor":"bg-transparent","ready":false,"tasks": cardsJson[1]}},
+        {"configObject":{"uniqId" : uniqid(),"name":"Dates📅","boardColor":"bg-transparent","ready":false,"tasks": cardsJson[2]}},
+        {"configObject":{"uniqId" : uniqid(),"name":"Finance💰","boardColor":"bg-transparent","ready":false,"tasks": cardsJson[3]}},
+        {"configObject":{"uniqId" : uniqid(),"name":"Family Tasks😔","boardColor":"bg-transparent","ready":false,"tasks": cardsJson[4]}},
+        {"configObject":{"uniqId" : uniqid(),"name":"House Tasks🏠","boardColor":"bg-transparent","ready":false,"tasks": cardsJson[5]}},
+        {"configObject":{"uniqId" : uniqid(),"name":"Week Menu🍲","boardColor":"bg-transparent","ready":false,"tasks": cardsJson[6]}},
+        {"configObject":{"uniqId" : uniqid(),"name":"Groceries🍌","boardColor":"bg-transparent","ready":false,"tasks": cardsJson[7]}}
       ]
       
       return new Response(JSON.stringify(dataJson), {

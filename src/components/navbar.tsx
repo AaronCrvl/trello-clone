@@ -1,6 +1,7 @@
 import {Fragment} from 'react'
 import logo  from '../assets/trello-clone-logo.png';
 import { Link, Outlet } from 'react-router-dom';
+import uniqid from 'uniqid';
 
 export default function NavBar() {    
     const  navConfig = [
@@ -31,8 +32,8 @@ export default function NavBar() {
                         {/* Options --------------- */}                        
                         {navConfig.map(config => {
                             return(
-                                <li key={Math.random()} className={`text-md mt-4 h-full ml-4 hover:bg-zinc-900 p-3 opacity-50 hover:cursor-pointer hover:opacity-100`}>
-                                    <Link key={'link' + Math.random()} to={config.link}>
+                                <li key={uniqid()} className={`text-md mt-4 h-full ml-4 hover:bg-zinc-900 p-3 opacity-50 hover:cursor-pointer hover:opacity-100`}>
+                                    <Link key={'link' + uniqid()} to={config.link}>
                                         {config.text}
                                     </Link>
                                 </li>                        

@@ -4,6 +4,7 @@ import editIcon from '../assets/edit-icon.png'
 import trashIcon from '../assets/trashcan-icon.png';
 import { initialDataType } from '../types/initialDataType';
 import { configObjectType } from '../types/configObjectType';
+import uniqid from 'uniqid';
 import './css/main.css';
 
 function BoardContainer({ configObj } : initialDataType) {    
@@ -41,6 +42,7 @@ function BoardContainer({ configObj } : initialDataType) {
         {
             let newArea : configObjectType = {
                 configObject: {
+                    uniqId : uniqid(),
                     name : '',
                     boardColor: configObj.configs[0].configObject.boardColor,
                     ready : false, 
@@ -69,6 +71,7 @@ function BoardContainer({ configObj } : initialDataType) {
         { 
             let newArea : configObjectType = {
                 configObject: {
+                    uniqId : uniqid(),
                     name : '',
                     boardColor: configObj.configs[0].configObject.boardColor,
                     ready : false, 
@@ -117,11 +120,12 @@ function BoardContainer({ configObj } : initialDataType) {
     const handleDelete = React.useMemo(()=> handleExclusion, [configObj])
     function handleExclusion(e : DragEvent) {        
         // delete card condition 🦹‍♂️ 
-        let key : string | undefined = e.dataTransfer?.getData("key")                
-        if(key !== undefined && key !== '' && key.includes('Card')) {                                                                                                                                                             
+        let key : string | undefined = e.dataTransfer?.getData("key")  
+        let UniqId : string | undefined= e.dataTransfer?.getData("UniqId")                                      
+
+        if(key !== undefined && key.includes('Card')) {                                                                                                                                                             
             configObj.configs.forEach((config : configObjectType) : void => {                        
-                if (config.configObject === undefined) 
-                {                                                                                                 
+                if (config.configObject === undefined)  {                                                                                                 
                     return      
                 }                        
             })
@@ -145,28 +149,20 @@ function BoardContainer({ configObj } : initialDataType) {
                 setBoard({mainTitle})
             }                                        
         }
-
-        // delete board condition 🦹‍♂️             
-        let name : string | undefined= e.dataTransfer?.getData("Name")                          
-        let area : string | undefined= e.dataTransfer?.getData("Area")                          
-        if(name !== undefined && name !== '' && area?.includes('dragThisAreaDiv')) {                                                                                                                                                             
+        // delete board condition 🦹‍♂️                                            
+        else if(UniqId !== undefined && e.dataTransfer?.getData("Area")?.includes('dragThisAreaDiv')) {                                                                                                                                                             
             configObj.configs.forEach((config : configObjectType) : void => {                        
-                if ( 
-                    // config !== undefined 
-                    // && config.configObject !== undefined 
-                    config.configObject?.name === name ) 
-                {                            
-                    let index : number = configObj.configs.findIndex((x) => { 
-                        return (x !== undefined && x.configObject !== undefined) ? x.configObject.name === name : 0                                
-                    })
-
-                    if(index > 0) {                        
-                        // use this instead of delete, because "delete arr[index]" set arr[index] to undefined
-                        // using "delete" create future problems for card manipulation on Card Area     
-                        configObj.configs.splice(index, 1) 
-                        setArr(configObj.configs)                                   
-                    }                                                                       
-                }                        
+                if ( config?.configObject?.uniqId  !== UniqId ) {                            
+                    return                                                                                            
+                }          
+                
+                let index : number = configObj.configs.findIndex((x) => x?.configObject?.uniqId === UniqId)
+                if(index > 0) {                        
+                    // use this instead of delete, because "delete arr[index]" set arr[index] to undefined
+                    // using "delete" create future problems for card manipulation on Card Area     
+                    configObj.configs.splice(index, 1) 
+                    setArr(configObj.configs)                                   
+                }
             })
 
             let mainTitle : typeof board.mainTitle = {title: board.mainTitle.title, edit: false, save: board.mainTitle.save}
@@ -373,6 +369,7 @@ function BoardContainer({ configObj } : initialDataType) {
                                     <CardContainer                                    
                                         key={'cArea' + Math.random()}                                                                                     
                                         configObject={{
+                                            uniqId : config.configObject.uniqId,
                                             name : config.configObject.name,
                                             boardColor : config.configObject.boardColor,
                                             ready : false,

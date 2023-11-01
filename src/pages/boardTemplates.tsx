@@ -1,6 +1,7 @@
 import React from 'react';
 import { Link, useLoaderData } from 'react-router-dom';
-import './css/main.css'
+import uniqid from 'uniqid';
+import './css/main.css';
 
 function BoardTemplates() {       
     const loader = useLoaderData()
@@ -21,9 +22,9 @@ function BoardTemplates() {
                                         if(template[1] === 'Management') {
                                             return (  
                                                 <li 
-                                                    key={Math.random()}
+                                                    key={uniqid()}
                                                     className='text-xl text-white rounded-lg p-2 hover:text-white mb-2 transition ease-in-out bg-blue-500 hover:-translate-y-1 hover:scale-110 hover:bg-sky-500 duration-100'>
-                                                    <Link id={Math.random().toString()} to={`/editBoard/${template[0]}`}>
+                                                    <Link id={uniqid().toString()} to={`/editBoard/${template[0]}`}>
                                                         <React.Fragment>                             
                                                             {template[2]}                          
                                                         </React.Fragment>
@@ -44,9 +45,9 @@ function BoardTemplates() {
                                         if(template[1] === 'Personal') {
                                             return (  
                                                 <li 
-                                                    key={Math.random()}
+                                                    key={uniqid()}
                                                     className='text-xl text-white rounded-lg p-2 hover:text-white mb-2 transition ease-in-out bg-green-500 hover:-translate-y-1 hover:scale-110 hover:bg-lime-500 duration-100'>
-                                                    <Link id={Math.random().toString()} to={`/editBoard/${template[0]}`}>
+                                                    <Link id={uniqid().toString()} to={`/editBoard/${template[0]}`}>
                                                         <React.Fragment>                             
                                                             {template[2]}                          
                                                         </React.Fragment>
@@ -67,9 +68,9 @@ function BoardTemplates() {
                                         if(template[1] === 'Calendar') {
                                             return (  
                                                 <li 
-                                                    key={Math.random()}
+                                                    key={uniqid()}
                                                     className='text-xl text-white rounded-lg p-2 hover:text-white mb-2 transition ease-in-out bg-orange-500 hover:-translate-y-1 hover:scale-110 hover:bg-red-500 duration-100'>
-                                                    <Link id={Math.random().toString()} to={`/editBoard/${template[0]}`}>
+                                                    <Link id={uniqid().toString()} to={`/editBoard/${template[0]}`}>
                                                         <React.Fragment>                             
                                                             {template[2]}                          
                                                         </React.Fragment>
@@ -90,9 +91,9 @@ function BoardTemplates() {
                                         if(template[1] === 'Human Resources') {
                                             return (
                                                 <li 
-                                                    key={Math.random()}
+                                                    key={uniqid()}
                                                     className='text-xl text-white rounded-lg p-2 hover:text-white mb-2 transition ease-in-out bg-purple-500 hover:-translate-y-1 hover:scale-110 hover:bg-indigo-500 duration-100'>
-                                                    <Link id={Math.random().toString()} to={`/editBoard/${template[0]}`}>
+                                                    <Link id={uniqid().toString()} to={`/editBoard/${template[0]}`}>
                                                         <React.Fragment>                             
                                                             {template[2]}                          
                                                         </React.Fragment>

@@ -1,8 +1,9 @@
-import React from 'react';
-import { Link, NavigateOptions, useLoaderData } from 'react-router-dom';
+import React, { KeyboardEvent } from 'react';
+import { NavigateOptions } from 'react-router-dom';
 import { configObjectType } from '../types/configObjectType';
 import { useNavigate } from 'react-router-dom';
-import './css/main.css'
+import uniqid from 'uniqid';
+import './css/main.css';
 
 function MyBoards() {    
 
@@ -14,7 +15,7 @@ function MyBoards() {
         let quadro = ''
         
         if(myBoards === undefined) {      
-            for(let i = 1; i <= 3; ++i) {                   
+            for(let i = 0; i < 3; ++i) {                   
                 if(localStorage.getItem(`quadro${i}`) !== null) {
                     quadro = JSON.parse(localStorage.getItem(`quadro${i}`)!)                                
                     arr.push(quadro)                
@@ -36,10 +37,10 @@ function MyBoards() {
     }
 
     function deleteSaveBoard(data : configObjectType) {
-        for(let i = 1; i <= 3; ++i) {                   
+        for(let i = 0; i < 3; ++i) {                   
             if(localStorage.getItem(`quadro${i}`) !== null) {
-                if((JSON.parse(localStorage.getItem(`quadro${i}`)!) as configObjectType).configObject?.tasks[0]?.uniqueKey 
-                    === data.configObject?.tasks[0]?.uniqueKey) {
+                if((JSON.parse(localStorage.getItem(`quadro${i}`)!) as configObjectType).configObject?.uniqId
+                    === data.configObject?.uniqId) {
                     localStorage.removeItem(`quadro${i}`)
                     alert('Board excluded sucessfully! Reloading page.')                    
                     window.location.reload()
@@ -62,18 +63,27 @@ function MyBoards() {
                                 myBoards.map(board => {                                        
                                     return ( 
                                         <div
-                                            key={Math.random()} 
+                                            key={uniqid()} 
                                             className='flex mb-2'>
-                                            <li 
-                                                key={Math.random()}
+                                            <li                                                 
                                                 className='cursor-pointer select-none text-xl text-white rounded-lg p-2 hover:text-white mb-2 transition ease-in-out bg-yellow-600 hover:-translate-y-1 hover:scale-110 hover:bg-amber-600 duration-100'
                                                 onClick={()=> navigateToEditPage(board)}
+                                                onKeyDown={(event : KeyboardEvent) => {
+                                                    if(event.key === 'Enter') {
+                                                        navigateToEditPage(board)
+                                                    }
+                                                }}
                                             >                                                
-                                                Go📋 - {board.toString()}    
+                                                Go📋 - {board?.configObject?.uniqId}    
                                             </li>           
                                             <button 
                                                 className='ml-5 text-white text-2xl font-bold rounded-lg bg-red-800 p-2 hover:bg-red-600 transition ease-in-out bg-yellow-600 hover:-translate-y-1 hover:scale-110 hover:bg-amber-600 duration-100'
                                                 onClick={()=>deleteSaveBoard(board)}
+                                                onKeyDown={(event : KeyboardEvent) => {
+                                                    if(event.key === 'Enter') {
+                                                        deleteSaveBoard(board)
+                                                    }
+                                                }}
                                             >
                                                 X
                                             </button>

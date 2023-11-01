@@ -2,6 +2,7 @@ import { cardType } from "./cardType"
 
 export type configObjectType = {    
     configObject: {
+        uniqId : string,
         // board name
         name : string,
         // board color

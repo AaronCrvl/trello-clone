@@ -1,4 +1,5 @@
 import { tagType } from "../../../types/tagType";
+import uniqid from 'uniqid';
 
 export default class EmployeeManualTemplate {
     public getBoards() : any {
@@ -16,34 +17,34 @@ export default class EmployeeManualTemplate {
       const cardsJson = 
       [
         [
-          {"uniqueKey":'Card'+Math.random(),"text":"On your first day? Read This🎉","description":[""],"tags":tagTypes[5], "color":"bg-red-700", "owner":""},         
-          {"uniqueKey":'Card'+Math.random(),"text":"Weekly Updates","description":["Team and project news."],"tags":[], "color":"bg-red-700", "owner":""}
+          {"uniqueKey":'Card'+uniqid(),"text":"On your first day? Read This🎉","description":[""],"tags":tagTypes[5], "color":"bg-red-700", "owner":""},         
+          {"uniqueKey":'Card'+uniqid(),"text":"Weekly Updates","description":["Team and project news."],"tags":[], "color":"bg-red-700", "owner":""}
         ],
         [
-          {"uniqueKey":'Card'+Math.random(),"text":"Health Insurance🏥","description":[""],"tags":[],"color":"bg-indigo-700", "owner":""},
-          {"uniqueKey":'Card'+Math.random(),"text":"Secure👮","description":[""],"tags":tagTypes[3], "color":"bg-transparent", "owner":""},
-          {"uniqueKey":'Card'+Math.random(),"text":"Dental🧪","description":[""],"tags":tagTypes[2],"color":"bg-transparent","owner":""},
+          {"uniqueKey":'Card'+uniqid(),"text":"Health Insurance🏥","description":[""],"tags":[],"color":"bg-indigo-700", "owner":""},
+          {"uniqueKey":'Card'+uniqid(),"text":"Secure👮","description":[""],"tags":tagTypes[3], "color":"bg-transparent", "owner":""},
+          {"uniqueKey":'Card'+uniqid(),"text":"Dental🧪","description":[""],"tags":tagTypes[2],"color":"bg-transparent","owner":""},
         ],
         [
-          {"uniqueKey":'Card'+Math.random(),"text":"Day Off Policy🚨","description":[""],"tags":[],"color":"bg-transparent","owner":""},
-          {"uniqueKey":'Card'+Math.random(),"text":"Medical License👨‍⚕️","description":[""],"tags":tagTypes[5], "color":"bg-purple-700", "owner":""},
+          {"uniqueKey":'Card'+uniqid(),"text":"Day Off Policy🚨","description":[""],"tags":[],"color":"bg-transparent","owner":""},
+          {"uniqueKey":'Card'+uniqid(),"text":"Medical License👨‍⚕️","description":[""],"tags":tagTypes[5], "color":"bg-purple-700", "owner":""},
         ],
         [],
         [],
         [
-          {"uniqueKey":'Card'+Math.random(),"text":"Home Office Policy🚨","description":[""],"tags":tagTypes[4], "color":"bg-transparent", "owner":""},
+          {"uniqueKey":'Card'+uniqid(),"text":"Home Office Policy🚨","description":[""],"tags":tagTypes[4], "color":"bg-transparent", "owner":""},
         ]
         
       ]
   
       const dataJson = 
       [
-        {"configObject":{"name":"Your first day✉","boardColor":"bg-transparent","ready":false,"tasks": cardsJson[0]}},
-        {"configObject":{"name":"Benefits👋","boardColor":"bg-transparent","ready":false,"tasks": cardsJson[1]}},
-        {"configObject":{"name":"Vacation / Days Off📅","boardColor":"bg-transparent","ready":false,"tasks": cardsJson[2]}},
-        {"configObject":{"name":"Trips / Conferences📅","boardColor":"bg-transparent","ready":false,"tasks": cardsJson[3]}},
-        {"configObject":{"name":"QG 🏗","boardColor":"bg-transparent","ready":false,"tasks": cardsJson[4]}},
-        {"configObject":{"name":"Home Office 🏠","boardColor":"bg-transparent","ready":false,"tasks": cardsJson[5]}}
+        {"configObject":{"uniqId" : uniqid(),"name":"Your first day✉","boardColor":"bg-transparent","ready":false,"tasks": cardsJson[0]}},
+        {"configObject":{"uniqId" : uniqid(),"name":"Benefits👋","boardColor":"bg-transparent","ready":false,"tasks": cardsJson[1]}},
+        {"configObject":{"uniqId" : uniqid(),"name":"Vacation / Days Off📅","boardColor":"bg-transparent","ready":false,"tasks": cardsJson[2]}},
+        {"configObject":{"uniqId" : uniqid(),"name":"Trips / Conferences📅","boardColor":"bg-transparent","ready":false,"tasks": cardsJson[3]}},
+        {"configObject":{"uniqId" : uniqid(),"name":"QG 🏗","boardColor":"bg-transparent","ready":false,"tasks": cardsJson[4]}},
+        {"configObject":{"uniqId" : uniqid(),"name":"Home Office 🏠","boardColor":"bg-transparent","ready":false,"tasks": cardsJson[5]}}
       ]
       
       return new Response(JSON.stringify(dataJson), {

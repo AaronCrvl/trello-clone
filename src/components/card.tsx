@@ -5,6 +5,7 @@ import cardMoving from '../assets/cardMoving.png';
 import imgIcon from '../assets/imageIcon.png';
 import editIcon from '../assets/edit-icon.png';
 import { useRef, useMemo, useState } from "react";
+import uniqid from 'uniqid';
 
 function Card({ uniqueKey, text, description, tags, owner, color, parentCallback } : cardType ) {  
     // Id's ------------------------------>
@@ -155,9 +156,9 @@ function Card({ uniqueKey, text, description, tags, owner, color, parentCallback
             
             dragConfig.ondrag = function(e) {
                 // set card moving image
-                let cardM = document.createElement('img')
-                cardM.src = cardMoving
-                e.dataTransfer?.setDragImage(cardM, 0, 0)
+                // let cardM = document.createElement('img')
+                // cardM.src = cardMoving
+                // e.dataTransfer?.setDragImage(cardM, 0, 0)
             }        
         }
     }, [dragConfig])    
@@ -221,7 +222,17 @@ function Card({ uniqueKey, text, description, tags, owner, color, parentCallback
                     :
                     (
                         <div className="flex select-none text-gray-300 text-sm font-bold">
-                            <div onClick={openCardModal} className="cursor-pointer hover:scale-110 hover:text-lg">{card.data.text}</div>
+                            <div 
+                                onClick={openCardModal} 
+                                onKeyDown={(event : KeyboardEvent) => {
+                                    if(event.key === 'Enter') {
+                                        openCardModal()
+                                    }
+                                }}
+                                className="cursor-pointer hover:scale-110 hover:text-lg"
+                            >
+                                {card.data.text}
+                            </div>
                             <div className="invert ml-auto cursor-pointer">
                                 <img 
                                     alt='' 
@@ -238,12 +249,20 @@ function Card({ uniqueKey, text, description, tags, owner, color, parentCallback
                         </div>  
                     )
                 }
-                <div className="flex gap-1 mt-2 w-full hover:cursor-pointer" onClick={openCardModal}>
+                <div 
+                    className="flex gap-1 mt-2 w-full hover:cursor-pointer" 
+                    onClick={openCardModal}
+                    onKeyDown={(event : KeyboardEvent) => {
+                        if(event.key === 'Enter') {
+                            openCardModal()
+                        }
+                    }}
+                >
                     {
                         card.data.tags.map((tag) => {
                             return (
                                 <div 
-                                    key={Math.random()}
+                                    key={uniqid()}
                                     className="w-3 h-2"
                                     style={{ backgroundColor: (tag.colorHex === undefined ? '#FDFEFE' : tag.colorHex), borderRadius: "25px" }} 
                                 />
@@ -303,6 +322,11 @@ function Card({ uniqueKey, text, description, tags, owner, color, parentCallback
                                     <div 
                                         className="btn text-white ml-auto select-none bg-zinc-700 p-2 w-fit rounded-lg hover:bg-gray-600 hover:cursor-pointer"
                                         onClick={addTextToHistory}
+                                        onKeyDown={(event : KeyboardEvent) => {
+                                            if(event.key === 'Enter') {
+                                                addTextToHistory()
+                                            }
+                                        }}
                                     >
                                         Add
                                     </div>
@@ -312,7 +336,7 @@ function Card({ uniqueKey, text, description, tags, owner, color, parentCallback
                                     {                                        
                                         card.data.description.map((item)=>{
                                             return (
-                                                <div key={Math.random()} className="text-white bg-gray-600 rounded p-2 mt-5">                                                    
+                                                <div key={uniqid()} className="text-white bg-gray-600 rounded p-2 mt-5">                                                    
                                                     <p className="text-right opacity-50 text-sm">{new Date().toTimeString()}</p>
                                                     <p className="rounded h-full p-2">
                                                         {item}
@@ -340,7 +364,7 @@ function Card({ uniqueKey, text, description, tags, owner, color, parentCallback
                                                 return (
                                                     <li
                                                         className="flex"                                                    
-                                                        key={Math.random()}
+                                                        key={uniqid()}
                                                     >      
                                                         <div 
                                                             className="mt-1 mr-5 opacity-50 text-sm text-center"
@@ -380,6 +404,11 @@ function Card({ uniqueKey, text, description, tags, owner, color, parentCallback
                                         <div 
                                             className="btn text-white text-sm ml-auto select-none p-1 w-fit rounded-lg hover:bg-gray-600 hover:cursor-pointer"
                                             onClick={addTextToTag}
+                                            onKeyDown={(event : KeyboardEvent) => {
+                                                if(event.key === 'Enter') {
+                                                    addTextToTag()
+                                                }
+                                            }}
                                         >
                                             Add
                                         </div>

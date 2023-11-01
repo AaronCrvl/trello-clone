@@ -1,8 +1,12 @@
 .boardContainerBg {
     background-image: url('../../assets/pattern3.svg');
+    background-size: cover;
+    background-repeat: no-repeat;
 }
 
 .editArea {
     height:100vh;
     background-image: url('../../assets/pattern.svg');
+    background-size: cover;
+    background-repeat: no-repeat;
 }
