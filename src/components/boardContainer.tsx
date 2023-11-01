@@ -316,7 +316,7 @@ function BoardContainer({ configObj } : initialDataType) {
                                         onClick={board.mainTitle.save}
                                         onKeyDown={(event : KeyboardEvent) => {
                                             if(event.key === 'Enter') {
-                                                board.mainTitle.save
+                                                board.mainTitle.save()
                                             }
                                         }}
                                     >

@@ -197,7 +197,7 @@ function Card({ uniqueKey, text, description, tags, owner, color, parentCallback
                                         onClick={alterName}
                                         onKeyDown={(event : KeyboardEvent) => {
                                             if(event.key === 'Enter') {
-                                                alterName
+                                                alterName()
                                             }
                                         }}
                                     >
