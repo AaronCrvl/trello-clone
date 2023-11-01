@@ -152,9 +152,9 @@ function BoardContainer({ configObj } : initialDataType) {
         if(name !== undefined && name !== '' && area?.includes('dragThisAreaDiv')) {                                                                                                                                                             
             configObj.configs.forEach((config : configObjectType) : void => {                        
                 if ( 
-                    config !== undefined 
-                    && config.configObject !== undefined 
-                    && config.configObject.name === name ) 
+                    // config !== undefined 
+                    // && config.configObject !== undefined 
+                    config.configObject?.name === name ) 
                 {                            
                     let index : number = configObj.configs.findIndex((x) => { 
                         return (x !== undefined && x.configObject !== undefined) ? x.configObject.name === name : 0                                

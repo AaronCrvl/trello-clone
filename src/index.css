@@ -13,10 +13,6 @@
   width: "100vh";      
 }
 
-.Content{  
-  
-}
-
 .Flipped, .Flipped .Content{
   transform: rotateX(180deg);
 }

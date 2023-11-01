@@ -55,6 +55,6 @@ export default class EmployeeManualTemplate {
     }
 
     constructor(){
-      // this class dont need to start it variables 
+      // this EmployeeManualTemplate class dont need to start it variables 
     }
   } // !_☄

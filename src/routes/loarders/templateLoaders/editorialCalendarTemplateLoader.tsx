@@ -64,6 +64,6 @@ export default class EditorialCalendarTemplateLoader {
   }  
 
   constructor(){
-    // this class dont need to start it variables 
+    // this EditorialCalendarTemplateLoader class dont need to start it variables 
   }
 } // !_☄

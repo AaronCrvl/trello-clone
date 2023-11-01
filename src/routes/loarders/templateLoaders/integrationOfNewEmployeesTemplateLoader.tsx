@@ -54,6 +54,6 @@ export default class IntegrationOfNewEmployeesTemplateLoader {
     }
    
     constructor(){
-        // this class dont need to start it variables 
+        // this IntegrationOfNewEmployeesTemplateLoader class dont need to start it variables 
     }
 } // !_☄

@@ -61,7 +61,9 @@ function MyBoards() {
                             {myBoards &&                                                                    
                                 myBoards.map(board => {                                        
                                     return ( 
-                                        <div className='flex mb-2'>
+                                        <div
+                                            key={Math.random()} 
+                                            className='flex mb-2'>
                                             <li 
                                                 key={Math.random()}
                                                 className='cursor-pointer select-none text-xl text-white rounded-lg p-2 hover:text-white mb-2 transition ease-in-out bg-yellow-600 hover:-translate-y-1 hover:scale-110 hover:bg-amber-600 duration-100'

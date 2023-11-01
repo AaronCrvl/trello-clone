@@ -31,8 +31,8 @@ export default class Loaders {
   }
 
   public getBoardTemplateList() : Promise<any> {
-    return new Promise((resolve) => {
-      resolve([        
+    return Promise.resolve(
+      [        
         // Id, Category, Name
         [0,'Management', 'Project Managment'],
         [1,'Personal', 'Habit Control'], 
@@ -42,7 +42,6 @@ export default class Loaders {
         [5,'Human Resources', 'Employee Manual'],      
         [6,'Personal', 'Family Management'], 
     ])
-    })
   }
 } // !_☄
 

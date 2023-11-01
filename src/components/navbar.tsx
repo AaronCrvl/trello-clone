@@ -31,7 +31,7 @@ export default function NavBar() {
                         {/* Options --------------- */}                        
                         {navConfig.map(config => {
                             return(
-                                <li className={`text-md mt-4 h-full ml-4 hover:bg-zinc-900 p-3 opacity-50 hover:cursor-pointer hover:opacity-100`}>
+                                <li key={Math.random()} className={`text-md mt-4 h-full ml-4 hover:bg-zinc-900 p-3 opacity-50 hover:cursor-pointer hover:opacity-100`}>
                                     <Link key={'link' + Math.random()} to={config.link}>
                                         {config.text}
                                     </Link>
